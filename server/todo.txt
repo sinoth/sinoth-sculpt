@@ -1,0 +1,3 @@
+
+CREATE TABLE sculpture0 ( id integer primary key, username text, ip text, hostna
+me text, checkout text, checkin text, data none );
