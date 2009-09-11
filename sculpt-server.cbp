@@ -16,7 +16,6 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
-					<Add option="-D_WIN32" />
 					<Add option="-D_WIN32_WINNT=0x0501" />
 				</Compiler>
 				<Linker>
@@ -53,6 +52,9 @@
 			<Option virtualFolder="sqlite\" />
 		</Unit>
 		<Unit filename="server\todo.txt" />
+		<Unit filename="server\win_helper.cpp" />
+		<Unit filename="sinsocket\sinsocket.cpp" />
+		<Unit filename="sinsocket\sinsocket.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

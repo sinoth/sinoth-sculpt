@@ -9,13 +9,10 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/types.h>
-
-
 #include <signal.h>
 
 #ifdef _WIN32
  #include <ws2tcpip.h>
- //#include <winsock2.h>
 #else
  #include <sys/socket.h>
  #include <netinet/in.h>
@@ -24,17 +21,15 @@
  #include <sys/wait.h>
 #endif
 
-
-
 #define PORT "3490"    // the port users will be connecting to
 #define BACKLOG 10     // how many pending connections queue will hold
 
-/*
-void sigchld_handler(int s)
-{
-    while(waitpid(-1, NULL, WNOHANG) > 0);
-}
-*/
+#ifdef _WIN32_WINNT
+ //these functions not present on windows, must use wrappers
+ const char *inet_ntop(int af, const void *src, char *dst, socklen_t cnt);
+ int inet_pton(int af, const char *src, void *dst);
+#endif
+
 
 
 // get sockaddr, IPv4 or IPv6:
@@ -54,17 +49,17 @@ int main(void)
     struct sockaddr_storage their_addr; // connector's address information
     socklen_t sin_size;
     //struct sigaction sa;
-    int yes=1;
+    char yes=1;
     char s[INET6_ADDRSTRLEN];
     int rv;
 
-
-#ifdef _WIN32
+#ifdef _WIN32_WINNT
     WSADATA wsaData;   // if this doesn't work try WSAData
 
     // MAKEWORD(1,1) for Winsock 1.1, MAKEWORD(2,0) for Winsock 2.0:
     if (WSAStartup(MAKEWORD(2,0), &wsaData) != 0) {
         fprintf(stderr, "WSAStartup failed.\n");
+        WSACleanup();
         exit(1);
     }
 #endif
@@ -87,8 +82,7 @@ int main(void)
             continue;
         }
 
-        if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes,
-                sizeof(int)) == -1) {
+        if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(char)) == -1) {
             perror("setsockopt");
             exit(1);
         }
@@ -104,7 +98,7 @@ int main(void)
 
     if (p == NULL)  {
         fprintf(stderr, "server: failed to bind\n");
-        return 2;
+        return 1;
     }
 
     freeaddrinfo(servinfo); // all done with this structure
@@ -114,44 +108,34 @@ int main(void)
         exit(1);
     }
 
-/*
-    sa.sa_handler = sigchld_handler; // reap all dead processes
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = SA_RESTART;
-    if (sigaction(SIGCHLD, &sa, NULL) == -1) {
-        perror("sigaction");
-        exit(1);
-    }
-*/
-
     printf("server: waiting for connections...\n");
 
-    while(1) {  // main accept() loop
+    //while(1) {  // main accept() loop
         sin_size = sizeof their_addr;
         new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size);
         if (new_fd == -1) {
             perror("accept");
-            continue;
+            #ifdef _WIN32_WINNT
+            WSACleanup();
+            #endif
+            exit(1);
         }
 
         inet_ntop(their_addr.ss_family,
-            get_in_addr((struct sockaddr *)&their_addr),
-            s, sizeof s);
+                  get_in_addr((struct sockaddr *)&their_addr),
+                  s,
+                  sizeof s);
         printf("server: got connection from %s\n", s);
 
-        if (!fork()) { // this is the child process
-            close(sockfd); // child doesn't need the listener
-            if (send(new_fd, "Hello, world!", 13, 0) == -1)
-                perror("send");
-            close(new_fd);
-            exit(0);
-        }
-        close(new_fd);  // parent doesn't need this
-    }
+        close(sockfd); // close the listener
+        if (send(new_fd, "Hello, world!", 13, 0) == -1)
+            perror("send");
+        close(new_fd); // close the active connection
+   //}
 
 
-#ifdef _WIN32
-    WSACleanup();
+#ifdef _WIN32_WINNT
+WSACleanup();
 #endif
 
     return 0;
