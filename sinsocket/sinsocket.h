@@ -8,8 +8,9 @@ public:
 
     //server functions
     int listen(int port);
-    int listen(int port, int threads);
-    int listen(int port, int threads, int sockets_per_thread);
+    //int listen(int port, int sockets_per_thread);
+    //int listen(int port, int sockets_per_thread, int threads );
+    sinsocket* accept();
 
     //client functions
     int connect(const char* address, int port);
@@ -18,6 +19,22 @@ public:
     sinsocket();
 
 
+private:
+
+    int my_socket;
 
 
 };
+
+
+
+//this class allows you to say, initialize 10 sockets and listen to all simultaneously
+//it also allows them to be serviced simultaneously
+class sinsocket_farm {
+public:
+
+
+
+private:
+
+}
