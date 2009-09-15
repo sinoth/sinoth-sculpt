@@ -49,6 +49,7 @@ sinsocket::sinsocket(int in_fd) : ready_for_action(false), my_socket(in_fd) {
     socket_count++;
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 sinsocket::~sinsocket() {
@@ -127,7 +128,8 @@ int sinsocket::listen(int in_port) {
 }
 
 
-
+///////////////////////////////////////////////////////////////////////////////
+//
 sinsocket* sinsocket::accept() {
 
     int new_fd;  // listen on sock_fd, new connection on new_fd
@@ -154,7 +156,113 @@ sinsocket* sinsocket::accept() {
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
+//
+int sinsocket::send( const void *indata, int inlength ) {
+    int bytes_sent = 0;
+    int bytes_left = inlength;
+    int temp_sent = 0;
 
+    while ( bytes_sent < inlength ) {
+        temp_sent = ::send(my_socket, (const char*)indata+bytes_sent, bytes_left, 0);
+        if ( temp_sent == -1 ) break; //something bad happened
+        bytes_sent += temp_sent;
+        bytes_left -= temp_sent;
+    }
+
+    if ( temp_sent == -1 ) { perror("send"); }
+
+    //return 1 if something messed up, 0 otherwise
+    return ( temp_sent==-1?1:0 );
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+int sinsocket::recv( const void *inbuffer, int inlength ) {
+    int bytes_recv = 0;
+    int bytes_left = inlength;
+    int temp_recv = 0;
+
+    while ( bytes_recv < inlength ) {
+        temp_recv = ::send(my_socket, (const char*)inbuffer+bytes_recv, bytes_left, 0);
+        if ( temp_recv == -1 || temp_recv == 0 ) break; //something bad happened or disconnect
+        bytes_recv += temp_recv;
+        bytes_left -= temp_recv;
+    }
+
+
+    //error
+    if ( temp_recv == -1 ) { perror("recv"); }
+    //peer disconnected
+    if ( temp_recv == 0 ) {
+        fprintf(stderr, "sinsocket: recv: peer has disconnected\n");
+        ready_for_action = false; }
+
+    //return 1 if the peer disconnected, -1 for error, 0 otherwise
+    return temp_recv;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+int sinsocket::connect(const char* inaddress, int inport ) {
+
+    int sockfd, numbytes;
+    char buf[MAXDATASIZE];
+    struct addrinfo hints, *servinfo, *p;
+    int rv;
+    char s[INET6_ADDRSTRLEN];
+
+    if (argc != 2) {
+        fprintf(stderr,"usage: client hostname\n");
+        exit(1);
+    }
+
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+
+    if ((rv = getaddrinfo(argv[1], PORT, &hints, &servinfo)) != 0) {
+        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+        return 1;
+    }
+
+    // loop through all the results and connect to the first we can
+    for(p = servinfo; p != NULL; p = p->ai_next) {
+        if ((sockfd = socket(p->ai_family, p->ai_socktype,
+                p->ai_protocol)) == -1) {
+            perror("client: socket");
+            continue;
+        }
+
+        if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+            close(sockfd);
+            perror("client: connect");
+            continue;
+        }
+
+        break;
+    }
+
+    if (p == NULL) {
+        fprintf(stderr, "client: failed to connect\n");
+        return 2;
+    }
+
+    inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr),
+            s, sizeof s);
+    printf("client: connecting to %s\n", s);
+
+    freeaddrinfo(servinfo); // all done with this structure
+
+
+
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
 void *sinsocket::get_in_addr(struct sockaddr *sa) {
     if (sa->sa_family == AF_INET) //IPv4
       return &(((struct sockaddr_in*)sa)->sin_addr);

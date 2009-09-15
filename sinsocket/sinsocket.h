@@ -10,8 +10,8 @@ public:
     int connect(const char* address, int port);
 
     //shared functions
-    int send
-    int recv
+    int send( const void *data, int len ); //blocking
+    int recv( const void *buf, int len ); //blocking
 
     sinsocket(int my_sockd=-1);
     ~sinsocket();
