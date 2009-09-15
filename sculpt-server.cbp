@@ -17,6 +17,7 @@
 				<Compiler>
 					<Add option="-g" />
 					<Add option="-D_WIN32_WINNT=0x0501" />
+					<Add option="-D_DEBUG" />
 					<Add directory="sinsocket" />
 				</Compiler>
 				<Linker>
@@ -32,9 +33,12 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-D_WIN32_WINNT=0x0501" />
+					<Add directory="sinsocket" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="ws2_32" />
 				</Linker>
 			</Target>
 		</Build>
@@ -53,7 +57,6 @@
 			<Option virtualFolder="sqlite\" />
 		</Unit>
 		<Unit filename="server\todo.txt" />
-		<Unit filename="server\win_helper.cpp" />
 		<Unit filename="sinsocket\sinsocket.cpp">
 			<Option virtualFolder="sinsocket\" />
 		</Unit>

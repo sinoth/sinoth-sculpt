@@ -1,4 +1,5 @@
 
+
 class sinsocket {
 public:
 
@@ -12,17 +13,16 @@ public:
     //shared functions
     int send( const void *data, int len ); //blocking
     int recv( const void *buf, int len ); //blocking
+    int disconnect();
 
     sinsocket(int my_sockd=-1);
     ~sinsocket();
-
 
 private:
 
     bool ready_for_action;
     int my_socket;
     char my_port[6];
-    void *get_in_addr(struct sockaddr *sa);
 
     //to know if the program-wide init has been run
     static bool done_init;

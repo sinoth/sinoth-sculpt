@@ -1,30 +1,33 @@
-/*
-** client.c -- a stream socket client demo
-*/
 
 #include <stdio.h>
 
 #include "sinsocket.h"
 
 
-
 int main(int argc, char *argv[])
 {
 
-    if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
-        perror("recv");
-        exit(1);
+    sinsocket client;
+    char buffer[20];
+    int result;
+
+    //to get rid of the unused variable warning
+    argc = argc; argv = argv;
+
+    //connect to the server
+    if ( client.connect("localhost",3490) ) {
+        fprintf(stderr,"ERROR on connect! bad!\n");
+        return 1; }
+
+    //receive data from the server
+    result = client.recv(buffer,11);
+    switch ( result ) {
+        case -1: fprintf(stderr,"ERROR on client receive! bad!\n"); break;
+        case 1:  printf("server disconnected\n"); break;
+        default: printf("client: received '%s'\n",buffer); break;
     }
-
-    buf[numbytes] = '\0';
-
-    printf("client: received '%s'\n",buf);
-
-    close(sockfd);
-
-#ifdef _WIN32_WINNT
- WSACleanup();
-#endif
 
     return 0;
 }
+
+
