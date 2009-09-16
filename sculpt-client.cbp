@@ -49,6 +49,14 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="client\main.cpp" />
+		<Unit filename="client\player.cpp" />
+		<Unit filename="client\player.h" />
+		<Unit filename="client\scene.h" />
+		<Unit filename="client\scene\init.cpp" />
+		<Unit filename="client\scene\input.cpp" />
+		<Unit filename="client\scene\render.cpp" />
+		<Unit filename="client\scene\scene.cpp" />
+		<Unit filename="client\scene\update.cpp" />
 		<Unit filename="client\todo.txt" />
 		<Unit filename="sinsocket\sinsocket.cpp">
 			<Option virtualFolder="sinsocket\" />
