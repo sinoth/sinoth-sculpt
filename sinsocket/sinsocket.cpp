@@ -27,8 +27,8 @@ int sinsocket::socket_count = 0;
 
 ///////////////////////////////////////////////////////////////////////////////
 //helper to get the right address
-void *get_in_addr(struct sockaddr *__restrict__ sa) {
-    if (sa->sa_family == AF_INET) //IPv4
+void *get_in_addr(struct sockaddr_storage *sa) {
+    if (sa->ss_family == AF_INET) //IPv4
       return &(((struct sockaddr_in*)sa)->sin_addr);
     else //IPv6
       return &(((struct sockaddr_in6*)sa)->sin6_addr);
@@ -216,7 +216,7 @@ sinsocket* sinsocket::accept() {
         return NULL; }
 
     inet_ntop(their_addr.ss_family,
-              get_in_addr((struct sockaddr *)&their_addr),
+              get_in_addr((struct sockaddr_storage *)&their_addr),
               connection_name,
               sizeof connection_name);
 
@@ -327,7 +327,7 @@ int sinsocket::connect(const char* inaddress, int inport ) {
         return 1;
     }
 
-    inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr),
+    inet_ntop(p->ai_family, get_in_addr((struct sockaddr_storage*)p->ai_addr),
             connection_name, sizeof connection_name);
 
     #ifdef _DEBUG
