@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <sintimer.h>
+#include <math.h>
 
 #include "scene.h"
 
@@ -9,13 +10,8 @@ scene::scene() {
 
     // screen stuff
     fullscreen = false;
-    res_win_x = 1024; res_win_y = 768;
-    res_full_x = 640; res_full_y = 480;
-
-    if ( fullscreen ) {
-        res_cur_x = res_full_x; res_cur_y = res_full_y;
-    } else {
-        res_cur_x = res_win_x; res_cur_y = res_win_y; }
+    res_win_x = 800; res_win_y = 600;
+    res_full_x = 800; res_full_y = 600;
 
     // input stuff
     mouseGrab = true;
@@ -25,17 +21,10 @@ scene::scene() {
     keyboardMoveSpeed = 0.1;
     mouseWheel = 0;
 
-    dynamicsWorld = NULL;
     myself = this;
 }
 
 scene::~scene() {}
-
-
-
-
-
-
 
 
 
@@ -47,17 +36,12 @@ scene::~scene() {}
 void scene::FPS()
 {
 	static int frames=0;
-	//static char *frame_string = new char[20];
 	static sinTimer fpsTimer(1);
-    //fpsTimer.getTime();
 
     frames++;
-    //printf("what");
     if( fpsTimer.needUpdate() )
     {
-		//printf("FPS: %d [%lld]\n",frames);//,settings.ull_counter);
 		printf("FPS: %d\n",frames);//,settings.ull_counter);
-        //sprintf(frame_string, "FPS: %d", frames);
         frames = 0;
     }
 }
@@ -87,48 +71,3 @@ void scene::perspectiveGL( GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdou
 
 
 
-
-bool scene::playerContactAdd(btManifoldPoint& cp,
-                      const btCollisionObject* colObj0,
-                      int partId0,
-                      int index0,
-                      const btCollisionObject* colObj1,
-                      int partId1,
-                      int index1) {
-
-    static const btRigidBody *body0, *body1;
-    //static collision_data* col_data;
-    //printf("wat\n");
-
-    if ( cp.m_userPersistentData == NULL ) {
-        //printf("new contact\n");
-        body0 = static_cast<const btRigidBody *> (colObj0);
-        body1 = static_cast<const btRigidBody *> (colObj1);
-
-        if ( (body0 == myself->mainPlayer.my_body && body1 == myself->mainGround) ||
-             (body1 == myself->mainPlayer.my_body && body0 == myself->mainGround)  ) {
-            myself->mainPlayer.contactPoints++;
-            //myself->mainPlayer.setPlaneLimit( -cp.m_normalWorldOnB, cp.getPositionWorldOnB() );
-            cp.m_userPersistentData = static_cast<void*>(&myself->mainPlayer);
-            //myself->collected_orb1 = true;
-            //printf("added normal: %f, %f, %f\n", -cp.m_normalWorldOnB.getX(), -cp.m_normalWorldOnB.getY(), -cp.m_normalWorldOnB.getZ() );
-         }
-
-    }
-
-    return false;
-}
-
-
-bool scene::playerContactDestroy(void* userPersistentData) {
-
-
-    if ( userPersistentData != NULL ) {
-        //static_cast<player*>(userPersistentData)->delContact();
-        static_cast<player*>(userPersistentData)->contactPoints--;
-        //printf("del, points: %d\n", myself->mainPlayer.getContacts() );
-
-    }
-
-    return false;
-}

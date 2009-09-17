@@ -20,9 +20,20 @@
 					<Add option="-D_WIN32_WINNT=0x0501" />
 					<Add option="-D_DEBUG" />
 					<Add directory="sinsocket" />
+					<Add directory="client" />
+					<Add directory="..\..\libs\libsin\include" />
+					<Add directory="..\..\libs\glfw\include" />
 				</Compiler>
 				<Linker>
+					<Add library="sincam" />
+					<Add library="sinlight" />
+					<Add library="sintimer" />
+					<Add library="sinprim" />
+					<Add library="glfw" />
+					<Add library="opengl32" />
 					<Add library="ws2_32" />
+					<Add directory="..\..\libs\libsin\lib" />
+					<Add directory="..\..\libs\glfw\lib" />
 				</Linker>
 			</Target>
 			<Target title="Windows Client Release">
@@ -49,8 +60,6 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="client\main.cpp" />
-		<Unit filename="client\player.cpp" />
-		<Unit filename="client\player.h" />
 		<Unit filename="client\scene.h" />
 		<Unit filename="client\scene\init.cpp" />
 		<Unit filename="client\scene\input.cpp" />

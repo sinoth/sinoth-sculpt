@@ -14,29 +14,21 @@ void scene::keyboardInput( int key, int action ) {
     switch (action) {
         case GLFW_PRESS:
             switch (key) {
-                case 'E': mainPlayer.goForward = true; break;
-                case 'D': mainPlayer.goBack = true; break;
-                case 'S': mainPlayer.goLeft = true; break;
-                case 'F': mainPlayer.goRight = true; break;
-                case GLFW_KEY_SPACE: mainPlayer.doJump(); break;
-                //case 'Z': softBodyWorldInfo->m_sparsesdf.GarbageCollect(); break;
-                case 'X':
-                    mainRope->m_anchors.clear();
-                    break;
-                case 'Z':
+                //case 'E': mainPlayer.goForward = true; break;
+                //case 'D': mainPlayer.goBack = true; break;
+                //case 'S': mainPlayer.goLeft = true; break;
+                //case 'F': mainPlayer.goRight = true; break;
 
-
-                    break;
 
             }
             break;
 
         case GLFW_RELEASE:
             switch (key) {
-                case 'E': mainPlayer.goForward = false; break;
-                case 'D': mainPlayer.goBack = false; break;
-                case 'S': mainPlayer.goLeft = false; break;
-                case 'F': mainPlayer.goRight = false; break;
+                //case 'E': mainPlayer.goForward = false; break;
+                //case 'D': mainPlayer.goBack = false; break;
+                //case 'S': mainPlayer.goLeft = false; break;
+                //case 'F': mainPlayer.goRight = false; break;
             }
             break;
     }
@@ -66,7 +58,6 @@ void scene::mouseClickInput( int button, int state ) {
     switch ( state ) {
         case GLFW_PRESS:
             switch ( button ) {
-
                 case GLFW_MOUSE_BUTTON_LEFT:
                     mouseL=1;
                     break;
@@ -79,7 +70,6 @@ void scene::mouseClickInput( int button, int state ) {
 
         case GLFW_RELEASE:
             switch ( button ) {
-
                 case GLFW_MOUSE_BUTTON_LEFT:
                     mouseL=0;
                     break;
@@ -100,25 +90,6 @@ void scene::mouseWheelInput( int pos ) {
     // i_mouseWheel - pos
     mouseWheel = pos;
     //printf("mouse wheel: %d\n",pos);
-
-    if ( dynamicsWorld ) {
-        //btSoftBody::tNodeArray &nodes(mainRope>m_nodes);
-        //mainRope->cutLink(4, 5, 0.1 );
-        static int lawl = mainRope->m_nodes.size()-2;
-        mainRope->m_anchors.clear();
-
-        //btMotionState *state = mainPlayer.my_body->getMotionState();
-        //btMotionState tempms;
-        btTransform tempt;
-        tempt.setOrigin(mainRope->m_nodes[lawl].m_x);
-        //tempt.setIdentity();
-        //tempt.setOrigin(mainRope->m_nodes[lawl].m_x);
-        //tempt.setOrigin(btVector3(30,10,10));
-        //mainPlayer.my_body->setWorldTransform(tempt);
-        mainPlayer.my_body->setCenterOfMassTransform(tempt);
-        mainRope->appendAnchor(lawl,mainPlayer.my_body,true);
-        lawl--;
-    }
 }
 
 

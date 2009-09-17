@@ -1,5 +1,4 @@
 
-#include <dsfmt.c>
 #include <stdio.h>
 
 #include "scene.h"
@@ -13,13 +12,12 @@ bool scene::init() {
     if ( fullscreen ) { res_cur_x = res_full_x; res_cur_y = res_full_y; }
     else { res_cur_x = res_win_x; res_cur_y = res_win_y; }
 
-
 	if ( !glfwInit() )
     { printf("ERROR: Unable to init glfw\n"); return 1; }
 
 	glfwSwapInterval(1); //1 for vsync on
 
-    glfwOpenWindowHint(GLFW_WINDOW_NO_RESIZE, GL_TRUE);
+    glfwOpenWindowHint(GLFW_WINDOW_NO_RESIZE, GL_FALSE);
 
     if (!glfwOpenWindow(
           res_cur_x, res_cur_y,    // Width and height of window
@@ -35,7 +33,7 @@ bool scene::init() {
     glfwDisable( GLFW_MOUSE_CURSOR );
     //glfwEnable( GLFW_MOUSE_CURSOR );
 
-    glfwSetWindowTitle( "small!" );
+    glfwSetWindowTitle( "sculpt" );
 
     // Enable sticky keys
     glfwEnable( GLFW_STICKY_KEYS );
@@ -45,7 +43,7 @@ bool scene::init() {
 
     //seed the holy RNG
     //init_gen_rand(time((time_t *)0));
-
+    //init_gen_rand(0);
 
 	//background color
 	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
@@ -57,18 +55,14 @@ bool scene::init() {
 
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-    glPointSize(5.0);
-    glLineWidth(2.0);
-    begin3D();
+    //glPointSize(1.0);
+    //glLineWidth(1.0);
 
-    init_gen_rand(0);
+    begin3D();
 
     glfwSetKeyCallback( wrapper_keyboard );
     glfwSetMousePosCallback( wrapper_mouse_pos );
     glfwSetMouseWheelCallback( wrapper_mouse_wheel );
-
-    generateCavern();
-    initPhys();
 
     printf("* init: Scene initalization complete. [%fs]\n", glfwGetTime()-elapsed_time);
 
@@ -171,91 +165,12 @@ void scene::end3D()
 
 void scene::initLight() {
 
-    glEnable(GL_COLOR_MATERIAL);
-    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-    //*colorLight = ( 1.0, 1.0, 1.0, 1.0 );
-    //glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, colorLight);
+    mainLighting.init();
 
-    //////////////////////////////////////////
-    // ambient light
-    //////////////////////////////////////////
-    global_ambient[0] = 0.2f;
-    global_ambient[1] = 0.2f;
-    global_ambient[2] = 0.2f;
-    global_ambient[3] = 0.21f;
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
-
-    //////////////////////////////////////////
-    // light0
-    //////////////////////////////////////////
-
-    light_ambient0[0] = 0.0f;
-    light_ambient0[1] = 0.0f;
-    light_ambient0[2] = 0.0f;
-    light_ambient0[3] = 1.0f;
-    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient0);
-
-    light_diffuse0[0] = 0.8f;
-    light_diffuse0[1] = 0.8f;
-    light_diffuse0[2] = 0.8f;
-    light_diffuse0[3] = 1.0f;
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse0);
-
-    //specularLight[0] = 0.4f;
-    //specularLight[1] = 0.4f;
-    //specularLight[2] = 0.4f;
-    //specularLight[3] = 1.0f;
-    //glLightfv(GL_LIGHT0, GL_SPECULAR, light_info);
-
-    light_pos0[0] = 48.0f;
-    light_pos0[1] = 12.0f;
-    light_pos0[2] = 48.0f;
-    light_pos0[3] = 1.0f;
-    glLightfv(GL_LIGHT0, GL_POSITION, light_pos0);
-
-    //glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, .001);
-    //glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.02f);
-    //glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.008f);
-
-
-    //////////////////////////////////////////
-    // light1
-    //////////////////////////////////////////
-
-    light_ambient1[0] = 0.0f;
-    light_ambient1[1] = 0.0f;
-    light_ambient1[2] = 0.0f;
-    light_ambient1[3] = 1.0f;
-    glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient1);
-
-    light_diffuse1[0] = 0.4f;
-    light_diffuse1[1] = 0.4f;
-    light_diffuse1[2] = 0.4f;
-    light_diffuse1[3] = 1.0f;
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse1);
-
-    //specularLight[0] = 0.4f;
-    //specularLight[1] = 0.4f;
-    //specularLight[2] = 0.4f;
-    //specularLight[3] = 1.0f;
-    //glLightfv(GL_LIGHT0, GL_SPECULAR, light_info);
-
-    light_pos1[0] = 0.0f;
-    light_pos1[1] = 100.0f;
-    light_pos1[2] = 0.0f;
-    light_pos1[3] = 1.0f;
-    glLightfv(GL_LIGHT1, GL_POSITION, light_pos1);
-
-    //glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, .001);
-    //glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.02f);
-    //glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.008f);
-
-
-
-
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHT1);
+    mainLighting.setAmbient(0, 0.3,0.3,0.3);
+    mainLighting.setDiffuse(0, 0.6,0.6,0.6);
+    mainLighting.setPosition(0, 0, 20, 0 );
+    mainLighting.enableLight(0);
 
 /*
         GLfloat fogcolor[4];
@@ -264,12 +179,12 @@ void scene::initLight() {
         fogcolor[2] = 0.0;
         fogcolor[3] = 0.0;
 
-        glFogi(GL_FOG_MODE, GL_LINEAR );		// Fog Mode
-        glFogfv(GL_FOG_COLOR, fogcolor);			// Set Fog Color
-        glFogf(GL_FOG_DENSITY, 0.1f);				// How Dense Will The Fog Be
-        glHint(GL_FOG_HINT, GL_NICEST);			// Fog Hint Value
-        glFogf(GL_FOG_START, 5.0f);				// Fog Start Depth
-        glFogf(GL_FOG_END, 20.0f);				// Fog End Depth
+        glFogi(GL_FOG_MODE, GL_LINEAR );	// Fog Mode
+        glFogfv(GL_FOG_COLOR, fogcolor);	// Set Fog Color
+        glFogf(GL_FOG_DENSITY, 0.1f);		// How Dense Will The Fog Be
+        glHint(GL_FOG_HINT, GL_NICEST);		// Fog Hint Value
+        glFogf(GL_FOG_START, 5.0f);			// Fog Start Depth
+        glFogf(GL_FOG_END, 20.0f);			// Fog End Depth
         glEnable(GL_FOG);					// Enables GL_FOG
 */
 
