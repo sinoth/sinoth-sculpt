@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 {
 
     scene mainScene;
-    sinT imer updateTimer(60);
+    sinTimer updateTimer(60);
 
     if ( mainScene.init() ) {
         fprintf(stderr, "ERROR: Cannot init scene\n");

@@ -14,10 +14,10 @@ void scene::keyboardInput( int key, int action ) {
     switch (action) {
         case GLFW_PRESS:
             switch (key) {
-                //case 'E': mainPlayer.goForward = true; break;
-                //case 'D': mainPlayer.goBack = true; break;
-                //case 'S': mainPlayer.goLeft = true; break;
-                //case 'F': mainPlayer.goRight = true; break;
+                case 'E': mainCamera.changeVelocity(1*keyboardMoveSpeed); break;
+                case 'D': mainCamera.changeVelocity(-1*keyboardMoveSpeed); break;
+                case 'S': mainCamera.changeStrafeVelocity(-1*keyboardMoveSpeed); break;
+                case 'F': mainCamera.changeStrafeVelocity(1*keyboardMoveSpeed); break;
 
 
             }
@@ -25,10 +25,14 @@ void scene::keyboardInput( int key, int action ) {
 
         case GLFW_RELEASE:
             switch (key) {
-                //case 'E': mainPlayer.goForward = false; break;
-                //case 'D': mainPlayer.goBack = false; break;
-                //case 'S': mainPlayer.goLeft = false; break;
-                //case 'F': mainPlayer.goRight = false; break;
+                case 'E': mainCamera.changeVelocity(-1*keyboardMoveSpeed); break;
+                case 'D': mainCamera.changeVelocity(1*keyboardMoveSpeed); break;
+                case 'S': mainCamera.changeStrafeVelocity(1*keyboardMoveSpeed); break;
+                case 'F': mainCamera.changeStrafeVelocity(-1*keyboardMoveSpeed); break;
+
+                case GLFW_KEY_ESC:
+                    quit = 1;
+                    break;
             }
             break;
     }
