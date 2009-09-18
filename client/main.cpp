@@ -1,12 +1,31 @@
 
 #include <stdio.h>
+#include <sintimer.h>
 
 #include "sinsocket.h"
+#include "scene.h"
 
 
 int main(int argc, char *argv[])
 {
 
+    scene mainScene;
+    sinT imer updateTimer(60);
+
+    if ( mainScene.init() ) {
+        fprintf(stderr, "ERROR: Cannot init scene\n");
+        return 1; }
+
+    while ( !mainScene.quit ) {
+
+        if ( updateTimer.needUpdateNoCarry() ) {
+            mainScene.update();
+        }
+
+        mainScene.render();
+    }
+
+/*
     sinsocket client;
     char buffer[20];
     int result;
@@ -26,7 +45,7 @@ int main(int argc, char *argv[])
         case 1:  printf("server disconnected\n"); break;
         default: printf("client: received '%s'\n",buffer); break;
     }
-
+*/
     return 0;
 }
 

@@ -18,6 +18,7 @@ public:
 
     // screen stuff
     bool fullscreen;
+    bool quit;
     int res_win_x, res_win_y;
     int res_full_x, res_full_y;
     int res_cur_x, res_cur_y;

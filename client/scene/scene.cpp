@@ -22,6 +22,7 @@ scene::scene() {
     mouseWheel = 0;
 
     myself = this;
+    quit = false;
 }
 
 scene::~scene() {}
