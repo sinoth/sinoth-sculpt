@@ -6,6 +6,7 @@
 
 #include <sincamera.h>
 #include <sinlight.h>
+#include <sinui.h>
 //#include <sinprim.h>
 
 
@@ -37,6 +38,9 @@ public:
     // light stuff
     sinLighting mainLighting;
 
+    //ui stuff
+    SinUI mainGui;
+
 
     /////////////////////////////////////////////////////
     // functions!
@@ -59,10 +63,12 @@ public:
     void input();
 
 	void keyboardInput(int, int);
+    void keyboardCharInput(int,int);
 	void mousePosInput(int, int);
 	void mouseClickInput(int, int);
 	void mouseWheelInput(int);
 	void static GLFWCALL wrapper_keyboard( int, int );
+	void static GLFWCALL wrapper_keyboard_char( int, int );
 	void static GLFWCALL wrapper_mouse_pos( int, int );
 	void static GLFWCALL wrapper_mouse_click( int, int );
 	void static GLFWCALL wrapper_mouse_wheel( int );
