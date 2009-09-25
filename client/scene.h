@@ -40,7 +40,9 @@ public:
 
     //ui stuff
     SinUI mainGui;
-
+    freetype_font_controller fontController;
+    freetype_font font12;
+    void static gui2closebutton();
 
     /////////////////////////////////////////////////////
     // functions!
@@ -59,6 +61,7 @@ public:
     void render();
     void update();
     bool init();
+    void init_ui();
     void initLight();
     void input();
 
