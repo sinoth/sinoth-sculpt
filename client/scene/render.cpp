@@ -36,6 +36,10 @@ void scene::render() {
     //glPopClientAttrib();
     */
 
+    begin2D();
+
+    mainGui.render();
+
 
     glfwSwapBuffers();
 

@@ -58,6 +58,10 @@ bool scene::init() {
     //glPointSize(1.0);
     //glLineWidth(1.0);
 
+    //ui fun
+    font12.init("dejavusansLGC.ttf",12);
+    init_ui();
+
     begin3D();
 
     glfwSetKeyCallback( wrapper_keyboard );
