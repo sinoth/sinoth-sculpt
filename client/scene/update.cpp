@@ -10,5 +10,5 @@ void scene::update() {
     //possibly lights
     mainCamera.updatePosition();
 
-
+    mainGui.update();
 }

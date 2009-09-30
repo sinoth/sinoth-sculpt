@@ -38,6 +38,8 @@ void scene::render() {
 
     begin2D();
 
+    glColor4f(1.0,1.0,1.0,1.0);
+    glBindTexture(GL_TEXTURE_2D, theme_texture);
     mainGui.render();
 
 

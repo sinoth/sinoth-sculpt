@@ -39,6 +39,7 @@ public:
     sinLighting mainLighting;
 
     //ui stuff
+    GLuint theme_texture;
     SinUI mainGui;
     freetype_font_controller fontController;
     freetype_font font12;

@@ -13,6 +13,8 @@ void scene::init_ui() {
 
     username_window = mainGui.addWindow("Username");
 
+    username_window->setThemeTextureID(theme_texture);
+
     username_window->titlebar.my_style.normal.setNP( UI_9P_TL, 128, 128, 11, 1, 3, 5 );
     username_window->titlebar.my_style.normal.setNP( UI_9P_TM, 128, 128, 15, 1, 1, 5 );
     username_window->titlebar.my_style.normal.setNP( UI_9P_TR, 128, 128, 17, 1, 3, 5 );

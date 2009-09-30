@@ -58,6 +58,8 @@ bool scene::init() {
     //glPointSize(1.0);
     //glLineWidth(1.0);
 
+    loadTextures();
+
     //ui fun
     font12.init("dejavusansLGC.ttf",12);
     init_ui();
@@ -65,7 +67,9 @@ bool scene::init() {
     begin3D();
 
     glfwSetKeyCallback( wrapper_keyboard );
+    glfwSetCharCallback( wrapper_keyboard_char );
     glfwSetMousePosCallback( wrapper_mouse_pos );
+    glfwSetMouseButtonCallback( wrapper_mouse_click );
     glfwSetMouseWheelCallback( wrapper_mouse_wheel );
 
     printf("* init: Scene initalization complete. [%fs]\n", glfwGetTime()-elapsed_time);
@@ -192,4 +196,22 @@ void scene::initLight() {
         glEnable(GL_FOG);					// Enables GL_FOG
 */
 
+}
+
+
+
+int scene::loadTextures() {
+
+
+    glGenTextures( 1, &theme_texture );
+    glBindTexture( GL_TEXTURE_2D, theme_texture );
+
+    if ( !glfwLoadTexture2D("theme.tga",GLFW_NO_RESCALE_BIT) ) {
+        printf("Unable to load theme.tga\n");
+    } else {
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST ); //GL_LINEAR
+    }
+
+    return 0;
 }

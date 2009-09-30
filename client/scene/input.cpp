@@ -19,6 +19,12 @@ void scene::keyboardInput( int key, int action ) {
                 case 'S': mainCamera.changeStrafeVelocity(-1*keyboardMoveSpeed); break;
                 case 'F': mainCamera.changeStrafeVelocity(1*keyboardMoveSpeed); break;
 
+                case GLFW_KEY_TAB:
+                    mouseGrab = !mouseGrab;
+                    if ( mouseGrab ) glfwDisable( GLFW_MOUSE_CURSOR );
+                    else glfwDisable( GLFW_MOUSE_CURSOR );
+                    printf("mousegrab: %d\n", mouseGrab );
+                    break;
 
             }
             break;
@@ -38,6 +44,9 @@ void scene::keyboardInput( int key, int action ) {
     }
 }
 
+void scene::keyboardCharInput(int,int) {
+}
+
 
 void scene::mousePosInput( int x, int y ) {
 
@@ -51,6 +60,8 @@ void scene::mousePosInput( int x, int y ) {
             //mainCamera.updatePositionXPlane(.2*event.motion.xrel, .2*event.motion.yrel);
         //}
         mouseX = x; mouseY = y;
+    } else {
+        mainGui.insertMousePos(x,y);
     }
 
 }
@@ -104,6 +115,9 @@ void GLFWCALL scene::wrapper_mouse_pos( int xpos, int ypos ) {
 
 void GLFWCALL scene::wrapper_keyboard( int key, int state ) {
     myself->keyboardInput(key,state); }
+
+void GLFWCALL scene::wrapper_keyboard_char( int key, int state ) {
+    myself->keyboardCharInput(key,state); }
 
 void GLFWCALL scene::wrapper_mouse_click( int button, int state ) {
     myself->mouseClickInput(button,state); }
