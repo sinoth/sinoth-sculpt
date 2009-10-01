@@ -14,9 +14,9 @@ scene::scene() {
     res_full_x = 800; res_full_y = 600;
 
     // input stuff
-    mouseGrab = true;
+    mouseGrab = false;
     mouseL = mouseR = false;
-    mouseX = mouseY = 0;
+    mouseX = 0; mouseY = 0;
     mouseSensitivity = 1.0;
     keyboardMoveSpeed = 0.1;
     mouseWheel = 0;

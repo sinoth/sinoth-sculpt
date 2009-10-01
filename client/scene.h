@@ -28,6 +28,7 @@ public:
     bool mouseGrab;
     bool mouseL, mouseR;
     int mouseX, mouseY;
+    int mouseX_old, mouseY_old;
     float mouseSensitivity;
     float keyboardMoveSpeed;
     int mouseWheel;
@@ -71,6 +72,7 @@ public:
 	void mousePosInput(int, int);
 	void mouseClickInput(int, int);
 	void mouseWheelInput(int);
+	bool windowClose();
 	void static GLFWCALL wrapper_keyboard( int, int );
 	void static GLFWCALL wrapper_keyboard_char( int, int );
 	void static GLFWCALL wrapper_mouse_pos( int, int );

@@ -30,7 +30,7 @@ bool scene::init() {
         { printf("ERROR: Unable to set resolution\n"); return 1; }
 
     //constrict mouse to the window
-    glfwDisable( GLFW_MOUSE_CURSOR );
+    if ( mouseGrab ) glfwDisable( GLFW_MOUSE_CURSOR );
     //glfwEnable( GLFW_MOUSE_CURSOR );
 
     glfwSetWindowTitle( "sculpt" );
@@ -61,7 +61,7 @@ bool scene::init() {
     loadTextures();
 
     //ui fun
-    font12.init("dejavusansLGC.ttf",12);
+    font12.init("dejavusansLGC.ttf",13);
     init_ui();
 
     begin3D();
@@ -71,6 +71,7 @@ bool scene::init() {
     glfwSetMousePosCallback( wrapper_mouse_pos );
     glfwSetMouseButtonCallback( wrapper_mouse_click );
     glfwSetMouseWheelCallback( wrapper_mouse_wheel );
+    glfwSetWindowCloseCallback( wrapper_window_close );
 
     printf("* init: Scene initalization complete. [%fs]\n", glfwGetTime()-elapsed_time);
 

@@ -15,25 +15,26 @@ void scene::init_ui() {
 
     username_window->setThemeTextureID(theme_texture);
 
-    username_window->titlebar.my_style.normal.setNP( UI_9P_TL, 128, 128, 11, 1, 3, 5 );
-    username_window->titlebar.my_style.normal.setNP( UI_9P_TM, 128, 128, 15, 1, 1, 5 );
-    username_window->titlebar.my_style.normal.setNP( UI_9P_TR, 128, 128, 17, 1, 3, 5 );
-    username_window->titlebar.my_style.normal.setNP( UI_9P_ML, 128, 128, 11, 7, 3, 1 );
-    username_window->titlebar.my_style.normal.setNP( UI_9P_MM, 128, 128, 15, 7, 1, 1 );
-    username_window->titlebar.my_style.normal.setNP( UI_9P_MR, 128, 128, 17, 7, 3, 1 );
-    username_window->titlebar.my_style.normal.setNP( UI_9P_BL, 128, 128, 11, 9, 3, 6 );
-    username_window->titlebar.my_style.normal.setNP( UI_9P_BM, 128, 128, 15, 9, 1, 6 );
-    username_window->titlebar.my_style.normal.setNP( UI_9P_BR, 128, 128, 17, 9, 3, 6 );
+    //username_window->titlebar.my_style.normal.setNP( UI_9P_TL, 128, 128, 11, 1, 3, 5 );
+    //username_window->titlebar.my_style.normal.setNP( UI_9P_TM, 128, 128, 15, 1, 1, 5 );
+    //username_window->titlebar.my_style.normal.setNP( UI_9P_TR, 128, 128, 17, 1, 3, 5 );
+    //username_window->titlebar.my_style.normal.setNP( UI_9P_ML, 128, 128, 11, 7, 3, 1 );
+    //username_window->titlebar.my_style.normal.setNP( UI_9P_MM, 128, 128, 15, 7, 1, 1 );
+    //username_window->titlebar.my_style.normal.setNP( UI_9P_MR, 128, 128, 17, 7, 3, 1 );
+    //username_window->titlebar.my_style.normal.setNP( UI_9P_BL, 128, 128, 11, 9, 3, 6 );
+    //username_window->titlebar.my_style.normal.setNP( UI_9P_BM, 128, 128, 15, 9, 1, 6 );
+    //username_window->titlebar.my_style.normal.setNP( UI_9P_BR, 128, 128, 17, 9, 3, 6 );
     //
-    username_window->titlebar.my_style.hover.setNP( UI_9P_TL, 128, 128, 1, 1, 3, 5 );
-    username_window->titlebar.my_style.hover.setNP( UI_9P_TM, 128, 128, 5, 1, 1, 5 );
-    username_window->titlebar.my_style.hover.setNP( UI_9P_TR, 128, 128, 7, 1, 3, 5 );
-    username_window->titlebar.my_style.hover.setNP( UI_9P_ML, 128, 128, 1, 7, 3, 1 );
-    username_window->titlebar.my_style.hover.setNP( UI_9P_MM, 128, 128, 5, 7, 1, 1 );
-    username_window->titlebar.my_style.hover.setNP( UI_9P_MR, 128, 128, 7, 7, 3, 1 );
-    username_window->titlebar.my_style.hover.setNP( UI_9P_BL, 128, 128, 1, 9, 3, 6 );
-    username_window->titlebar.my_style.hover.setNP( UI_9P_BM, 128, 128, 5, 9, 1, 6 );
-    username_window->titlebar.my_style.hover.setNP( UI_9P_BR, 128, 128, 7, 9, 3, 6 );
+    //username_window->titlebar.my_style.hover.setNP( UI_9P_TL, 128, 128, 1, 1, 3, 5 );
+    username_window->titlebar.my_style.normal.setNP( UI_9P_TL, 128, 128, 1, 1, 3, 5 );
+    username_window->titlebar.my_style.normal.setNP( UI_9P_TM, 128, 128, 5, 1, 1, 5 );
+    username_window->titlebar.my_style.normal.setNP( UI_9P_TR, 128, 128, 7, 1, 3, 5 );
+    username_window->titlebar.my_style.normal.setNP( UI_9P_ML, 128, 128, 1, 7, 3, 1 );
+    username_window->titlebar.my_style.normal.setNP( UI_9P_MM, 128, 128, 5, 7, 1, 1 );
+    username_window->titlebar.my_style.normal.setNP( UI_9P_MR, 128, 128, 7, 7, 3, 1 );
+    username_window->titlebar.my_style.normal.setNP( UI_9P_BL, 128, 128, 1, 9, 3, 6 );
+    username_window->titlebar.my_style.normal.setNP( UI_9P_BM, 128, 128, 5, 9, 1, 6 );
+    username_window->titlebar.my_style.normal.setNP( UI_9P_BR, 128, 128, 7, 9, 3, 6 );
     username_window->titlebar.my_style.cook();
     //
     username_window->window_style.hover.setNP( UI_9P_TL, 128, 128, 1, 17, 0, 0 );
@@ -108,22 +109,65 @@ void scene::init_ui() {
     default_style_a.cook();
     default_style_a.font_x = 4;
 
-    username_window->setXY(res_cur_x/2-100,res_cur_y/2+50);
-    username_window->setWH(200,100);
-    username_window->titlebar.setWH(200,50);
-    username_window->titlebar.can_drag_parent = true;
+    username_window->setXY(res_cur_x/2-100,res_cur_y/2+35);
+    username_window->setWH(200,70);
+    username_window->titlebar.setWH(200,20);
+    //username_window->titlebar.can_drag_parent = true;
     username_window->enableFontController();
-    username_window->enableCloseButton();
+    //username_window->enableCloseButton();
     username_window->enableTitlebar();
     username_window->titlebar.my_font.setFont(&font12);
     username_window->titlebar.my_font.setVertAlign(FONT_ALIGN_CENTER);
     username_window->titlebar.my_font.setHorizAlign(FONT_ALIGN_CENTER);
     username_window->titlebar.my_font.setStretch(true);
     username_window->titlebar.my_font.setColor(1.0,1.0,1.0,1.0);
-    username_window->titlebar.my_font.setText("Graphic Options");
+    username_window->titlebar.my_font.setText("Username");
     username_window->titlebar.my_font.cook();
 
     //username_window->closebutton.setPayload(gui2closebutton);
+
+    ui_button_np *t_np = (ui_button_np*)mainGui.addWidget("username_ok", UI_WIDGET_BUTTON_NP);
+    //username_window->addChild(t_np, "username_ok_button");
+    t_np->setStyle(default_np_style);
+    t_np->setXY(155,30);
+    t_np->setWH(35,30);
+    t_np->my_font.setFont(&font12);
+    t_np->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    t_np->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    t_np->my_font.setStretch(false);
+    t_np->my_font.setColor(0.0,0.0,0.0,1.0);
+    t_np->my_font.setText("OK!");
+    t_np->my_font.cook();
+
+
+    ui_textinput *t_ti = (ui_textinput*)mainGui.addWidget("username_input", UI_WIDGET_TEXTINPUT);
+    //username_window->addChild(t_ti,"username_input");
+    t_ti->setStyle(default_style_a);
+    t_ti->setXY(10,30);
+    t_ti->setWH(140,30);
+    t_ti->setMaxTextLength(10);
+    t_ti->setText("input");
+    t_ti->my_font.setFont(&font12, FONT_HINT_DYNAMIC);
+    t_ti->my_font.setColor(0.0,0.0,0.0,1.0);
+    t_ti->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    t_ti->my_font.setStretch(false);
+    t_ti->my_font.cook();
+
+
+
+
+    username_window->cook();
+
+    mainGui.bringToFront( mainGui.getWindow("Username") );
+    mainGui.getWidget("username_input")->setActive( true);
+
+}
+
+
+
+
+
+/*
 
     ui_button_np *t_np;
     t_np = new ui_button_np;
@@ -192,8 +236,4 @@ void scene::init_ui() {
     check->setXY(80,100);
     check->setWH(15,15);
     check->checkmark.setTex( 128, 128, 32, 00, 19, 19 );
-
-
-    username_window->cook();
-
-}
+*/

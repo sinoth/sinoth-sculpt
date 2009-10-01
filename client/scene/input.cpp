@@ -11,6 +11,8 @@ scene *scene::myself;
 
 void scene::keyboardInput( int key, int action ) {
 
+    if ( mainGui.insertKey(key,action) ) return;
+
     switch (action) {
         case GLFW_PRESS:
             switch (key) {
@@ -20,9 +22,8 @@ void scene::keyboardInput( int key, int action ) {
                 case 'F': mainCamera.changeStrafeVelocity(1*keyboardMoveSpeed); break;
 
                 case GLFW_KEY_TAB:
-                    mouseGrab = !mouseGrab;
-                    if ( mouseGrab ) glfwDisable( GLFW_MOUSE_CURSOR );
-                    else glfwDisable( GLFW_MOUSE_CURSOR );
+                    if ( !mouseGrab ) { mouseGrab = !mouseGrab; glfwDisable( GLFW_MOUSE_CURSOR ); }
+                    else { glfwEnable( GLFW_MOUSE_CURSOR ); glfwSetMousePos(mouseX, mouseY); mouseGrab = !mouseGrab; }
                     printf("mousegrab: %d\n", mouseGrab );
                     break;
 
@@ -37,6 +38,7 @@ void scene::keyboardInput( int key, int action ) {
                 case 'F': mainCamera.changeStrafeVelocity(-1*keyboardMoveSpeed); break;
 
                 case GLFW_KEY_ESC:
+                    printf("* MAIN: Received ESC key, quitting...\n");
                     quit = 1;
                     break;
             }
@@ -44,11 +46,14 @@ void scene::keyboardInput( int key, int action ) {
     }
 }
 
-void scene::keyboardCharInput(int,int) {
+void scene::keyboardCharInput(int inchar, int instate) {
+    mainGui.insertKeyChar(inchar,instate);
 }
 
 
 void scene::mousePosInput( int x, int y ) {
+
+    //printf("x: %d, y: %d, grab: %d\n", x, y, mouseGrab);
 
     if ( mouseGrab ) {
             mainCamera.changePitch(-0.1*(y-mouseY)*mouseSensitivity);
@@ -59,42 +64,47 @@ void scene::mousePosInput( int x, int y ) {
         //} else if ( mouseL && !mouseR ) {
             //mainCamera.updatePositionXPlane(.2*event.motion.xrel, .2*event.motion.yrel);
         //}
-        mouseX = x; mouseY = y;
+
     } else {
-        mainGui.insertMousePos(x,y);
+        mainGui.insertMousePos(x,res_cur_y - y);
     }
 
+    mouseX = x; mouseY = y;
 }
 
 
 
 void scene::mouseClickInput( int button, int state ) {
 
-    switch ( state ) {
-        case GLFW_PRESS:
-            switch ( button ) {
-                case GLFW_MOUSE_BUTTON_LEFT:
-                    mouseL=1;
-                    break;
+    if ( mouseGrab ) {
+        switch ( state ) {
+            case GLFW_PRESS:
+                switch ( button ) {
+                    case GLFW_MOUSE_BUTTON_LEFT:
+                        mouseL=1;
+                        break;
 
-                case GLFW_MOUSE_BUTTON_RIGHT:
-                case GLFW_MOUSE_BUTTON_MIDDLE:
-                    break;
-            }
-            break;
+                    case GLFW_MOUSE_BUTTON_RIGHT:
+                    case GLFW_MOUSE_BUTTON_MIDDLE:
+                        break;
+                }
+                break;
 
-        case GLFW_RELEASE:
-            switch ( button ) {
-                case GLFW_MOUSE_BUTTON_LEFT:
-                    mouseL=0;
-                    break;
+            case GLFW_RELEASE:
+                switch ( button ) {
+                    case GLFW_MOUSE_BUTTON_LEFT:
+                        mouseL=0;
+                        break;
 
-                case GLFW_MOUSE_BUTTON_RIGHT:
-                    break;
-                case GLFW_MOUSE_BUTTON_MIDDLE:
-                    break;
-            }
-            break;
+                    case GLFW_MOUSE_BUTTON_RIGHT:
+                        break;
+                    case GLFW_MOUSE_BUTTON_MIDDLE:
+                        break;
+                }
+                break;
+        }
+    } else {
+        mainGui.insertMouseClick(button,state,mouseX,res_cur_y-mouseY);
     }
 
 }
@@ -107,7 +117,10 @@ void scene::mouseWheelInput( int pos ) {
     //printf("mouse wheel: %d\n",pos);
 }
 
-
+bool scene::windowClose() {
+    quit = true;
+    return true;
+}
 
 
 void GLFWCALL scene::wrapper_mouse_pos( int xpos, int ypos ) {
@@ -126,8 +139,8 @@ void GLFWCALL scene::wrapper_mouse_wheel( int pos ) {
     myself->mouseWheelInput(pos); }
 
 int GLFWCALL scene::wrapper_window_close( void ) {
-//\/    return myself->window_close();
-    return true;
+    return myself->windowClose();
+    //return true;
 }
 
 void GLFWCALL scene::wrapper_window_size( int xres, int yres ) {
