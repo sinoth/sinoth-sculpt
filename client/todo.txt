@@ -1,8 +1,12 @@
 
 Todo!
 
-[ ] Import UI library
+[X] Import UI library
 [ ] Add text entry box for username (write username to username.txt)
+  . Pressing OK saves and closes the username box
+  . Hitting enter with the username window up accepts and closes also
+  . Write username to username.txt
+  . Load username.txt if it is available
 [ ] Make main menu ( 'List servers', 'Options', 'Quit' )
 [ ] Options menu ('Resolution', 'Fullscreen', 'Username' )
 [ ] List Servers (show servers that are up and how many hours till next piece) ('Select', 'Back')
