@@ -4,7 +4,7 @@ Todo!
 [X] Import UI library
 [ ] Add text entry box for username (write username to username.txt)
   . Pressing OK saves and closes the username box
-  . Hitting enter with the username window up accepts and closes also
+  . Hitting ENTER/ESC with the username window up accepts and closes also
   . Write username to username.txt
   . Load username.txt if it is available
 [ ] Make main menu ( 'List servers', 'Options', 'Quit' )

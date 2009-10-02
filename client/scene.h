@@ -81,6 +81,10 @@ public:
 	 int static GLFWCALL wrapper_window_close( void );
 	void static GLFWCALL wrapper_window_size( int, int );
 
+	//UI functions
+    void static username_OK();
+    bool static username_input_keycallback(int,int);
+
     //self-reference variable
     //required for C callbacks
     static scene *myself;

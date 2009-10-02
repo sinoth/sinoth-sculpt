@@ -66,6 +66,7 @@
 		</Compiler>
 		<Unit filename="client\main.cpp" />
 		<Unit filename="client\scene.h" />
+		<Unit filename="client\scene\actions.cpp" />
 		<Unit filename="client\scene\init.cpp" />
 		<Unit filename="client\scene\init_ui.cpp" />
 		<Unit filename="client\scene\input.cpp" />

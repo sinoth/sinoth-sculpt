@@ -123,11 +123,9 @@ void scene::init_ui() {
     username_window->titlebar.my_font.setColor(1.0,1.0,1.0,1.0);
     username_window->titlebar.my_font.setText("Username");
     username_window->titlebar.my_font.cook();
-
     //username_window->closebutton.setPayload(gui2closebutton);
 
     ui_button_np *t_np = (ui_button_np*)mainGui.addWidget("username_ok", UI_WIDGET_BUTTON_NP);
-    //username_window->addChild(t_np, "username_ok_button");
     t_np->setStyle(default_np_style);
     t_np->setXY(155,30);
     t_np->setWH(35,30);
@@ -138,20 +136,20 @@ void scene::init_ui() {
     t_np->my_font.setColor(0.0,0.0,0.0,1.0);
     t_np->my_font.setText("OK!");
     t_np->my_font.cook();
-
+    t_np->setPayload(username_OK);
 
     ui_textinput *t_ti = (ui_textinput*)mainGui.addWidget("username_input", UI_WIDGET_TEXTINPUT);
-    //username_window->addChild(t_ti,"username_input");
     t_ti->setStyle(default_style_a);
     t_ti->setXY(10,30);
     t_ti->setWH(140,30);
     t_ti->setMaxTextLength(10);
-    t_ti->setText("input");
+    t_ti->setText("");
     t_ti->my_font.setFont(&font12, FONT_HINT_DYNAMIC);
     t_ti->my_font.setColor(0.0,0.0,0.0,1.0);
     t_ti->my_font.setVertAlign(FONT_ALIGN_CENTER);
     t_ti->my_font.setStretch(false);
     t_ti->my_font.cook();
+    t_ti->setCustomKeyCallback(username_input_keycallback);
 
 
 
@@ -159,7 +157,7 @@ void scene::init_ui() {
     username_window->cook();
 
     mainGui.bringToFront( mainGui.getWindow("Username") );
-    mainGui.getWidget("username_input")->setActive( true);
+    mainGui.getWidget("username_input")->setActive(true);
 
 }
 
