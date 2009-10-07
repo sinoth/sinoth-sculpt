@@ -33,7 +33,17 @@ bool scene::username_input_keycallback(int key, int state) {
 
 
 void scene::load_username() {
-    ff
+    FILE *username_file;
+    username_file = fopen("username.txt","r");
+
+    if ( username_file == NULL ) {
+        //no username has been picked
+        username = "";
+        return;
+    }
+
+    username =
+
 }
 
 

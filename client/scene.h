@@ -46,6 +46,9 @@ public:
     freetype_font font12;
     void static gui2closebutton();
 
+    //client stuff
+    std::string username;
+
     /////////////////////////////////////////////////////
     // functions!
 
