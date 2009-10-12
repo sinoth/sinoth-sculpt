@@ -37,6 +37,14 @@ bool scene::username_input_keycallback(int key, int state) {
 
 
 
+void scene::quitbutton() {
+
+    if ( myself->confirm_quit ) { myself->quit = true; return; }
+
+    myself->confirm_quit = true;
+    //show the confirm dialog here
+
+}
 
 void scene::load_username() {
     FILE *username_file;

@@ -26,6 +26,7 @@ scene::scene() {
 
     myself = this;
     quit = false;
+    confirm_quit = false;
 }
 
 scene::~scene() {}

@@ -20,6 +20,7 @@ public:
     // screen stuff
     bool fullscreen;
     bool quit;
+    bool confirm_quit;
     int res_win_x, res_win_y;
     int res_full_x, res_full_y;
     int res_cur_x, res_cur_y;
@@ -45,6 +46,7 @@ public:
     freetype_font_controller fontController;
     freetype_font font12;
     void static gui2closebutton();
+    void static quitbutton();
 
     //client stuff
     void load_username();
