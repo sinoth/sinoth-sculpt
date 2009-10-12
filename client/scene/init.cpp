@@ -60,6 +60,9 @@ bool scene::init() {
 
     loadTextures();
 
+    //grab the username
+    load_username();
+
     //ui fun
     font12.init("dejavusansLGC.ttf",13);
     init_ui();

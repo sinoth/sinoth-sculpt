@@ -9,6 +9,12 @@ void scene::username_OK() {
     temp_window->doFade(UI_FADE_OUT, 20);
     temp_window->setActive(false);
 
+    ui_textinput *temp_textinput;
+    temp_textinput = (ui_textinput*)myself->mainGui.getWidget("username_input");
+    strcpy(myself->username, temp_textinput->getText() );
+
+    printf("Setting username to : [%s]\n", temp_textinput->getText() );
+
 }
 
 
@@ -38,15 +44,27 @@ void scene::load_username() {
 
     if ( username_file == NULL ) {
         //no username has been picked
-        username = "";
+        sprintf(username,"anonymous");
         return;
     }
 
-    username =
-
+    fgets(username,30,username_file);
+    fclose(username_file);
+    loaded_username = true;
+    return;
 }
 
 
 void scene::save_username() {
-    ff
+
+    FILE *username_file;
+    username_file = fopen("username.txt","w");
+
+    if ( username_file == NULL ) {
+        printf("ERROR: cannot open username file for write.\n");
+        return;
+    }
+
+    fwrite(username, 1, strlen(username)+1, username_file);
+    fclose(username_file);
 }

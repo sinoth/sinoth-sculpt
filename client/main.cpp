@@ -46,6 +46,9 @@ int main(int argc, char *argv[])
         default: printf("client: received '%s'\n",buffer); break;
     }
 */
+
+    mainScene.save_username();
+
     return 0;
 }
 

@@ -21,6 +21,9 @@ scene::scene() {
     keyboardMoveSpeed = 0.1;
     mouseWheel = 0;
 
+    //ui stuff
+    loaded_username = false;
+
     myself = this;
     quit = false;
 }

@@ -47,7 +47,10 @@ public:
     void static gui2closebutton();
 
     //client stuff
-    std::string username;
+    void load_username();
+    void save_username();
+    char username[30];
+    bool loaded_username;
 
     /////////////////////////////////////////////////////
     // functions!

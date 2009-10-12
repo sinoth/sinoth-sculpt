@@ -143,7 +143,7 @@ void scene::init_ui() {
     t_ti->setXY(10,30);
     t_ti->setWH(140,30);
     t_ti->setMaxTextLength(10);
-    t_ti->setText("");
+    t_ti->setText(username);
     t_ti->my_font.setFont(&font12, FONT_HINT_DYNAMIC);
     t_ti->my_font.setColor(0.0,0.0,0.0,1.0);
     t_ti->my_font.setVertAlign(FONT_ALIGN_CENTER);
@@ -156,8 +156,13 @@ void scene::init_ui() {
 
     username_window->cook();
 
-    mainGui.bringToFront( mainGui.getWindow("Username") );
-    mainGui.getWidget("username_input")->setActive(true);
+    //if we haven't loaded a username, show the box
+    if ( !loaded_username ) {
+        mainGui.bringToFront( mainGui.getWindow("Username") );
+        mainGui.getWidget("username_input")->setActive(true);
+    } else { //else, just continue to main menu
+        mainGui.getWindow("Username")->setVisible(false);
+    }
 
 }
 
