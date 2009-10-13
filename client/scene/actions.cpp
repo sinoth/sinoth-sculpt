@@ -35,15 +35,24 @@ bool scene::username_input_keycallback(int key, int state) {
     return false;
 }
 
-
+//bool confirmquit_input_keycallback(int,int);
+//bool mainmenu_input_keycallback(int,int);
+//bool options_input_keycallback(int,int);
 
 void scene::quitbutton() {
-
     if ( myself->confirm_quit ) { myself->quit = true; return; }
 
     myself->confirm_quit = true;
     //show the confirm dialog here
+}
 
+void scene::confirmquit_YES() {
+    myself->quit = true;
+}
+
+void scene::confirmquit_NO() {
+    myself->mainGui.getWindow("ConfirmQuit")->doFade(UI_FADE_OUT, 10);
+    myself->confirm_quit = false;
 }
 
 void scene::load_username() {

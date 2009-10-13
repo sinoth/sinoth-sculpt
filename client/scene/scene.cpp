@@ -27,6 +27,7 @@ scene::scene() {
     myself = this;
     quit = false;
     confirm_quit = false;
+    mainmenu_visible = true;
 }
 
 scene::~scene() {}

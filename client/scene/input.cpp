@@ -38,8 +38,14 @@ void scene::keyboardInput( int key, int action ) {
                 case 'F': mainCamera.changeStrafeVelocity(-1*keyboardMoveSpeed); break;
 
                 case GLFW_KEY_ESC:
-                    printf("* MAIN: Received ESC key, quitting...\n");
-                    quit = 1;
+                    if ( !confirm_quit ) {
+                        confirm_quit = true;
+                        mainGui.getWindow("ConfirmQuit")->doFade(UI_FADE_IN, 10);
+                        mainGui.bringToFront(mainGui.getWindow("ConfirmQuit"));
+                    } else {
+                        printf("* MAIN: Received ESC key, quitting...\n");
+                        quit = true;
+                    }
                     break;
             }
             break;

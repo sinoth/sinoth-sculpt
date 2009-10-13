@@ -269,7 +269,7 @@ void scene::init_ui() {
     confirmquit_yes_button->my_font.setColor(0.0,0.0,0.0,1.0);
     confirmquit_yes_button->my_font.setText("Yes");
     confirmquit_yes_button->my_font.cook();
-    //confirmquit_yes_button->setPayload(username_OK);
+    confirmquit_yes_button->setPayload(confirmquit_YES);
 
     ui_button_np *confirmquit_no_button = (ui_button_np*)mainGui.addWidget("quit_no", UI_WIDGET_BUTTON_NP);
     confirmquit_no_button->setStyle(default_np_style);
@@ -282,10 +282,91 @@ void scene::init_ui() {
     confirmquit_no_button->my_font.setColor(0.0,0.0,0.0,1.0);
     confirmquit_no_button->my_font.setText("No");
     confirmquit_no_button->my_font.cook();
-    //mainmenu_list_button->setPayload(username_OK);
+    confirmquit_no_button->setPayload(confirmquit_NO);
 
     confirmquit_window->cook();
     confirmquit_window->setVisible(false);
+
+
+    doin stuff here!
+    /////////////////////////////////////////////////////////////////
+    // options window
+    /////////////////////////////////////////////////////////////////
+
+    ui_window *mainmenu_window = mainGui.addWindow("Options");
+    mainmenu_window->setThemeTextureID(theme_texture);
+    mainmenu_window->window_style = default_win_style;
+    mainmenu_window->titlebar.my_style = default_win_titlebar_style;
+    mainmenu_window->closebutton.my_style = default_win_closebutton_style;
+
+    mainmenu_window->setXY(res_cur_x/2-75,res_cur_y/2+90);
+    mainmenu_window->setWH(150,180);
+    mainmenu_window->titlebar.setWH(150,20);
+    //mainmenu_window->titlebar.can_drag_parent = true;
+    mainmenu_window->enableFontController();
+    //mainmenu_window->enableCloseButton();
+    mainmenu_window->enableTitlebar();
+    mainmenu_window->titlebar.my_font.setFont(&font12);
+    mainmenu_window->titlebar.my_font.setVertAlign(FONT_ALIGN_CENTER);
+    mainmenu_window->titlebar.my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    mainmenu_window->titlebar.my_font.setStretch(true);
+    mainmenu_window->titlebar.my_font.setColor(1.0,1.0,1.0,1.0);
+    mainmenu_window->titlebar.my_font.setText("Options");
+    mainmenu_window->titlebar.my_font.cook();
+    //mainmenu_window->closebutton.setPayload(gui2closebutton);
+
+    ui_button_np *options_res_button_left = (ui_button_np*)mainGui.addWidget("res_left", UI_WIDGET_BUTTON);
+    //options_res_button_left->setStyle(default_np_style);
+    options_res_button_left->setXY(10,30);
+    options_res_button_left->setWH(130,40);
+    //options_res_button_left->setPayload(username_OK);
+
+    ui_label *confirmquit_text = (ui_label*)mainGui.addWidget("res_display", UI_WIDGET_LABEL);
+    confirmquit_text->setXY(30,25);
+    confirmquit_text->setWH(280,30);
+    confirmquit_text->my_font.setFont(&font12);
+    confirmquit_text->my_font.setColor(1.0,1.0,1.0,1.0);
+    confirmquit_text->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    confirmquit_text->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    //confirmquit_text->my_font.setStretch(true);
+    confirmquit_text->my_font.setText("1920 x 1080");
+    confirmquit_text->my_font.cook();
+
+    ui_button_np *options_res_button_right = (ui_button_np*)mainGui.addWidget("res_right", UI_WIDGET_BUTTON);
+    //options_res_button_right->setStyle(default_np_style);
+    options_res_button_right->setXY(10,30);
+    options_res_button_right->setWH(130,40);
+    //options_res_button_right->setPayload(username_OK);
+
+    ui_button_np *mainmenu_options_button = (ui_button_np*)mainGui.addWidget("options_apply", UI_WIDGET_BUTTON_NP);
+    mainmenu_options_button->setStyle(default_np_style);
+    mainmenu_options_button->setXY(10,80);
+    mainmenu_options_button->setWH(130,40);
+    mainmenu_options_button->my_font.setFont(&font12);
+    mainmenu_options_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    mainmenu_options_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    mainmenu_options_button->my_font.setStretch(false);
+    mainmenu_options_button->my_font.setColor(0.0,0.0,0.0,1.0);
+    mainmenu_options_button->my_font.setText("Apply");
+    mainmenu_options_button->my_font.cook();
+    //mainmenu_list_button->setPayload(username_OK);
+
+    ui_button_np *mainmenu_exit_button = (ui_button_np*)mainGui.addWidget("options_username", UI_WIDGET_BUTTON_NP);
+    mainmenu_exit_button->setStyle(default_np_style);
+    mainmenu_exit_button->setXY(10,130);
+    mainmenu_exit_button->setWH(130,40);
+    mainmenu_exit_button->my_font.setFont(&font12);
+    mainmenu_exit_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    mainmenu_exit_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    mainmenu_exit_button->my_font.setStretch(false);
+    mainmenu_exit_button->my_font.setColor(0.0,0.0,0.0,1.0);
+    mainmenu_exit_button->my_font.setText("Change Username");
+    mainmenu_exit_button->my_font.cook();
+    //mainmenu_list_button->setPayload(username_OK);
+
+    mainmenu_window->cook();
+
+
 
 
 

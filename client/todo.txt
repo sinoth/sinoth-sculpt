@@ -10,7 +10,7 @@ Todo!
 [ ] Need some kind of logo to show while main menu is up
 [ ] Make main menu ( 'List servers', 'Options', 'Quit' )
 [ ] Confirm quit menu ( 'Yes', 'No' );
-[ ] Options menu ('Resolution', 'Fullscreen', 'Username' )
+[ ] Options menu ('Resolution', 'Apply', 'Fullscreen', 'Change Username', 'Quit' )
 [ ] List Servers (show servers that are up and how many hours till next piece) ('Select', 'Back')
 
 

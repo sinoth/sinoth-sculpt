@@ -45,14 +45,11 @@ public:
     SinUI mainGui;
     freetype_font_controller fontController;
     freetype_font font12;
-    void static gui2closebutton();
-    void static quitbutton();
 
     //client stuff
-    void load_username();
-    void save_username();
     char username[30];
     bool loaded_username;
+    bool mainmenu_visible;
 
     /////////////////////////////////////////////////////
     // functions!
@@ -75,6 +72,9 @@ public:
     void initLight();
     void input();
 
+    void load_username();
+    void save_username();
+
 	void keyboardInput(int, int);
     void keyboardCharInput(int,int);
 	void mousePosInput(int, int);
@@ -92,6 +92,13 @@ public:
 	//UI functions
     void static username_OK();
     bool static username_input_keycallback(int,int);
+    bool static confirmquit_input_keycallback(int,int);
+    bool static mainmenu_input_keycallback(int,int);
+    bool static options_input_keycallback(int,int);
+    void static gui2closebutton();
+    void static quitbutton();
+    void static confirmquit_YES();
+    void static confirmquit_NO();
 
     //self-reference variable
     //required for C callbacks
