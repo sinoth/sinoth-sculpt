@@ -25,6 +25,11 @@ public:
     int res_full_x, res_full_y;
     int res_cur_x, res_cur_y;
 
+    int total_vid_modes;
+    int current_vid_mode;
+    GLFWvidmode vid_modes[100];
+    std::vector<std::string> vid_modes_strings;
+
     // input stuff
     bool mouseGrab;
     bool mouseL, mouseR;
@@ -69,6 +74,7 @@ public:
     void update();
     bool init();
     void init_ui();
+    void init_ui_resize();
     void initLight();
     void input();
 
@@ -99,6 +105,9 @@ public:
     void static quitbutton();
     void static confirmquit_YES();
     void static confirmquit_NO();
+    void static options_res_left();
+    void static options_res_right();
+    void static options_res_apply();
 
     //self-reference variable
     //required for C callbacks

@@ -28,6 +28,7 @@ scene::scene() {
     quit = false;
     confirm_quit = false;
     mainmenu_visible = true;
+    current_vid_mode = 0;
 }
 
 scene::~scene() {}

@@ -17,7 +17,7 @@ bool scene::init() {
 
 	glfwSwapInterval(1); //1 for vsync on
 
-    glfwOpenWindowHint(GLFW_WINDOW_NO_RESIZE, GL_FALSE);
+    glfwOpenWindowHint(GLFW_WINDOW_NO_RESIZE, GL_TRUE);
 
     if (!glfwOpenWindow(
           res_cur_x, res_cur_y,    // Width and height of window
@@ -28,6 +28,20 @@ bool scene::init() {
           GLFW_WINDOW        // We want a desktop window (could be GLFW_FULLSCREEN)
           ))
         { printf("ERROR: Unable to set resolution\n"); return 1; }
+
+
+    //dump the usable video modes
+    GLFWvidmode temp_vid_modes[100];
+    total_vid_modes = glfwGetVideoModes(temp_vid_modes, 100);
+    char temp_string[100];
+    for ( int i=0; i < total_vid_modes; i++ ) {
+        if ( temp_vid_modes[i].RedBits + temp_vid_modes[i].GreenBits + temp_vid_modes[i].BlueBits == 24 ) {
+            sprintf(temp_string,"%d x %d", temp_vid_modes[i].Width, temp_vid_modes[i].Height );
+            vid_modes[vid_modes_strings.size()] = temp_vid_modes[i];
+            vid_modes_strings.push_back(temp_string);
+        }
+    }
+    total_vid_modes = vid_modes_strings.size();
 
     //constrict mouse to the window
     if ( mouseGrab ) glfwDisable( GLFW_MOUSE_CURSOR );

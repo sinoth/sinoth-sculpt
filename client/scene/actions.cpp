@@ -85,3 +85,36 @@ void scene::save_username() {
     fwrite(username, 1, strlen(username)+1, username_file);
     fclose(username_file);
 }
+
+
+
+void scene::options_res_left() {
+    myself->current_vid_mode--;
+    if ( myself->current_vid_mode < 0 )
+        myself->current_vid_mode = 0;
+
+    myself->mainGui.getWidget("res_display")->my_font.setText(myself->vid_modes_strings[myself->current_vid_mode].c_str());
+    myself->mainGui.getWidget("res_display")->my_font.cook();
+}
+
+void scene::options_res_right() {
+    myself->current_vid_mode++;
+    if ( myself->current_vid_mode >= myself->total_vid_modes )
+        myself->current_vid_mode = myself->total_vid_modes-1;
+
+    myself->mainGui.getWidget("res_display")->my_font.setText(myself->vid_modes_strings[myself->current_vid_mode].c_str());
+    myself->mainGui.getWidget("res_display")->my_font.cook();
+}
+
+void scene::options_res_apply() {
+
+    myself->mainGui.globalResize(myself->vid_modes[myself->current_vid_mode].Width - myself->res_cur_x,
+                                 myself->vid_modes[myself->current_vid_mode].Height - myself->res_cur_y );
+
+    myself->res_cur_x = myself->vid_modes[myself->current_vid_mode].Width;
+    myself->res_cur_y = myself->vid_modes[myself->current_vid_mode].Height;
+
+    glfwSetWindowSize(myself->res_cur_x, myself->res_cur_y);
+    glViewport(0,0,myself->res_cur_x, myself->res_cur_y);
+
+}
