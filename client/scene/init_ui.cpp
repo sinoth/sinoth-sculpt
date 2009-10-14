@@ -312,7 +312,7 @@ void scene::init_ui() {
     options_window->setXY(res_cur_x/2-100,res_cur_y/2+75);
     options_window->setWH(200,150);
     options_window->titlebar.setWH(200,20);
-    //options_window->titlebar.can_drag_parent = true;
+    options_window->titlebar.can_drag_parent = true;
     options_window->enableFontController();
     options_window->enableCloseButton();
     options_window->enableTitlebar();

@@ -108,8 +108,10 @@ void scene::options_res_right() {
 
 void scene::options_res_apply() {
 
-    myself->mainGui.globalResize(myself->vid_modes[myself->current_vid_mode].Width - myself->res_cur_x,
-                                 myself->vid_modes[myself->current_vid_mode].Height - myself->res_cur_y );
+    myself->mainGui.globalResize(myself->res_cur_x,
+                                 myself->res_cur_y,
+                                 myself->vid_modes[myself->current_vid_mode].Width,
+                                 myself->vid_modes[myself->current_vid_mode].Height );
 
     myself->res_cur_x = myself->vid_modes[myself->current_vid_mode].Width;
     myself->res_cur_y = myself->vid_modes[myself->current_vid_mode].Height;
