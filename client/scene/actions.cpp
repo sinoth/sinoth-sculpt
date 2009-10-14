@@ -108,15 +108,18 @@ void scene::options_res_right() {
 
 void scene::options_res_apply() {
 
-    myself->mainGui.globalResize(myself->res_cur_x,
-                                 myself->res_cur_y,
-                                 myself->vid_modes[myself->current_vid_mode].Width,
-                                 myself->vid_modes[myself->current_vid_mode].Height );
+    glfwSetWindowSize(myself->vid_modes[myself->current_vid_mode].Width,
+                      myself->vid_modes[myself->current_vid_mode].Height );
 
-    myself->res_cur_x = myself->vid_modes[myself->current_vid_mode].Width;
-    myself->res_cur_y = myself->vid_modes[myself->current_vid_mode].Height;
+    int tw, th;
+    glfwGetWindowSize(&tw, &th);
+    //printf("New size: %d x %d\n", tw, th );
 
-    glfwSetWindowSize(myself->res_cur_x, myself->res_cur_y);
-    glViewport(0,0,myself->res_cur_x, myself->res_cur_y);
+    glViewport(0,0,tw,th);
+
+    myself->mainGui.globalResize(myself->res_cur_x, myself->res_cur_y, tw, th );
+
+    myself->res_cur_x = tw;
+    myself->res_cur_y = th;
 
 }

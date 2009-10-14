@@ -253,12 +253,12 @@ void scene::init_ui() {
     confirmquit_window->setThemeTextureID(theme_texture);
     confirmquit_window->window_style = default_win_style_notitlebar;
 
-    confirmquit_window->setXY(res_cur_x/2-170,res_cur_y/2+70);
-    confirmquit_window->setWH(340,140);
+    confirmquit_window->setXY(res_cur_x/2-150,res_cur_y/2+70);
+    confirmquit_window->setWH(300,140);
     confirmquit_window->enableFontController();
 
     ui_label *confirmquit_text = (ui_label*)mainGui.addWidget("quit_text", UI_WIDGET_LABEL);
-    confirmquit_text->setXY(30,25);
+    confirmquit_text->setXY(10,25);
     confirmquit_text->setWH(280,30);
     confirmquit_text->my_font.setFont(&font12);
     confirmquit_text->my_font.setColor(1.0,1.0,1.0,1.0);
@@ -271,7 +271,7 @@ void scene::init_ui() {
 
     ui_button_np *confirmquit_yes_button = (ui_button_np*)mainGui.addWidget("quit_yes", UI_WIDGET_BUTTON_NP);
     confirmquit_yes_button->setStyle(default_np_style);
-    confirmquit_yes_button->setXY(90,70);
+    confirmquit_yes_button->setXY(70,70);
     confirmquit_yes_button->setWH(60,40);
     confirmquit_yes_button->my_font.setFont(&font12);
     confirmquit_yes_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
@@ -284,7 +284,7 @@ void scene::init_ui() {
 
     ui_button_np *confirmquit_no_button = (ui_button_np*)mainGui.addWidget("quit_no", UI_WIDGET_BUTTON_NP);
     confirmquit_no_button->setStyle(default_np_style);
-    confirmquit_no_button->setXY(180,70);
+    confirmquit_no_button->setXY(160,70);
     confirmquit_no_button->setWH(60,40);
     confirmquit_no_button->my_font.setFont(&font12);
     confirmquit_no_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
