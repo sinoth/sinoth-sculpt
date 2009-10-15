@@ -185,13 +185,15 @@ void scene::init_ui() {
     mainmenu_window->window_style = default_win_style;
     mainmenu_window->titlebar.setStyle(default_win_titlebar_style);
     mainmenu_window->closebutton.setStyle(default_win_closebutton_style);
+    mainmenu_window->setCustomKeyCallback(mainmenu_input_keycallback);
 
     mainmenu_window->setXY(res_cur_x/2-75,res_cur_y/2+90);
     mainmenu_window->setWH(150,180);
     mainmenu_window->titlebar.setWH(150,20);
     //mainmenu_window->titlebar.can_drag_parent = true;
     mainmenu_window->enableFontController();
-    //mainmenu_window->enableCloseButton();
+    mainmenu_window->enableCloseButton();
+    mainmenu_window->closebutton.setPayload(mainmenu_close);
     mainmenu_window->enableTitlebar();
     mainmenu_window->titlebar.my_font.setFont(&font12);
     mainmenu_window->titlebar.my_font.setVertAlign(FONT_ALIGN_CENTER);
@@ -200,7 +202,7 @@ void scene::init_ui() {
     mainmenu_window->titlebar.my_font.setColor(1.0,1.0,1.0,1.0);
     mainmenu_window->titlebar.my_font.setText("Main Menu");
     mainmenu_window->titlebar.my_font.cook();
-    //mainmenu_window->closebutton.setPayload(gui2closebutton);
+
 
     ui_button_np *mainmenu_list_button = (ui_button_np*)mainGui.addWidget("main_list", UI_WIDGET_BUTTON_NP);
     mainmenu_list_button->setStyle(default_np_style);
@@ -226,7 +228,7 @@ void scene::init_ui() {
     mainmenu_options_button->my_font.setColor(0.0,0.0,0.0,1.0);
     mainmenu_options_button->my_font.setText("Options");
     mainmenu_options_button->my_font.cook();
-    //mainmenu_list_button->setPayload(username_OK);
+    mainmenu_options_button->setPayload(mainmenu_options);
 
     ui_button_np *mainmenu_exit_button = (ui_button_np*)mainGui.addWidget("main_quit", UI_WIDGET_BUTTON_NP);
     mainmenu_exit_button->setStyle(default_np_style);
@@ -239,7 +241,7 @@ void scene::init_ui() {
     mainmenu_exit_button->my_font.setColor(0.0,0.0,0.0,1.0);
     mainmenu_exit_button->my_font.setText("Quit");
     mainmenu_exit_button->my_font.cook();
-    //mainmenu_list_button->setPayload(username_OK);
+    mainmenu_exit_button->setPayload(mainmenu_quit);
 
     mainmenu_window->cook();
 
@@ -308,10 +310,11 @@ void scene::init_ui() {
     options_window->window_style = default_win_style;
     options_window->titlebar.setStyle(default_win_titlebar_style);
     options_window->closebutton.setStyle(default_win_closebutton_style);
+    options_window->setCustomKeyCallback(options_input_keycallback);
 
-    options_window->setXY(res_cur_x/2-100,res_cur_y/2+75);
-    options_window->setWH(200,150);
-    options_window->titlebar.setWH(200,20);
+    options_window->setXY(res_cur_x/2-70,res_cur_y/2+85);
+    options_window->setWH(140,170);
+    options_window->titlebar.setWH(140,20);
     options_window->titlebar.can_drag_parent = true;
     options_window->enableFontController();
     options_window->enableCloseButton();
@@ -323,7 +326,7 @@ void scene::init_ui() {
     options_window->titlebar.my_font.setColor(1.0,1.0,1.0,1.0);
     options_window->titlebar.my_font.setText("Options");
     options_window->titlebar.my_font.cook();
-    //options_window->closebutton.setPayload(gui2closebutton);
+    options_window->closebutton.setPayload(options_close);
 
     ui_button *options_res_button_left = (ui_button*)mainGui.addWidget("res_left", UI_WIDGET_BUTTON);
     options_res_button_left->setStyle(res_leftarrow_style);
@@ -348,10 +351,57 @@ void scene::init_ui() {
     options_res_button_right->setWH(10,20);
     options_res_button_right->setPayload(options_res_right);
 
+
+    ui_checkbox *full_checkbox = (ui_checkbox*) mainGui.addWidget("full_checkbox", UI_WIDGET_CHECKBOX);
+    full_checkbox->setStyle(default_np_style);
+    full_checkbox->setXY(20,61);
+    full_checkbox->setWH(15,15);
+    full_checkbox->checkmark.setTex( 128, 128, 32, 00, 19, 19 );
+    full_checkbox->setPayload(options_full_checkbox);
+
+    ui_label *full_text = (ui_label*)mainGui.addWidget("full_text", UI_WIDGET_LABEL);
+    full_text->setXY(45,60);
+    full_text->setWH(100,20);
+    full_text->my_font.setFont(&font12);
+    full_text->my_font.setColor(0.7,0.0,0.0,1.0);
+    full_text->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    //full_text->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    //full_text->my_font.setStretch(true);
+    full_text->my_font.setText("Fullscreen");
+    full_text->my_font.cook();
+    full_text->setPayload(options_full_checkbox_text);
+
+
+    ui_button_np *options_username_button = (ui_button_np*)mainGui.addWidget("options_username", UI_WIDGET_BUTTON_NP);
+    options_username_button->setStyle(default_np_style);
+    options_username_button->setXY(10,90);
+    options_username_button->setWH(120,30);
+    options_username_button->my_font.setFont(&font12);
+    options_username_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    options_username_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    options_username_button->my_font.setStretch(false);
+    options_username_button->my_font.setColor(0.0,0.0,0.0,1.0);
+    options_username_button->my_font.setText("Edit Username");
+    options_username_button->my_font.cook();
+    options_username_button->setPayload(options_username);
+
+    ui_button_np *options_cancel_button = (ui_button_np*)mainGui.addWidget("options_cancel", UI_WIDGET_BUTTON_NP);
+    options_cancel_button->setStyle(default_np_style);
+    options_cancel_button->setXY(10,130);
+    options_cancel_button->setWH(55,30);
+    options_cancel_button->my_font.setFont(&font12);
+    options_cancel_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    options_cancel_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    options_cancel_button->my_font.setStretch(false);
+    options_cancel_button->my_font.setColor(0.0,0.0,0.0,1.0);
+    options_cancel_button->my_font.setText("Cancel");
+    options_cancel_button->my_font.cook();
+    options_cancel_button->setPayload(options_close);
+
     ui_button_np *options_apply_button = (ui_button_np*)mainGui.addWidget("options_apply", UI_WIDGET_BUTTON_NP);
     options_apply_button->setStyle(default_np_style);
-    options_apply_button->setXY(140,30);
-    options_apply_button->setWH(50,20);
+    options_apply_button->setXY(75,130);
+    options_apply_button->setWH(55,30);
     options_apply_button->my_font.setFont(&font12);
     options_apply_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
     options_apply_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
@@ -360,20 +410,7 @@ void scene::init_ui() {
     options_apply_button->my_font.setText("Apply");
     options_apply_button->my_font.cook();
     options_apply_button->setPayload(options_res_apply);
-/*
-    ui_button_np *mainmenu_exit_button = (ui_button_np*)mainGui.addWidget("options_username", UI_WIDGET_BUTTON_NP);
-    mainmenu_exit_button->setStyle(default_np_style);
-    mainmenu_exit_button->setXY(10,130);
-    mainmenu_exit_button->setWH(130,40);
-    mainmenu_exit_button->my_font.setFont(&font12);
-    mainmenu_exit_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
-    mainmenu_exit_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
-    mainmenu_exit_button->my_font.setStretch(false);
-    mainmenu_exit_button->my_font.setColor(0.0,0.0,0.0,1.0);
-    mainmenu_exit_button->my_font.setText("Change Username");
-    mainmenu_exit_button->my_font.cook();
-    //mainmenu_list_button->setPayload(username_OK);
-*/
+
     options_window->cook();
 
 

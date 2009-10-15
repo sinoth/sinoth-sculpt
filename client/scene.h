@@ -55,6 +55,7 @@ public:
     char username[30];
     bool loaded_username;
     bool mainmenu_visible;
+    bool fullscreen_checkbox;
 
     /////////////////////////////////////////////////////
     // functions!
@@ -102,11 +103,17 @@ public:
     bool static mainmenu_input_keycallback(int,int);
     bool static options_input_keycallback(int,int);
     void static gui2closebutton();
-    void static quitbutton();
+    void static mainmenu_quit();
+    void static mainmenu_options();
+    void static mainmenu_close();
     void static confirmquit_YES();
     void static confirmquit_NO();
     void static options_res_left();
     void static options_res_right();
+    void static options_full_checkbox();
+    void static options_full_checkbox_text();
+    void static options_username();
+    void static options_close();
     void static options_res_apply();
 
     //self-reference variable

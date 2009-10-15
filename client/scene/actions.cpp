@@ -35,15 +35,86 @@ bool scene::username_input_keycallback(int key, int state) {
     return false;
 }
 
+
+bool scene::options_input_keycallback(int key, int state) {
+printf("OPTIONS WINDOW LAWL!\n");
+    switch ( state ) {
+      case GLFW_PRESS:
+        switch ( key ) {
+            case GLFW_KEY_ENTER:
+                //scene::username_OK();
+                break;
+        }
+      break;
+
+      case GLFW_RELEASE:
+      lol here
+            case GLFW_KEY_ESC:
+                printf("OPTIONS WINDOW CLOSE!\n");
+                scene::options_close();
+                return true;
+                break;
+      break;
+    }
+
+    return false;
+}
+
+bool scene::mainmenu_input_keycallback(int key, int state) {
+    switch ( state ) {
+      case GLFW_PRESS:
+        switch ( key ) {
+            case GLFW_KEY_ENTER:
+                //scene::username_OK();
+                break;
+        }
+      break;
+
+      case GLFW_RELEASE:
+            case GLFW_KEY_ESC:
+                scene::mainmenu_close();
+                return true;
+                break;
+      break;
+    }
+
+    return false;
+}
 //bool confirmquit_input_keycallback(int,int);
 //bool mainmenu_input_keycallback(int,int);
 //bool options_input_keycallback(int,int);
 
-void scene::quitbutton() {
+
+
+void scene::mainmenu_close() {
+
+    ui_window *temp_window;
+    temp_window = myself->mainGui.getWindow("MainMenu");
+    temp_window->doFade(UI_FADE_OUT, 20);
+    temp_window->setActive(false);
+}
+
+
+void scene::mainmenu_quit() {
     if ( myself->confirm_quit ) { myself->quit = true; return; }
 
     myself->confirm_quit = true;
+
     //show the confirm dialog here
+    myself->mainGui.getWindow("ConfirmQuit")->doFade(UI_FADE_IN, 10);
+    myself->mainGui.bringToFront(myself->mainGui.getWindow("ConfirmQuit"));
+}
+
+void scene::mainmenu_options() {
+
+    ui_window *temp_window;
+    temp_window = myself->mainGui.getWindow("MainMenu");
+    temp_window->doFade(UI_FADE_OUT, 20);
+    temp_window->setActive(false);
+
+    temp_window = myself->mainGui.getWindow("Options");
+    temp_window->doFade(UI_FADE_IN, 20);
+    temp_window->setActive(true);
 }
 
 void scene::confirmquit_YES() {
@@ -108,8 +179,8 @@ void scene::options_res_right() {
 
 void scene::options_res_apply() {
 
-    glfwSetWindowSize(myself->vid_modes[myself->current_vid_mode].Width,
-                      myself->vid_modes[myself->current_vid_mode].Height );
+    glfwSetWindowSize( myself->vid_modes[myself->current_vid_mode].Width,
+                       myself->vid_modes[myself->current_vid_mode].Height );
 
     int tw, th;
     glfwGetWindowSize(&tw, &th);
@@ -122,4 +193,39 @@ void scene::options_res_apply() {
     myself->res_cur_x = tw;
     myself->res_cur_y = th;
 
+}
+
+void scene::options_full_checkbox() {
+    ui_checkbox *full_checkbox = (ui_checkbox*)myself->mainGui.getWidget("full_checkbox");
+    myself->fullscreen_checkbox = full_checkbox->isChecked();
+    //printf("Fullscreen checkbox is %d\n", myself->fullscreen_checkbox );
+}
+
+void scene::options_full_checkbox_text() {
+    ui_checkbox *full_checkbox = (ui_checkbox*)myself->mainGui.getWidget("full_checkbox");
+    full_checkbox->flipChecked();
+    myself->fullscreen_checkbox = full_checkbox->isChecked();
+    //printf("Fullscreen checkbox is %d\n", myself->fullscreen_checkbox );
+}
+
+
+void scene::options_close() {
+
+    ui_window *temp_window;
+    temp_window = myself->mainGui.getWindow("Options");
+    temp_window->doFade(UI_FADE_OUT, 20);
+    temp_window->setActive(false);
+
+    temp_window = myself->mainGui.getWindow("MainMenu");
+    temp_window->doFade(UI_FADE_IN, 20);
+    temp_window->setActive(true);
+}
+
+void scene::options_username() {
+
+    ui_window *temp_window;
+    temp_window = myself->mainGui.getWindow("Username");
+    myself->mainGui.bringToFront(temp_window);
+    temp_window->doFade(UI_FADE_IN, 20);
+    temp_window->setActive(true);
 }

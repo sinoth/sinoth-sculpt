@@ -47,6 +47,9 @@ void scene::keyboardInput( int key, int action ) {
                         quit = true;
                     }
                     break;
+                case GLFW_KEY_F1:
+                    mainGui.getWindow("MainMenu")->doFade(UI_FADE_IN, 20);
+                    break;
             }
             break;
     }
