@@ -45,6 +45,7 @@ bool scene::init() {
 
     //constrict mouse to the window
     if ( mouseGrab ) glfwDisable( GLFW_MOUSE_CURSOR );
+    else glfwEnable( GLFW_MOUSE_CURSOR );
     //glfwEnable( GLFW_MOUSE_CURSOR );
 
     glfwSetWindowTitle( "sculpt" );
@@ -97,6 +98,74 @@ bool scene::init() {
 
 
 
+bool scene::reInit() {
+
+    double elapsed_time;
+    printf("* init: Starting scene reinitalization...\n"); elapsed_time = glfwGetTime();
+
+    glfwCloseWindow();
+
+    if (!glfwOpenWindow(
+          res_cur_x, res_cur_y,    // Width and height of window
+          8, 8, 8,           // Number of red, green, and blue bits for color buffer
+          8,                 // Number of bits for alpha buffer
+          24,                // Number of bits for depth buffer (Z-buffer)
+          0,                 // Number of bits for stencil buffer
+                             // We want a desktop window (could be GLFW_FULLSCREEN)
+          ( fullscreen ? GLFW_FULLSCREEN : GLFW_WINDOW )
+          ))
+        { printf("ERROR: Unable to set resolution\n"); return 1; }
+
+
+    //constrict mouse to the window
+    if ( mouseGrab ) glfwDisable( GLFW_MOUSE_CURSOR );
+    else glfwEnable( GLFW_MOUSE_CURSOR );
+    //glfwEnable( GLFW_MOUSE_CURSOR );
+
+    glfwSetWindowTitle( "sculpt" );
+
+    // Enable sticky keys
+    glfwEnable( GLFW_STICKY_KEYS );
+    //glfwDisable( GLFW_AUTO_POLL_EVENTS );
+
+    glViewport(0,0,res_cur_x, res_cur_y);
+
+    //seed the holy RNG
+    //init_gen_rand(time((time_t *)0));
+    //init_gen_rand(0);
+
+	//background color
+	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+
+    glFrontFace(GL_CW);
+	glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+    //glDisable(GL_CULL_FACE);
+
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
+    //glPointSize(1.0);
+    //glLineWidth(1.0);
+
+    loadTextures();
+
+    //ui fun
+    font12.init("dejavusansLGC.ttf",13);
+    reInit_ui();
+
+    begin3D();
+
+    glfwSetKeyCallback( wrapper_keyboard );
+    glfwSetCharCallback( wrapper_keyboard_char );
+    glfwSetMousePosCallback( wrapper_mouse_pos );
+    glfwSetMouseButtonCallback( wrapper_mouse_click );
+    glfwSetMouseWheelCallback( wrapper_mouse_wheel );
+    glfwSetWindowCloseCallback( wrapper_window_close );
+
+    printf("* init: Scene reinitalization complete. [%fs]\n", glfwGetTime()-elapsed_time);
+
+    return 0;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // initialize 2D

@@ -2,6 +2,8 @@
 #include "scene.h"
 
 
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::username_OK() {
 
     ui_window *temp_window;
@@ -18,6 +20,8 @@ void scene::username_OK() {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+//
 bool scene::username_input_keycallback(int key, int state) {
     switch ( state ) {
       case GLFW_PRESS:
@@ -36,8 +40,10 @@ bool scene::username_input_keycallback(int key, int state) {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+//
 bool scene::options_input_keycallback(int key, int state) {
-printf("OPTIONS WINDOW LAWL!\n");
+
     switch ( state ) {
       case GLFW_PRESS:
         switch ( key ) {
@@ -48,18 +54,21 @@ printf("OPTIONS WINDOW LAWL!\n");
       break;
 
       case GLFW_RELEASE:
-      lol here
+        switch ( key ) {
             case GLFW_KEY_ESC:
-                printf("OPTIONS WINDOW CLOSE!\n");
                 scene::options_close();
                 return true;
                 break;
+        }
       break;
     }
 
     return false;
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+//
 bool scene::mainmenu_input_keycallback(int key, int state) {
     switch ( state ) {
       case GLFW_PRESS:
@@ -71,10 +80,12 @@ bool scene::mainmenu_input_keycallback(int key, int state) {
       break;
 
       case GLFW_RELEASE:
+        switch ( key ) {
             case GLFW_KEY_ESC:
                 scene::mainmenu_close();
                 return true;
                 break;
+        }
       break;
     }
 
@@ -86,6 +97,8 @@ bool scene::mainmenu_input_keycallback(int key, int state) {
 
 
 
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::mainmenu_close() {
 
     ui_window *temp_window;
@@ -95,6 +108,8 @@ void scene::mainmenu_close() {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::mainmenu_quit() {
     if ( myself->confirm_quit ) { myself->quit = true; return; }
 
@@ -105,6 +120,9 @@ void scene::mainmenu_quit() {
     myself->mainGui.bringToFront(myself->mainGui.getWindow("ConfirmQuit"));
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::mainmenu_options() {
 
     ui_window *temp_window;
@@ -117,15 +135,24 @@ void scene::mainmenu_options() {
     temp_window->setActive(true);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::confirmquit_YES() {
     myself->quit = true;
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::confirmquit_NO() {
     myself->mainGui.getWindow("ConfirmQuit")->doFade(UI_FADE_OUT, 10);
     myself->confirm_quit = false;
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::load_username() {
     FILE *username_file;
     username_file = fopen("username.txt","r");
@@ -143,6 +170,8 @@ void scene::load_username() {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::save_username() {
 
     FILE *username_file;
@@ -159,6 +188,8 @@ void scene::save_username() {
 
 
 
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::options_res_left() {
     myself->current_vid_mode--;
     if ( myself->current_vid_mode < 0 )
@@ -168,6 +199,9 @@ void scene::options_res_left() {
     myself->mainGui.getWidget("res_display")->my_font.cook();
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::options_res_right() {
     myself->current_vid_mode++;
     if ( myself->current_vid_mode >= myself->total_vid_modes )
@@ -177,30 +211,55 @@ void scene::options_res_right() {
     myself->mainGui.getWidget("res_display")->my_font.cook();
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::options_res_apply() {
 
-    glfwSetWindowSize( myself->vid_modes[myself->current_vid_mode].Width,
-                       myself->vid_modes[myself->current_vid_mode].Height );
-
     int tw, th;
+    int cw, ch;
+
+    cw = myself->res_cur_x;
+    ch = myself->res_cur_y;
+
+    tw = myself->vid_modes[myself->current_vid_mode].Width;
+    th = myself->vid_modes[myself->current_vid_mode].Height;
+
+    myself->res_cur_x = tw;
+    myself->res_cur_y = th;
+
+    if ( myself->fullscreen_checkbox != myself->fullscreen ) {
+        myself->fullscreen = myself->fullscreen_checkbox;
+        myself->reInit();
+    } else { //just change window size
+        glfwSetWindowSize( tw, th );
+    }
+
+
     glfwGetWindowSize(&tw, &th);
     //printf("New size: %d x %d\n", tw, th );
 
     glViewport(0,0,tw,th);
 
-    myself->mainGui.globalResize(myself->res_cur_x, myself->res_cur_y, tw, th );
+    myself->mainGui.globalResize(cw, ch, tw, th );
 
     myself->res_cur_x = tw;
     myself->res_cur_y = th;
 
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::options_full_checkbox() {
     ui_checkbox *full_checkbox = (ui_checkbox*)myself->mainGui.getWidget("full_checkbox");
     myself->fullscreen_checkbox = full_checkbox->isChecked();
     //printf("Fullscreen checkbox is %d\n", myself->fullscreen_checkbox );
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::options_full_checkbox_text() {
     ui_checkbox *full_checkbox = (ui_checkbox*)myself->mainGui.getWidget("full_checkbox");
     full_checkbox->flipChecked();
@@ -209,6 +268,8 @@ void scene::options_full_checkbox_text() {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::options_close() {
 
     ui_window *temp_window;
@@ -221,6 +282,9 @@ void scene::options_close() {
     temp_window->setActive(true);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::options_username() {
 
     ui_window *temp_window;

@@ -74,8 +74,9 @@ public:
     void render();
     void update();
     bool init();
+    bool reInit();
     void init_ui();
-    void init_ui_resize();
+    void reInit_ui();
     void initLight();
     void input();
 

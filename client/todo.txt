@@ -1,6 +1,11 @@
+HIGH PRIORITY:
+--------------
+ [ ] UI needs to redraw every text on a reInit
+ [ ] Don't fade so long, its annoying
 
-Todo!
 
+MEDIUM PRIORITY:
+----------------
 [X] Import UI library
 [X] Add text entry box for username (write username to username.txt)
   x Pressing OK saves and closes the username box
@@ -13,6 +18,17 @@ Todo!
 [ ] Options menu ('Resolution', 'Apply', 'Fullscreen', 'Change Username', 'Quit' )
 [ ] List Servers (show servers that are up and how many hours till next piece) ('Select', 'Back')
 
+
+LOW PRIORITY:
+-------------
+[ ] reInit may cause some memory leaks
+    . check font (re)init
+
+
+
+///
+// Specs!
+///
 
 Port range: 35610-4
 

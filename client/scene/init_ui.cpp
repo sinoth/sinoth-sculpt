@@ -428,10 +428,12 @@ void scene::init_ui() {
 }
 
 
-void scene::init_ui_resize() {
+void scene::reInit_ui() {
 
-
-
+    mainGui.getWindow("MainMenu")->setThemeTextureID(theme_texture);
+    mainGui.getWindow("Username")->setThemeTextureID(theme_texture);
+    mainGui.getWindow("ConfirmQuit")->setThemeTextureID(theme_texture);
+    mainGui.getWindow("Options")->setThemeTextureID(theme_texture);
 
 }
 
