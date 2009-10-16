@@ -8,7 +8,7 @@ void scene::username_OK() {
 
     ui_window *temp_window;
     temp_window = myself->mainGui.getWindow("Username");
-    temp_window->doFade(UI_FADE_OUT, 20);
+    temp_window->doFade(UI_FADE_OUT, 10);
     temp_window->setActive(false);
 
     ui_textinput *temp_textinput;
@@ -103,7 +103,7 @@ void scene::mainmenu_close() {
 
     ui_window *temp_window;
     temp_window = myself->mainGui.getWindow("MainMenu");
-    temp_window->doFade(UI_FADE_OUT, 20);
+    temp_window->doFade(UI_FADE_OUT, 10);
     temp_window->setActive(false);
 }
 
@@ -127,11 +127,11 @@ void scene::mainmenu_options() {
 
     ui_window *temp_window;
     temp_window = myself->mainGui.getWindow("MainMenu");
-    temp_window->doFade(UI_FADE_OUT, 20);
+    temp_window->doFade(UI_FADE_OUT, 10);
     temp_window->setActive(false);
 
     temp_window = myself->mainGui.getWindow("Options");
-    temp_window->doFade(UI_FADE_IN, 20);
+    temp_window->doFade(UI_FADE_IN, 10);
     temp_window->setActive(true);
 }
 
@@ -274,11 +274,11 @@ void scene::options_close() {
 
     ui_window *temp_window;
     temp_window = myself->mainGui.getWindow("Options");
-    temp_window->doFade(UI_FADE_OUT, 20);
+    temp_window->doFade(UI_FADE_OUT, 10);
     temp_window->setActive(false);
 
     temp_window = myself->mainGui.getWindow("MainMenu");
-    temp_window->doFade(UI_FADE_IN, 20);
+    temp_window->doFade(UI_FADE_IN, 10);
     temp_window->setActive(true);
 }
 
@@ -290,6 +290,6 @@ void scene::options_username() {
     ui_window *temp_window;
     temp_window = myself->mainGui.getWindow("Username");
     myself->mainGui.bringToFront(temp_window);
-    temp_window->doFade(UI_FADE_IN, 20);
+    temp_window->doFade(UI_FADE_IN, 10);
     temp_window->setActive(true);
 }

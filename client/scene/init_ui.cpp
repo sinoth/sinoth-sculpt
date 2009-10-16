@@ -412,8 +412,61 @@ void scene::init_ui() {
     options_apply_button->setPayload(options_res_apply);
 
     options_window->cook();
+    options_window->setVisible(false);
 
 
+    /////////////////////////////////////////////////////////////////
+    // server list menu
+    /////////////////////////////////////////////////////////////////
+
+    ui_window *serverlist_window = mainGui.addWindow("ServerList");
+    serverlist_window->setThemeTextureID(theme_texture);
+    serverlist_window->window_style = default_win_style_notitlebar;
+
+    serverlist_window->setXY(res_cur_x/2-150,res_cur_y/2+70);
+    serverlist_window->setWH(300,140);
+    serverlist_window->enableFontController();
+
+    ui_label *serverlist_text = (ui_label*)mainGui.addWidget("list_text", UI_WIDGET_LABEL);
+    serverlist_text->setXY(10,25);
+    serverlist_text->setWH(280,30);
+    serverlist_text->my_font.setFont(&font12);
+    serverlist_text->my_font.setColor(1.0,1.0,1.0,1.0);
+    serverlist_text->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    serverlist_text->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    //serverlist_text->my_font.setStretch(true);
+    serverlist_text->my_font.setText("SERVER LIST LOLOLOL");
+    serverlist_text->my_font.cook();
+
+
+    ui_button_np *serverlist_yes_button = (ui_button_np*)mainGui.addWidget("list_refresh", UI_WIDGET_BUTTON_NP);
+    serverlist_yes_button->setStyle(default_np_style);
+    serverlist_yes_button->setXY(70,70);
+    serverlist_yes_button->setWH(60,40);
+    serverlist_yes_button->my_font.setFont(&font12);
+    serverlist_yes_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    serverlist_yes_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    serverlist_yes_button->my_font.setStretch(false);
+    serverlist_yes_button->my_font.setColor(0.0,0.0,0.0,1.0);
+    serverlist_yes_button->my_font.setText("Refresh");
+    serverlist_yes_button->my_font.cook();
+    //serverlist_yes_button->setPayload(serverlist_YES);
+
+    ui_button_np *serverlist_no_button = (ui_button_np*)mainGui.addWidget("list_close", UI_WIDGET_BUTTON_NP);
+    serverlist_no_button->setStyle(default_np_style);
+    serverlist_no_button->setXY(160,70);
+    serverlist_no_button->setWH(60,40);
+    serverlist_no_button->my_font.setFont(&font12);
+    serverlist_no_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    serverlist_no_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    serverlist_no_button->my_font.setStretch(false);
+    serverlist_no_button->my_font.setColor(0.0,0.0,0.0,1.0);
+    serverlist_no_button->my_font.setText("Close");
+    serverlist_no_button->my_font.cook();
+    //serverlist_no_button->setPayload(serverlist_NO);
+
+    serverlist_window->cook();
+    //serverlist_window->setVisible(false);
 
 
 
@@ -434,6 +487,8 @@ void scene::reInit_ui() {
     mainGui.getWindow("Username")->setThemeTextureID(theme_texture);
     mainGui.getWindow("ConfirmQuit")->setThemeTextureID(theme_texture);
     mainGui.getWindow("Options")->setThemeTextureID(theme_texture);
+
+    mainGui.restoreControllers();
 
 }
 

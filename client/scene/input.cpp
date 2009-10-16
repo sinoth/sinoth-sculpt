@@ -21,10 +21,18 @@ void scene::keyboardInput( int key, int action ) {
                 case 'S': mainCamera.changeStrafeVelocity(-1*keyboardMoveSpeed); break;
                 case 'F': mainCamera.changeStrafeVelocity(1*keyboardMoveSpeed); break;
 
+                case 'Q':
+                    if ( alt_status ) { quit = true; glfwTerminate(); }
+                    break;
+
                 case GLFW_KEY_TAB:
                     if ( !mouseGrab ) { mouseGrab = !mouseGrab; glfwDisable( GLFW_MOUSE_CURSOR ); }
                     else { glfwEnable( GLFW_MOUSE_CURSOR ); glfwSetMousePos(mouseX, mouseY); mouseGrab = !mouseGrab; }
                     printf("mousegrab: %d\n", mouseGrab );
+                    break;
+
+                case GLFW_KEY_LALT: case GLFW_KEY_RALT:
+                    alt_status = true;
                     break;
 
             }
@@ -48,7 +56,11 @@ void scene::keyboardInput( int key, int action ) {
                     }
                     break;
                 case GLFW_KEY_F1:
-                    mainGui.getWindow("MainMenu")->doFade(UI_FADE_IN, 20);
+                    mainGui.getWindow("MainMenu")->doFade(UI_FADE_IN, 10);
+                    break;
+
+                case GLFW_KEY_LALT: case GLFW_KEY_RALT:
+                    alt_status = false;
                     break;
             }
             break;

@@ -21,6 +21,9 @@ scene::scene() {
     mouseSensitivity = 1.0;
     keyboardMoveSpeed = 0.1;
     mouseWheel = 0;
+    alt_status = false;
+    shift_status = false;
+    ctrl_status = false;
 
     //ui stuff
     loaded_username = false;

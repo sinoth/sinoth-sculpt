@@ -1,7 +1,9 @@
 HIGH PRIORITY:
 --------------
- [ ] UI needs to redraw every text on a reInit
- [ ] Don't fade so long, its annoying
+ [X] UI needs to redraw every text on a reInit
+     x Actually, just fixed font_controller to swap in new texIDs
+ [X] Don't fade so long, its annoying
+     x Also added ALT-Q to insta-quit
 
 
 MEDIUM PRIORITY:
@@ -12,17 +14,20 @@ MEDIUM PRIORITY:
   x Hitting ENTER/ESC with the username window up accepts and closes also
   x Write username to username.txt
   x Load username.txt if it is available
-[ ] Need some kind of logo to show while main menu is up
-[ ] Make main menu ( 'List servers', 'Options', 'Quit' )
-[ ] Confirm quit menu ( 'Yes', 'No' );
-[ ] Options menu ('Resolution', 'Apply', 'Fullscreen', 'Change Username', 'Quit' )
-[ ] List Servers (show servers that are up and how many hours till next piece) ('Select', 'Back')
+[X] Make main menu ( 'List servers', 'Options', 'Quit' )
+[X] Confirm quit menu ( 'Yes', 'No' );
+[X] Options menu ('Resolution', 'Apply', 'Fullscreen', 'Change Username', 'Quit' )
+[ ] Options save/load from a text file
+    . Possibly use XML
+[ ] List Servers menu (show servers that are up and how many hours till next piece) ('Select', 'Back')
 
 
 LOW PRIORITY:
 -------------
 [ ] reInit may cause some memory leaks
     . check font (re)init
+[ ] Need some kind of logo to show while main menu is up
+[ ] Does the UI give input to all windows, not just active? Why?
 
 
 

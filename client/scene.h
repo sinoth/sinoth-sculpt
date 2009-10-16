@@ -38,6 +38,9 @@ public:
     float mouseSensitivity;
     float keyboardMoveSpeed;
     int mouseWheel;
+    bool alt_status;
+    bool shift_status;
+    bool ctrl_status;
 
     // camera stuff
     sinCamera mainCamera;
@@ -49,7 +52,7 @@ public:
     GLuint theme_texture;
     SinUI mainGui;
     freetype_font_controller fontController;
-    freetype_font font12;
+    freetype_font font12,font18;
 
     //client stuff
     char username[30];

@@ -80,6 +80,7 @@ bool scene::init() {
 
     //ui fun
     font12.init("dejavusansLGC.ttf",13);
+    font18.init("dejavusansLGC.ttf",18);
     init_ui();
 
     begin3D();
@@ -102,6 +103,8 @@ bool scene::reInit() {
 
     double elapsed_time;
     printf("* init: Starting scene reinitalization...\n"); elapsed_time = glfwGetTime();
+
+    mainGui.storeControllers();
 
     glfwCloseWindow();
 
@@ -150,6 +153,7 @@ bool scene::reInit() {
     loadTextures();
 
     //ui fun
+    font18.init("dejavusansLGC.ttf",18);
     font12.init("dejavusansLGC.ttf",13);
     reInit_ui();
 
