@@ -4,7 +4,7 @@ HIGH PRIORITY:
      x Actually, just fixed font_controller to swap in new texIDs
  [X] Don't fade so long, its annoying
      x Also added ALT-Q to insta-quit
-
+ [ ] Add STATIC_IMAGE to UI so I don't have to make everything a button
 
 MEDIUM PRIORITY:
 ----------------
@@ -28,7 +28,7 @@ LOW PRIORITY:
     . check font (re)init
 [ ] Need some kind of logo to show while main menu is up
 [ ] Does the UI give input to all windows, not just active? Why?
-
+[ ] Possibly change UI init so you only have to cook() once at the end
 
 
 ///

@@ -16,6 +16,8 @@ void scene::init_ui() {
     np_style default_style_a;
     tex_style res_leftarrow_style;
     tex_style res_rightarrow_style;
+    tex_style list_button_style;
+    tex_style separator_style;
 
     default_win_titlebar_style.normal.setNP( UI_9P_TL, 128, 128, 1, 1, 3, 5 );
     default_win_titlebar_style.normal.setNP( UI_9P_TM, 128, 128, 5, 1, 1, 5 );
@@ -119,7 +121,14 @@ void scene::init_ui() {
     default_style_a.active.setNP( UI_9P_BR, 128, 128,  6, 40, 2, 2 );
     default_style_a.cook();
     default_style_a.font_x = 4;
-
+    //
+    list_button_style.normal.setTex(  128, 128, 14, 29, 1, 1 );
+    list_button_style.hover.setTex(   128, 128,  4, 29, 1, 1 );
+    list_button_style.pressed.setTex( 128, 128, 24, 29, 1, 1 );
+    list_button_style.cook();
+    //
+    separator_style.normal.setTex(  128, 128, 1, 17, 1, 1 );
+    separator_style.cook();
 
     /////////////////////////////////////////////////////////////////
     // username window
@@ -423,25 +432,132 @@ void scene::init_ui() {
     serverlist_window->setThemeTextureID(theme_texture);
     serverlist_window->window_style = default_win_style_notitlebar;
 
-    serverlist_window->setXY(res_cur_x/2-150,res_cur_y/2+70);
-    serverlist_window->setWH(300,140);
+    serverlist_window->setXY(res_cur_x/2-250,res_cur_y/2+150);
+    serverlist_window->setWH(500,300);
     serverlist_window->enableFontController();
 
-    ui_label *serverlist_text = (ui_label*)mainGui.addWidget("list_text", UI_WIDGET_LABEL);
-    serverlist_text->setXY(10,25);
-    serverlist_text->setWH(280,30);
-    serverlist_text->my_font.setFont(&font12);
-    serverlist_text->my_font.setColor(1.0,1.0,1.0,1.0);
-    serverlist_text->my_font.setVertAlign(FONT_ALIGN_CENTER);
-    serverlist_text->my_font.setHorizAlign(FONT_ALIGN_CENTER);
-    //serverlist_text->my_font.setStretch(true);
-    serverlist_text->my_font.setText("SERVER LIST LOLOLOL");
-    serverlist_text->my_font.cook();
+    ui_label *serverlabel_name = (ui_label*)mainGui.addWidget("serverlabel_name", UI_WIDGET_LABEL);
+    serverlabel_name->setXY(15,10);
+    serverlabel_name->setWH(240,20);
+    serverlabel_name->my_font.setFont(&font12);
+    serverlabel_name->my_font.setColor(0.2,0.2,0.2,1.0);
+    serverlabel_name->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    serverlabel_name->my_font.setText("Server Name:");
+    serverlabel_name->my_font.cook();
+
+
+    ui_label *serverlabel_complete = (ui_label*)mainGui.addWidget("serverlabel_complete", UI_WIDGET_LABEL);
+    serverlabel_complete->setXY(250,10);
+    serverlabel_complete->setWH(200,20);
+    serverlabel_complete->my_font.setFont(&font12);
+    serverlabel_complete->my_font.setColor(0.2,0.2,0.2,1.0);
+    serverlabel_complete->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    serverlabel_complete->my_font.setText("Completion:");
+    serverlabel_complete->my_font.cook();
+
+    ui_label *serverlabel_time = (ui_label*)mainGui.addWidget("serverlabel_time", UI_WIDGET_LABEL);
+    serverlabel_time->setXY(380,10);
+    serverlabel_time->setWH(200,20);
+    serverlabel_time->my_font.setFont(&font12);
+    serverlabel_time->my_font.setColor(0.2,0.2,0.2,1.0);
+    serverlabel_time->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    serverlabel_time->my_font.setText("Request Timer:");
+    serverlabel_time->my_font.cook();
+
+    ui_button *separator_button = (ui_button*)mainGui.addWidget("list_separator", UI_WIDGET_BUTTON);
+    separator_button->setStyle(separator_style);
+    separator_button->setXY(10,30);
+    separator_button->setWH(480,1);
+
+
+    ////////////////
+
+    ui_button *server1_button = (ui_button*)mainGui.addWidget("serverbutton_1", UI_WIDGET_BUTTON);
+    server1_button->setStyle(list_button_style);
+    server1_button->setXY(10,40);
+    server1_button->setWH(480,20);
+    //server1_button->setPayload(options_res_right);
+    ui_button *server2_button = (ui_button*)mainGui.addWidget("serverbutton_2", UI_WIDGET_BUTTON);
+    server2_button->setStyle(list_button_style);
+    server2_button->setXY(10,60);
+    server2_button->setWH(480,20);
+    //server2_button->setPayload(options_res_right);
+    ui_button *server3_button = (ui_button*)mainGui.addWidget("serverbutton_3", UI_WIDGET_BUTTON);
+    server3_button->setStyle(list_button_style);
+    server3_button->setXY(10,80);
+    server3_button->setWH(480,20);
+    //server1_button->setPayload(options_res_right);
+    ui_button *server4_button = (ui_button*)mainGui.addWidget("serverbutton_4", UI_WIDGET_BUTTON);
+    server4_button->setStyle(list_button_style);
+    server4_button->setXY(10,100);
+    server4_button->setWH(480,20);
+    //server1_button->setPayload(options_res_right);
+    ui_button *server5_button = (ui_button*)mainGui.addWidget("serverbutton_5", UI_WIDGET_BUTTON);
+    server5_button->setStyle(list_button_style);
+    server5_button->setXY(10,120);
+    server5_button->setWH(480,20);
+    //server1_button->setPayload(options_res_right);
+
+
+    ui_label *server1_name = (ui_label*)mainGui.addWidget("server1_name", UI_WIDGET_LABEL);
+    server1_name->setXY(15,41);
+    server1_name->setWH(240,20);
+    server1_name->my_font.setFont(&font12);
+    server1_name->my_font.setColor(0.2,0.2,0.2,1.0);
+    server1_name->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    //server1_name->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    //server1_name->my_font.setStretch(true);
+    server1_name->my_font.setText("Server Name Here");
+    server1_name->my_font.cook();
+
+    ui_label *server2_name = (ui_label*)mainGui.addWidget("server2_name", UI_WIDGET_LABEL);
+    server2_name->setXY(15,61);
+    server2_name->setWH(240,20);
+    server2_name->my_font.setFont(&font12);
+    server2_name->my_font.setColor(0.2,0.2,0.2,1.0);
+    server2_name->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    //server2_name->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    //server2_name->my_font.setStretch(true);
+    server2_name->my_font.setText("Server Name Here 2");
+    server2_name->my_font.cook();
+
+    ui_label *server3_name = (ui_label*)mainGui.addWidget("server3_name", UI_WIDGET_LABEL);
+    server3_name->setXY(15,81);
+    server3_name->setWH(240,20);
+    server3_name->my_font.setFont(&font12);
+    server3_name->my_font.setColor(0.2,0.2,0.2,1.0);
+    server3_name->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    //server3_name->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    //server3_name->my_font.setStretch(true);
+    server3_name->my_font.setText("Server Name Here 3");
+    server3_name->my_font.cook();
+
+    ui_label *server4_name = (ui_label*)mainGui.addWidget("server4_name", UI_WIDGET_LABEL);
+    server4_name->setXY(15,101);
+    server4_name->setWH(240,20);
+    server4_name->my_font.setFont(&font12);
+    server4_name->my_font.setColor(0.2,0.2,0.2,1.0);
+    server4_name->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    //server4_name->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    //server4_name->my_font.setStretch(true);
+    server4_name->my_font.setText("Server Name Here 4");
+    server4_name->my_font.cook();
+
+    ui_label *server5_name = (ui_label*)mainGui.addWidget("server5_name", UI_WIDGET_LABEL);
+    server5_name->setXY(15,121);
+    server5_name->setWH(240,20);
+    server5_name->my_font.setFont(&font12);
+    server5_name->my_font.setColor(0.2,0.2,0.2,1.0);
+    server5_name->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    //server5_name->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    //server5_name->my_font.setStretch(true);
+    server5_name->my_font.setText("Server Name Here 5");
+    server5_name->my_font.cook();
 
 
     ui_button_np *serverlist_yes_button = (ui_button_np*)mainGui.addWidget("list_refresh", UI_WIDGET_BUTTON_NP);
     serverlist_yes_button->setStyle(default_np_style);
-    serverlist_yes_button->setXY(70,70);
+    serverlist_yes_button->setXY(70,150);
     serverlist_yes_button->setWH(60,40);
     serverlist_yes_button->my_font.setFont(&font12);
     serverlist_yes_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
@@ -454,7 +570,7 @@ void scene::init_ui() {
 
     ui_button_np *serverlist_no_button = (ui_button_np*)mainGui.addWidget("list_close", UI_WIDGET_BUTTON_NP);
     serverlist_no_button->setStyle(default_np_style);
-    serverlist_no_button->setXY(160,70);
+    serverlist_no_button->setXY(160,150);
     serverlist_no_button->setWH(60,40);
     serverlist_no_button->my_font.setFont(&font12);
     serverlist_no_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
