@@ -106,8 +106,10 @@ public:
     bool static confirmquit_input_keycallback(int,int);
     bool static mainmenu_input_keycallback(int,int);
     bool static options_input_keycallback(int,int);
+    bool static serverlist_input_keycallback(int,int);
     void static gui2closebutton();
     void static mainmenu_quit();
+    void static mainmenu_list();
     void static mainmenu_options();
     void static mainmenu_close();
     void static confirmquit_YES();
@@ -119,6 +121,8 @@ public:
     void static options_username();
     void static options_close();
     void static options_res_apply();
+    void static serverlist_refresh();
+    void static serverlist_close();
 
     //self-reference variable
     //required for C callbacks

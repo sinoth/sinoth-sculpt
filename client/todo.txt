@@ -5,6 +5,11 @@ HIGH PRIORITY:
  [X] Don't fade so long, its annoying
      x Also added ALT-Q to insta-quit
  [ ] Add STATIC_IMAGE to UI so I don't have to make everything a button
+ [ ] Make first communication between client-serverlist_close
+     . Client send
+     . Server recv
+     . Server send
+     . Client recv
 
 MEDIUM PRIORITY:
 ----------------
@@ -19,7 +24,7 @@ MEDIUM PRIORITY:
 [X] Options menu ('Resolution', 'Apply', 'Fullscreen', 'Change Username', 'Quit' )
 [ ] Options save/load from a text file
     . Possibly use XML
-[ ] List Servers menu (show servers that are up and how many hours till next piece) ('Select', 'Back')
+[X] List Servers menu (show servers that are up and how many hours till next piece) ('Select', 'Back')
 
 
 LOW PRIORITY:

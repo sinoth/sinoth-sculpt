@@ -67,6 +67,33 @@ bool scene::options_input_keycallback(int key, int state) {
 }
 
 
+
+////////////////////////////////////////////////////////////////////////////////
+//
+bool scene::serverlist_input_keycallback(int key, int state) {
+    switch ( state ) {
+      case GLFW_PRESS:
+        switch ( key ) {
+            case GLFW_KEY_ENTER:
+                //scene::username_OK();
+                break;
+        }
+      break;
+
+      case GLFW_RELEASE:
+        switch ( key ) {
+            case GLFW_KEY_ESC:
+                scene::serverlist_close();
+                return true;
+                break;
+        }
+      break;
+    }
+
+    return false;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 bool scene::mainmenu_input_keycallback(int key, int state) {
@@ -135,6 +162,20 @@ void scene::mainmenu_options() {
     temp_window->setActive(true);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+//
+void scene::mainmenu_list() {
+
+    ui_window *temp_window;
+    temp_window = myself->mainGui.getWindow("MainMenu");
+    temp_window->doFade(UI_FADE_OUT, 10);
+    temp_window->setActive(false);
+
+    temp_window = myself->mainGui.getWindow("ServerList");
+    temp_window->doFade(UI_FADE_IN, 10);
+    temp_window->setActive(true);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -292,4 +333,26 @@ void scene::options_username() {
     myself->mainGui.bringToFront(temp_window);
     temp_window->doFade(UI_FADE_IN, 10);
     temp_window->setActive(true);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+void scene::serverlist_close() {
+
+    ui_window *temp_window;
+    temp_window = myself->mainGui.getWindow("ServerList");
+    temp_window->doFade(UI_FADE_OUT, 10);
+    temp_window->setActive(false);
+
+    temp_window = myself->mainGui.getWindow("MainMenu");
+    temp_window->doFade(UI_FADE_IN, 10);
+    temp_window->setActive(true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+void scene::serverlist_refresh() {
+
+
 }

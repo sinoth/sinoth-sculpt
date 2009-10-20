@@ -70,6 +70,7 @@
 		<Unit filename="client\scene\init.cpp" />
 		<Unit filename="client\scene\init_ui.cpp" />
 		<Unit filename="client\scene\input.cpp" />
+		<Unit filename="client\scene\network.cpp" />
 		<Unit filename="client\scene\render.cpp" />
 		<Unit filename="client\scene\scene.cpp" />
 		<Unit filename="client\scene\update.cpp" />

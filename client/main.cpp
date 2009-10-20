@@ -20,9 +20,10 @@ int main(int argc, char *argv[])
 
         if ( updateTimer.needUpdateNoCarry() ) {
             mainScene.update();
+            mainScene.render();
+
         }
 
-        mainScene.render();
     }
 
 /*
