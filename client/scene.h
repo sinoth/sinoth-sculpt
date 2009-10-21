@@ -7,6 +7,7 @@
 #include <sincamera.h>
 #include <sinlight.h>
 #include <sinui.h>
+#include "sinsocket.h"
 //#include <sinprim.h>
 
 
@@ -86,6 +87,10 @@ public:
     void load_username();
     void save_username();
 
+    //network stuff
+    bool retrieveServerList();
+
+    //input and callbacks
 	void keyboardInput(int, int);
     void keyboardCharInput(int,int);
 	void mousePosInput(int, int);

@@ -88,7 +88,8 @@ int inet_pton(int af, const char *src, void *__restrict__ dst)
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-sinsocket::sinsocket(int in_fd) : ready_for_action(false), my_socket(in_fd) {
+sinsocket::sinsocket(int in_fd) : ready_for_action(false),
+                                  my_socket(in_fd), bytes_in_buffer(0) {
 
     if ( in_fd != -1 ) ready_for_action = true;
 
@@ -251,29 +252,42 @@ int sinsocket::send( const void *indata, int inlength ) {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//
+// returns -1 if the peer disconnected, -2 for error, bytes received otherwise
 int sinsocket::recv( const void *inbuffer, int inlength ) {
-    int bytes_recv = 0;
-    int bytes_left = inlength;
+    //int bytes_recv = bytes_in_buffer;
+    int bytes_left = inlength-bytes_in_buffer;
     int temp_recv = 0;
 
-    while ( bytes_recv < inlength ) {
-        temp_recv = ::recv(my_socket, (char*)inbuffer+bytes_recv, bytes_left, 0);
+    while ( bytes_in_buffer < inlength ) {
+        temp_recv = ::recv(my_socket, recv_buffer+bytes_in_buffer, bytes_left, 0);
         if ( temp_recv == -1 || temp_recv == 0 ) break; //something bad happened or disconnect
-        bytes_recv += temp_recv;
+        bytes_in_buffer += temp_recv;
         bytes_left -= temp_recv;
     }
 
+    //copy data from internal buffer to passed buffer
+    for ( int i=0; i < inlength; ++i )
+        { ((char*)inbuffer)[i] = recv_buffer[i]; }
+
+    //shift back any data that remains in the buffer
+    bytes_in_buffer -= inlength;
+    for ( int i=0; i < bytes_in_buffer; ++i )
+        { recv_buffer[i] = recv_buffer[i+inlength]; }
+
 
     //error
-    if ( temp_recv == -1 ) { perror("ERROR: sinsocket.recv"); }
+    if ( temp_recv == -1 ) {
+        perror("ERROR: sinsocket.recv");
+        return -2; }
+
     //peer disconnected
     if ( temp_recv == 0 ) {
         fprintf(stderr, "ERROR: sinsocket.recv: peer has disconnected\n");
-        ready_for_action = false; }
+        ready_for_action = false;
+        return -1; }
 
-    //return 1 if the peer disconnected, -1 for error, 0 otherwise
-    return temp_recv;
+    //everything seems fine
+    return inlength;
 }
 
 

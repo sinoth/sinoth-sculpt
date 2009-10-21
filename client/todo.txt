@@ -44,7 +44,7 @@ Port range: 35610-4
 
 Discover Servers conversation:
 ------------------------------
-  [CLIENT] [1 BYTES] [0x00] (Hey! Give me a list!)
+  [CLIENT] [1 BYTES] [0x28] (Hey! Give me a list!)
   [SERVER] [1 BYTES] [0x0X] (I'm sending you X servers)
   For each server above:
     [SERVER] [4 BYTES] [int] (Length of server name)

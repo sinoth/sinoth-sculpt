@@ -354,5 +354,5 @@ void scene::serverlist_close() {
 //
 void scene::serverlist_refresh() {
 
-
+    myself->retrieveServerList();
 }

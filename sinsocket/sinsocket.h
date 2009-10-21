@@ -1,4 +1,6 @@
 
+#ifndef _SINSOCKET_H
+#define _SINSOCKET_H
 
 class sinsocket {
 public:
@@ -24,6 +26,10 @@ private:
     int my_socket;
     char my_port[6];
 
+    //buffer madness
+    char recv_buffer[1024];
+    int bytes_in_buffer;
+
     //to know if the program-wide init has been run
     static bool done_init;
     static int socket_count;
@@ -37,3 +43,6 @@ class sinsocket_farm {
 public:
 private:
 };
+
+
+#endif
