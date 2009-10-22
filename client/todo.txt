@@ -47,10 +47,12 @@ Discover Servers conversation:
   [CLIENT] [1 BYTES] [0x28] (Hey! Give me a list!)
   [SERVER] [1 BYTES] [0x0X] (I'm sending you X servers)
   For each server above:
-    [SERVER] [4 BYTES] [int] (Length of server name)
+    [SERVER] [1 BYTES] [char] (Length of server name)
     [SERVER] [X BYTES] [char*] (Server name)
+    [SERVER] [4 BYTES] [int] (Total pieces)
     [SERVER] [4 BYTES] [int] (Pieces left)
-    [SERVER] [1 BYTES] (most significant bit is if we're allowed to get a piece. other 7 bites are hours left to wait)
+    [SERVER] [1 BYTES] [char] (how many total pieces available to you)
+    [SERVER] [1 BYTES] [char] (how many current pieces available to you)
   [END]
 
 Upon participation:
@@ -80,8 +82,6 @@ hostname = hostname of above
 checkout = timestamp of checkout
 checkin  = timestamp of checkin
 data     = starts as NULL, is eventually set to submitted data (of size cubesize^3)
-
-
 
 
 

@@ -50,7 +50,7 @@ void scene::FPS()
 	static sinTimer fpsTimer(1);
 
     frames++;
-    if( fpsTimer.needUpdate() )
+    if( fpsTimer.needUpdateNoCarry() )
     {
 		printf("FPS: %d\n",frames);//,settings.ull_counter);
         frames = 0;
