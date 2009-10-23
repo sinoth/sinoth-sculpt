@@ -20,6 +20,7 @@ bool scene::retrieveServerList() {
     ui_label *temp_label;
     char temp_widget_name[100];
     char temp_label_text[100];
+    char temp_status[200];
 
 
     if ( client_socket.connect("localhost",35610) ) {
@@ -86,7 +87,9 @@ bool scene::retrieveServerList() {
         }
     }
 
-    serverlabel_status
+    sprintf(temp_status,"SUCCESS: Retrieved %d server entries.",num_of_servers);
+    temp_label = (ui_label*)mainGui.getWidget("comm_status");
+    temp_label->my_font.setText(temp_status); temp_label->my_font.cook();
 
     return 0;
 }
