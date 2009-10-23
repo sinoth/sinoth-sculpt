@@ -7,7 +7,7 @@
 void send_server_list( sinsocket * );
 
 
-int main(int argc, char *argv[] ) {
+int main(int, char **) {
 
     sinsocket server, *incoming_connection;
     unsigned char request;

@@ -2,5 +2,6 @@
 todo:
  [ ] consider sending server as one big packet instead of multiple sends for each piece
 
-CREATE TABLE sculpture0 ( id integer primary key, username text, ip text, hostna
-me text, checkout text, checkin text, data none );
+CREATE TABLE sculpture0 ( id integer primary key, username text, ip text, hostname text, checkout text, checkin text, data none );
+
+CREATE TABLE sculpture0 ( id integer primary key, hash text, username text, ip text, hostname text, checkout text, checkin text, data none );
