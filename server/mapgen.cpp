@@ -2,27 +2,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 #include <sqlite3.h>
 #include <time.h>
 #include <dsfmt.c>
 
 
 
-void create_new_map(char*,char*,int,int,int,int,int);
+bool create_new_map(const char*,const char*,int,int,int,int,int);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 int main(int, char **) {
 
-    create_new_map((char*)"",       //name
-                   (char*)"",       //table name
-                   5,               //x size
-                   5,               //y size
-                   5,               //z size
-                   10,              //pieces per user
-                   1                //recharge rate (hours)
-                   );
+    if ( create_new_map("test_1",       //table name
+                         "The first test sculpture", //description
+                         5,               //x size
+                         5,               //y size
+                         5,               //z size
+                         10,              //pieces per user
+                         1                //recharge rate (hours)
+                         ) ) {
+        //something went wrong!
+        fprintf(stderr,"Error: map not created\n"); return 1; }
 
+    printf("Map created successfully!\n");
     return 0;
 }
 
@@ -30,8 +34,8 @@ int main(int, char **) {
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-void create_new_map(char* name,
-                    char* name_table,
+bool create_new_map(const char* name_table,
+                    const char* description,
                     int   size_x,
                     int   size_y,
                     int   size_z,
@@ -39,7 +43,8 @@ void create_new_map(char* name,
                     int   recharge_rate    ) {
 
     sqlite3 *db;
-    char temp_string[100];
+    char *error_msg;
+    char temp_string[200];
     sqlite3_stmt *insert_statement;
     int rc;
 
@@ -52,47 +57,76 @@ void create_new_map(char* name,
 
     //open the database file
     rc = sqlite3_open("sculpt-db", &db);
-    if( rc ){
+    if( rc != SQLITE_OK ){
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        sqlite3_close(db);
-        exit(1);
-    }
+        sqlite3_close(db); return true; }
+    printf("Opened database.\n");
+
+    //create the table for this map
+    sprintf(temp_string,
+        "CREATE TABLE %s ( id integer primary key, hash text, username text, ip text, hostname text, checkout text, checkin text, data none );",
+        name_table);
+    rc = sqlite3_exec(db, temp_string, NULL, NULL, &error_msg);
+    if ( rc != SQLITE_OK ) {
+        fprintf(stderr,"Cannot create table: [%s] %s\n", temp_string, error_msg);
+        sqlite3_free(error_msg); return true; }
+    printf("Created table.\n");
+
+    //insert an entry for this table in the information table
+    sprintf(temp_string, "insert into server_maps values (\"%s\",\"%s\",%d,%d,%d,%d,%d,%d,%d);",
+                        name_table,
+                        description,
+                        size_x, size_y, size_z,
+                        pieces_per_user, recharge_rate,
+                        size_x*size_y*size_z,
+                        size_x*size_y*size_z );
+    rc = sqlite3_exec(db, temp_string, NULL, NULL, &error_msg);
+    if ( rc != SQLITE_OK ) {
+        fprintf(stderr,"Cannot create table: [%s] %s\n", temp_string, error_msg);
+        sqlite3_free(error_msg); return true; }
+    printf("Inserted table information.\n");
 
 
-
-    sprintf(temp_string,"insert into sculpture0 values (?,?,NULL,NULL,NULL,NULL,NULL,?);");
-    rc = sqlite3_prepare_v2(db,                     // Database handle
-                            temp_string,            // SQL statement, UTF-8 encoded
-                            strlen(temp_string),    // Maximum length of zSql in bytes
-                            &insert_statement,      // OUT: Statement handle
-                            NULL                    // OUT: Pointer to unused portion of zSql
+    //prepare map insert statement
+    sprintf(temp_string, "insert into %s values (?,?,NULL,NULL,NULL,NULL,NULL,?);", name_table);
+    rc = sqlite3_prepare_v2(db,                         // Database handle
+                            temp_string,                // SQL statement, UTF-8 encoded
+                            -1,                         // Maximum length of zSql in bytes
+                            &insert_statement,          // OUT: Statement handle
+                            NULL                        // OUT: Pointer to unused portion of zSql
                             );
     if( rc!=SQLITE_OK ){
-        fprintf(stderr, "SQL error: %s\n", sqlite3_errmsg(db) );
-    }
+        fprintf(stderr, "SQL error (prepare): %s\n", sqlite3_errmsg(db) ); return true; }
 
-    table_id = genrand_close_open()*1000;
-    for ( int i=0; i < 16; ++i )
-        table_hash[i] = ( 65 + (int)(genrand_close_open()*26.0) + (genrand_close_open() < 0.5 ? 0 : 32 ) );
-    table_hash[16] = '\0';
+    //populate the database with the correct number of chunks
+    for ( table_id = 0; table_id < size_x*size_y*size_z; ++table_id ) {
 
-    //bind all the values to insert
-    sqlite3_bind_int(insert_statement, 1, table_id);
-    sqlite3_bind_text(insert_statement, 2, table_hash,-1,SQLITE_STATIC);
-    sqlite3_bind_zeroblob(insert_statement, 3, -1);
+        for ( int i=0; i < 16; ++i )
+            table_hash[i] = ( 65 + (int)(genrand_close_open()*26.0) + (genrand_close_open() < 0.5 ? 0 : 32 ) );
+        table_hash[16] = '\0';
 
-    //execute the insert
-    rc = sqlite3_step(insert_statement);
-    if ( rc != SQLITE_DONE ) {
-        fprintf(stderr, "SQL error: [%d]%s\n", rc, sqlite3_errmsg(db) );
+        //bind all the values to insert
+        sqlite3_bind_int(insert_statement, 1, table_id);
+        sqlite3_bind_text(insert_statement, 2, table_hash,-1,SQLITE_STATIC);
+        sqlite3_bind_zeroblob(insert_statement, 3, -1);
+
+        //execute the insert
+        rc = sqlite3_step(insert_statement);
+        if ( rc != SQLITE_DONE ) {
+            fprintf(stderr, "SQL error (step): [%d,%s]%s\n", table_id, table_hash, sqlite3_errmsg(db) ); return true; }
+
+        //reset the statement to be used again
+        sqlite3_reset(insert_statement);
     }
 
     //clean up the statement
-    sqlite3_finalize(insert_statement);
-
+    rc = sqlite3_finalize(insert_statement);
+    if( rc!=SQLITE_OK ){
+        fprintf(stderr, "SQL error (finalize): %s\n", sqlite3_errmsg(db) ); return true; }
+    printf("Created map pieces.\n");
 
     sqlite3_close(db);
-    return;
+    return false;
 }
 
 
