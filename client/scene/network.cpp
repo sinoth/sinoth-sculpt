@@ -2,6 +2,7 @@
 #include "scene.h"
 
 typedef struct serverinfo_s {
+    unsigned char server_id;
     char server_name[100];
     int total_pieces;
     int pieces_left;
@@ -34,6 +35,7 @@ bool scene::retrieveServerList() {
     printf("* NETWORK: Preparing to receive %d servers...\n", num_of_servers );
 
     for ( int i=0; i < num_of_servers; ++i ) {
+        client_socket.recv( &servers[i].server_id, 1 );
         client_socket.recv( &server_name_length, 1 );
         client_socket.recv( servers[i].server_name, server_name_length );
         client_socket.recv( &servers[i].total_pieces, 4 );
@@ -41,7 +43,8 @@ bool scene::retrieveServerList() {
         client_socket.recv( &servers[i].player_total, 1 );
         client_socket.recv( &servers[i].player_left, 1 );
 
-        printf("%d: [%s], %d/%d total pieces, %u/%u available pieces\n", i+1,
+        printf("%d(%d): [%s], %d/%d total pieces, %u/%u available pieces\n", i+1,
+                                                                         servers[i].server_id,
                                                                          servers[i].server_name,
                                                                          servers[i].pieces_left,
                                                                          servers[i].total_pieces,

@@ -47,22 +47,26 @@ Discover Servers conversation:
   [CLIENT] [1 BYTES] [0x28] (Hey! Give me a list!)
   [SERVER] [1 BYTES] [0x0X] (I'm sending you X servers)
   For each server above:
-    [SERVER] [1 BYTES] [char] (Length of server name)
+    [SERVER] [1 BYTES] [char]  (ID of the server)
+    [SERVER] [1 BYTES] [char]  (Length of server name)
     [SERVER] [X BYTES] [char*] (Server name)
-    [SERVER] [4 BYTES] [int] (Total pieces)
-    [SERVER] [4 BYTES] [int] (Pieces left)
-    [SERVER] [1 BYTES] [char] (how many total pieces available to you)
-    [SERVER] [1 BYTES] [char] (how many current pieces available to you)
+    [SERVER] [4 BYTES] [int]   (Total pieces)
+    [SERVER] [4 BYTES] [int]   (Pieces left)
+    [SERVER] [1 BYTES] [char]  (how many total pieces available to you)
+    [SERVER] [1 BYTES] [char]  (how many current pieces available to you)
   [END]
 
 Upon participation:
 -------------------
-  [CLIENT] [1 BYTES] [0x00] (Hey! Give me a piece!)
-  [SERVER] [1 BYTES] (Sends back either 0 meaning OK, or 1 meaning CANNOT PARTICIPATE)
+  [CLIENT] [1 BYTES] [0x43] (Hey! Give me a piece!)
+  [CLIENT] [1 BYTES] [char] (ID of the server)
+  [SERVER] [1 BYTES] [char] (Sends back either 0 meaning OK, or 1 meaning CANNOT PARTICIPATE)
   If client is OK to participate:
-    Server rotates view randomly for a particular piece
-    Sends the following 26 times, starting at TOP/FORWARD/LEFT, working RIGHT then DOWN, then DOWN)
-    [SERVER] [S^3 BOOLS] (Length of bools equal to cube size^3)
+    [SERVER] [16 BYTES]    (16-character hash for this piece)
+    [SERVER] [3 BYTES]     (X, Y, and Z size of piece)
+                           (Server rotates view randomly for a particular piece)
+                           (Sends the following 26 times, starting at TOP/FORWARD/LEFT, working RIGHT then BACK, then DOWN)
+    [SERVER] [X*Y*Z BOOLS] (Length of bools equal to cube x*y*z)
   [END]
 
 Server database stuff:

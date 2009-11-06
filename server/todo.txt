@@ -3,13 +3,24 @@ todo:
  [ ] consider sending server as one big packet instead of multiple sends for each piece
 
 
-CREATE TABLE sculpture0 ( id integer primary key, hash text, username text, ip text, hostname text, checkout text, checkin text, data none );
+CREATE TABLE sculpture0 ( id integer primary key,
+                          hash text,
+                          username text,
+                          ip text,
+                          hostname text,
+                          checkout text,
+                          checkin text,
+                          data none );
 
-CREATE TABLE server_maps (  name text primary key,
+CREATE TABLE server_maps (  id integer primary key,
+                            name text,
                             description text,
                             x_size integer,
                             y_size integer,
                             z_size integer,
+                            piece_x_size integer,
+                            piece_y_size integer,
+                            piece_z_size integer,
                             pieces_per_user integer,
                             recharge_rate integer,
                             pieces_total integer,

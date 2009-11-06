@@ -9,20 +9,19 @@
 
 
 
-bool create_new_map(const char*,const char*,int,int,int,int,int);
+bool create_new_map(const char*,const char*,int,int,int,int,int,int,int,int);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 int main(int, char **) {
 
-    if ( create_new_map("test_1",       //table name
-                         "The first test sculpture", //description
-                         5,               //x size
-                         5,               //y size
-                         5,               //z size
-                         10,              //pieces per user
-                         1                //recharge rate (hours)
-                         ) ) {
+    if ( create_new_map("test_4",  //table name
+                        "Fast now?", //description
+                        15,15,15,     //x,y,z size
+                        7,7,7,     //piece x,y,z size
+                        20,        //pieces per user
+                        1          //recharge rate (hours)
+                        ) ) {
         //something went wrong!
         fprintf(stderr,"Error: map not created\n"); return 1; }
 
@@ -36,19 +35,21 @@ int main(int, char **) {
 //
 bool create_new_map(const char* name_table,
                     const char* description,
-                    int   size_x,
-                    int   size_y,
-                    int   size_z,
-                    int   pieces_per_user,
-                    int   recharge_rate    ) {
+                    int size_x, int size_y, int size_z,
+                    int piece_size_x, int piece_size_y, int piece_size_z,
+                    int pieces_per_user,
+                    int recharge_rate    ) {
 
     sqlite3 *db;
     char *error_msg;
     char temp_string[200];
     sqlite3_stmt *insert_statement;
+    sqlite3_stmt *check_statement;
     int rc;
+    bool unique;
 
     //temp table values
+    unsigned char map_id;
     int   table_id;
     char  table_hash[17];
 
@@ -60,7 +61,7 @@ bool create_new_map(const char* name_table,
     if( rc != SQLITE_OK ){
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db); return true; }
-    printf("Opened database.\n");
+    printf("Opened database successfully.\n");
 
     //create the table for this map
     sprintf(temp_string,
@@ -72,11 +73,36 @@ bool create_new_map(const char* name_table,
         sqlite3_free(error_msg); return true; }
     printf("Created table.\n");
 
+    //generate a map ID and make sure it isn't in use
+    sprintf(temp_string, "select NULL from server_maps where id = ?;");
+    rc = sqlite3_prepare_v2(db, temp_string, -1, &check_statement, NULL);
+    if( rc!=SQLITE_OK ){
+        fprintf(stderr, "SQL error (prepare check): %s\n", sqlite3_errmsg(db) ); return true; }
+
+    unique = false;
+    while (!unique) {
+        map_id = genrand_open_close()*255;
+        sqlite3_bind_int(check_statement, 1, map_id);
+        rc = sqlite3_step(check_statement);
+        if ( rc == SQLITE_ROW ) {
+            //duplicate, try again
+            sqlite3_reset(check_statement);
+        } else if ( rc == SQLITE_DONE ) {
+            //we're good to go
+            sqlite3_finalize(check_statement);
+            unique = true;
+        } else {
+            fprintf(stderr, "SQL error (step check): %s\n", sqlite3_errmsg(db) ); return true;
+        }
+    }
+
     //insert an entry for this table in the information table
-    sprintf(temp_string, "insert into server_maps values (\"%s\",\"%s\",%d,%d,%d,%d,%d,%d,%d);",
+    sprintf(temp_string, "insert into server_maps values (%d,\"%s\",\"%s\",%d,%d,%d,%d,%d,%d,%d,%d,%d,%d);",
+                        map_id,
                         name_table,
                         description,
                         size_x, size_y, size_z,
+                        piece_size_x, piece_size_y, piece_size_z,
                         pieces_per_user, recharge_rate,
                         size_x*size_y*size_z,
                         size_x*size_y*size_z );
@@ -99,6 +125,7 @@ bool create_new_map(const char* name_table,
         fprintf(stderr, "SQL error (prepare): %s\n", sqlite3_errmsg(db) ); return true; }
 
     //populate the database with the correct number of chunks
+    sqlite3_exec(db, "BEGIN;",NULL,NULL,&error_msg);
     for ( table_id = 0; table_id < size_x*size_y*size_z; ++table_id ) {
 
         for ( int i=0; i < 16; ++i )
@@ -118,6 +145,7 @@ bool create_new_map(const char* name_table,
         //reset the statement to be used again
         sqlite3_reset(insert_statement);
     }
+    sqlite3_exec(db, "COMMIT;",NULL,NULL,&error_msg);
 
     //clean up the statement
     rc = sqlite3_finalize(insert_statement);
@@ -128,10 +156,6 @@ bool create_new_map(const char* name_table,
     sqlite3_close(db);
     return false;
 }
-
-
-
-
 
 
 /*
