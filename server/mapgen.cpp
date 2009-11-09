@@ -9,18 +9,19 @@
 
 
 
-bool create_new_map(const char*,const char*,int,int,int,int,int,int,int,int);
+bool create_new_map(const char*,const char*,int,int,int,int,int,int,int,int,int);
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 int main(int, char **) {
 
-    if ( create_new_map("test_4",  //table name
-                        "Fast now?", //description
-                        15,15,15,     //x,y,z size
-                        7,7,7,     //piece x,y,z size
+    if ( create_new_map("test_1",  //table name
+                        "Initial test", //description
+                        5,5,5,     //x,y,z size
+                        5,5,5,     //piece x,y,z size
                         20,        //pieces per user
-                        1          //recharge rate (hours)
+                        1,          //recharge rate (hours)
+                        0          //distribution method
                         ) ) {
         //something went wrong!
         fprintf(stderr,"Error: map not created\n"); return 1; }
@@ -38,7 +39,8 @@ bool create_new_map(const char* name_table,
                     int size_x, int size_y, int size_z,
                     int piece_size_x, int piece_size_y, int piece_size_z,
                     int pieces_per_user,
-                    int recharge_rate    ) {
+                    int recharge_rate,
+                    int distribution    ) {
 
     sqlite3 *db;
     char *error_msg;
@@ -97,7 +99,7 @@ bool create_new_map(const char* name_table,
     }
 
     //insert an entry for this table in the information table
-    sprintf(temp_string, "insert into server_maps values (%d,\"%s\",\"%s\",%d,%d,%d,%d,%d,%d,%d,%d,%d,%d);",
+    sprintf(temp_string, "insert into server_maps values (%d,\"%s\",\"%s\",%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d);",
                         map_id,
                         name_table,
                         description,
@@ -105,7 +107,8 @@ bool create_new_map(const char* name_table,
                         piece_size_x, piece_size_y, piece_size_z,
                         pieces_per_user, recharge_rate,
                         size_x*size_y*size_z,
-                        size_x*size_y*size_z );
+                        size_x*size_y*size_z,
+                        distribution );
     rc = sqlite3_exec(db, temp_string, NULL, NULL, &error_msg);
     if ( rc != SQLITE_OK ) {
         fprintf(stderr,"Cannot create table: [%s] %s\n", temp_string, error_msg);

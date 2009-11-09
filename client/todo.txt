@@ -60,7 +60,7 @@ Upon participation:
 -------------------
   [CLIENT] [1 BYTES] [0x43] (Hey! Give me a piece!)
   [CLIENT] [1 BYTES] [char] (ID of the server)
-  [SERVER] [1 BYTES] [char] (Sends back either 0 meaning OK, or 1 meaning CANNOT PARTICIPATE)
+  [SERVER] [1 BYTES] [char] (Sends back either 1 meaning OK, or 0 meaning CANNOT PARTICIPATE)
   If client is OK to participate:
     [SERVER] [16 BYTES]    (16-character hash for this piece)
     [SERVER] [3 BYTES]     (X, Y, and Z size of piece)

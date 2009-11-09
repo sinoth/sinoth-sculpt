@@ -24,4 +24,21 @@ CREATE TABLE server_maps (  id integer primary key,
                             pieces_per_user integer,
                             recharge_rate integer,
                             pieces_total integer,
-                            pieces_left integer );
+                            pieces_left integer,
+                            distribution integer );
+
+
+CREATE TABLE server_maps (0 id integer primary key,
+                          1 name text,
+                          2 description text,
+                          3 x_size integer,
+                          4 y_size integer,
+                          5 z_size integer,
+                          6 piece_x_size integer,
+                          7 piece_y_size integer,
+                          8 piece_z_size integer,
+                          9 pieces_per_user integer,
+                         10 recharge_rate integer,
+                         11 pieces_total integer,
+                         12 pieces_left integer,
+                         13 distribution integer );
