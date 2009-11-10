@@ -1,9 +1,12 @@
 
+#include <vector>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <sqlite3.h>
 #include "sinsocket.h"
+
+
 
 //global database stuff
 int rc;
@@ -12,6 +15,7 @@ sqlite3 *db;
 //prototypes
 void send_server_list( sinsocket * );
 void send_piece( sinsocket * );
+void construct_blob( unsigned char*, int,int,int,int,int,int,int );
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -154,11 +158,10 @@ void send_piece( sinsocket *insocket ) {
     char temp_query[200];
     char table_name[50];
     char temp_hash[17];
-    unsigned char piece_x_size, piece_y_size, piece_z_size;
-    unsigned char map_x_size, map_y_size, map_z_size;
-    unsigned char *data_to_send;
+    int piece_x_size, piece_y_size, piece_z_size;
+    int map_x_size, map_y_size, map_z_size;
     int piece_id;
-    int storage_size;
+    unsigned char *data_to_send;
 
 
     //find requested table make sure it is valid
@@ -228,19 +231,43 @@ void send_piece( sinsocket *insocket ) {
 
 
     //how much storage do we need?
-    storage_size = piece_x_size*piece_y_size*piece_z_size*26/8+1;
-    data_to_send = (unsigned char*)malloc( storage_size );
+    int blob_size = piece_x_size*piece_y_size*piece_z_size*26;
+    data_to_send = new char[blob_size];
 
     //construct blob of data to send over the wire
     construct_blob(data_to_send, piece_id, piece_x_size, piece_y_size, piece_z_size, map_x_size, map_y_size, map_z_size);
 
-    free(data_to_send);
+    insocket->send(data_to_send, blob_size);
+
+    delete[] data_to_send;
 }
 
 
 
+void construct_blob( unsigned char *data_in, int id, int p_x, int p_y, int p_z, int m_x, int m_y, int m_z ) {
 
-void construct_bloc( unsigned char* data_in, int id,
+    int data_counter = 0;
+    int check_id;
+
+    for (int i=-1; i <= 1; ++i )
+        for (int j=-1; j <= 1; ++j)
+            for (int k=-1; k <= 1; ++k) {
+
+                check_id = id + (i) + (j*m_x) + (k*m_x*m_y);
+
+                if ( check_id < 1 || check_id > m_x*m_y*m_z ) {
+                    //out of bounds, so send all 0's
+                    for ( int ii=0; ii<p_x*p_y*p_z; ++ii )
+                        data_in[data_counter++] = false;
+                } else {
+                    //valid id, check if it is empty
+                }
+            }
+
+
+
+
+}
 
 
 
@@ -251,4 +278,12 @@ void construct_bloc( unsigned char* data_in, int id,
     if ( incoming_connection->send("hello dude", 11) ) {
         fprintf(stderr,"Error on send! Baad!\n");
     }
+*/
+/*
+void set_bit(unsigned char*in, int bit, bool value) {
+    if ( value ) //setting true, so use OR
+        in[bit/8] |= (1 << (bit - (bit/8)*8));
+    else //setting false, so use AND
+        in[bit/8] &= (1 << (bit - (bit/8)*8));
+}
 */
