@@ -7,6 +7,7 @@
 #include <time.h>
 #include <dsfmt.c>
 
+#include "sinsql.h"
 
 
 bool create_new_map(const char*,const char*,int,int,int,int,int,int,int,int,int);
@@ -43,11 +44,8 @@ bool create_new_map(const char* name_table,
                     int distribution    ) {
 
     sqlite3 *db;
-    char *error_msg;
     char temp_string[200];
     sqlite3_stmt *insert_statement;
-    sqlite3_stmt *check_statement;
-    int rc;
     bool unique;
 
     //temp table values
@@ -58,44 +56,27 @@ bool create_new_map(const char* name_table,
     //seed the holy RNG
     init_gen_rand(time(NULL));
 
+  try {
+
     //open the database file
-    rc = sqlite3_open("sculpt-db", &db);
-    if( rc != SQLITE_OK ){
-        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        sqlite3_close(db); return true; }
-    printf("Opened database successfully.\n");
+    sinsql_open_db("sculpt-db", db);
+    printf("Opened database.\n");
 
     //create the table for this map
-    sprintf(temp_string,
-        "CREATE TABLE %s ( id integer primary key, hash text, username text, ip text, hostname text, checkout text, checkin text, data none );",
-        name_table);
-    rc = sqlite3_exec(db, temp_string, NULL, NULL, &error_msg);
-    if ( rc != SQLITE_OK ) {
-        fprintf(stderr,"Cannot create table: [%s] %s\n", temp_string, error_msg);
-        sqlite3_free(error_msg); return true; }
+    sprintf(temp_string, "CREATE TABLE %s ( id integer primary key, "
+                         "hash text, username text default null, ip text default null, "
+                         "hostname text default null, checkout text default null, "
+                         "checkin text default null, data none default null );", name_table);
+
+    sinsql_exec(db, temp_string);
     printf("Created table.\n");
 
     //generate a map ID and make sure it isn't in use
-    sprintf(temp_string, "select NULL from server_maps where id = ?;");
-    rc = sqlite3_prepare_v2(db, temp_string, -1, &check_statement, NULL);
-    if( rc!=SQLITE_OK ){
-        fprintf(stderr, "SQL error (prepare check): %s\n", sqlite3_errmsg(db) ); return true; }
-
     unique = false;
     while (!unique) {
         map_id = genrand_open_close()*255;
-        sqlite3_bind_int(check_statement, 1, map_id);
-        rc = sqlite3_step(check_statement);
-        if ( rc == SQLITE_ROW ) {
-            //duplicate, try again
-            sqlite3_reset(check_statement);
-        } else if ( rc == SQLITE_DONE ) {
-            //we're good to go
-            sqlite3_finalize(check_statement);
-            unique = true;
-        } else {
-            fprintf(stderr, "SQL error (step check): %s\n", sqlite3_errmsg(db) ); return true;
-        }
+        sprintf(temp_string, "select null from server_maps where id = %d;", map_id);
+        if ( !sinsql_existence(db, temp_string) ) unique = true;
     }
 
     //insert an entry for this table in the information table
@@ -109,26 +90,17 @@ bool create_new_map(const char* name_table,
                         size_x*size_y*size_z,
                         size_x*size_y*size_z,
                         distribution );
-    rc = sqlite3_exec(db, temp_string, NULL, NULL, &error_msg);
-    if ( rc != SQLITE_OK ) {
-        fprintf(stderr,"Cannot create table: [%s] %s\n", temp_string, error_msg);
-        sqlite3_free(error_msg); return true; }
+    sinsql_exec(db, temp_string);
     printf("Inserted table information.\n");
 
 
+
     //prepare map insert statement
-    sprintf(temp_string, "insert into %s values (?,?,NULL,NULL,NULL,NULL,NULL,?);", name_table);
-    rc = sqlite3_prepare_v2(db,                         // Database handle
-                            temp_string,                // SQL statement, UTF-8 encoded
-                            -1,                         // Maximum length of zSql in bytes
-                            &insert_statement,          // OUT: Statement handle
-                            NULL                        // OUT: Pointer to unused portion of zSql
-                            );
-    if( rc!=SQLITE_OK ){
-        fprintf(stderr, "SQL error (prepare): %s\n", sqlite3_errmsg(db) ); return true; }
+    sprintf(temp_string, "insert into %s (id,hash) values (?,?);", name_table);
+    sinsql_stmt_prep(db, temp_string, insert_statement);
 
     //populate the database with the correct number of chunks
-    sqlite3_exec(db, "BEGIN;",NULL,NULL,&error_msg);
+    sinsql_exec(db, "BEGIN;");
     for ( table_id = 0; table_id < size_x*size_y*size_z; ++table_id ) {
 
         for ( int i=0; i < 16; ++i )
@@ -138,25 +110,30 @@ bool create_new_map(const char* name_table,
         //bind all the values to insert
         sqlite3_bind_int(insert_statement, 1, table_id);
         sqlite3_bind_text(insert_statement, 2, table_hash,-1,SQLITE_STATIC);
-        sqlite3_bind_zeroblob(insert_statement, 3, -1);
 
         //execute the insert
-        rc = sqlite3_step(insert_statement);
-        if ( rc != SQLITE_DONE ) {
-            fprintf(stderr, "SQL error (step): [%d,%s]%s\n", table_id, table_hash, sqlite3_errmsg(db) ); return true; }
+        sinsql_stmt_step(insert_statement);
 
         //reset the statement to be used again
         sqlite3_reset(insert_statement);
     }
-    sqlite3_exec(db, "COMMIT;",NULL,NULL,&error_msg);
+    sinsql_exec(db, "COMMIT;");
 
     //clean up the statement
-    rc = sqlite3_finalize(insert_statement);
-    if( rc!=SQLITE_OK ){
-        fprintf(stderr, "SQL error (finalize): %s\n", sqlite3_errmsg(db) ); return true; }
+    sinsql_stmt_fin(insert_statement);
     printf("Created map pieces.\n");
 
     sqlite3_close(db);
+
+  } catch ( int error ) {
+        //print the last error if db is valid
+        if ( db != NULL )
+            printf("Last SQL error: %s\n", sqlite3_errmsg(db));
+        //close the database if it isn't already
+        if ( db != NULL ) sqlite3_close(db);
+
+        return true;
+  }
     return false;
 }
 

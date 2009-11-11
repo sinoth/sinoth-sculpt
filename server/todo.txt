@@ -10,7 +10,7 @@ CREATE TABLE sculpture0 ( id integer primary key,
                           hostname text,
                           checkout text,
                           checkin text,
-                          data none );
+                          data none DEFAULT NULL );
 
 CREATE TABLE server_maps (  id integer primary key,
                             name text,

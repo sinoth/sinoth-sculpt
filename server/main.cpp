@@ -4,18 +4,20 @@
 #include <stdio.h>
 #include <string.h>
 #include <sqlite3.h>
-#include "sinsocket.h"
 
+#include "sinsocket.h"
+#include "sinsql.h"
 
 
 //global database stuff
-int rc;
 sqlite3 *db;
+char temp_query[200];
+
 
 //prototypes
 void send_server_list( sinsocket * );
 void send_piece( sinsocket * );
-void construct_blob( unsigned char*, int,int,int,int,int,int,int );
+void construct_blob( unsigned char*, int,int,int,int,int,int,int,const char* );
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,12 +27,11 @@ int main(int, char **) {
     sinsocket server, *incoming_connection;
     unsigned char request;
 
+//////////
+  try {
     //open the database
-    rc = sqlite3_open("sculpt-db", &db);
-    if( rc != SQLITE_OK ){
-        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        sqlite3_close(db); return true; }
-    printf("Opened database successfully.\n");
+    sinsql_open_db("sculpt-db", db);
+    printf("Opened database.\n");
 
     //create a listening socket on port 81
     if ( server.listen(35610) ) {
@@ -56,12 +57,21 @@ int main(int, char **) {
             case 0x43: //request to claim a piece
                 send_piece(incoming_connection);
                 break;
+            case 0x55: //terminate the server
+                break;
+            case 0x71: //query for server info
+                break;
         }
 
         incoming_connection->disconnect();
 
     }
 
+//////////
+  } catch ( int error ) {
+    if ( db != NULL ) printf("Last SQL error: %s\n", sqlite3_errmsg(db));
+  }
+//////////
 
     sqlite3_close(db);
     return 0;
@@ -86,27 +96,20 @@ void send_server_list( sinsocket *insocket ) {
     unsigned char current_player_pieces;
     unsigned char total_player_pieces;
 
+  try {
+
     //retrieve number of servers
-    rc = sqlite3_prepare_v2(db, "select count(*) from server_maps;", -1, &list_statement, NULL);
-        if(rc!=SQLITE_OK){fprintf(stderr, "SQL error (prepare count): %s\n", sqlite3_errmsg(db) ); return; }
-    rc = sqlite3_step(list_statement);
-        if(rc!=SQLITE_ROW){fprintf(stderr, "SQL error (step count): %s\n", sqlite3_errmsg(db) ); return; }
-    num_of_servers = sqlite3_column_int(list_statement, 0);
-    rc = sqlite3_finalize(list_statement);
-        if(rc!=SQLITE_OK){fprintf(stderr, "SQL error (finalize count): %s\n", sqlite3_errmsg(db) ); return; }
+    sinsql_get_int(db, "select count(*) from server_maps;", num_of_servers);
 
     //send number of servers
     insocket->send( &num_of_servers, 1 );
     printf("Number of servers: %d\n", num_of_servers);
 
-    rc = sqlite3_prepare_v2(db, "select * from server_maps;", -1, &list_statement, NULL);
-        if(rc!=SQLITE_OK){fprintf(stderr, "SQL error (prepare loop): %s\n", sqlite3_errmsg(db) ); return; }
-
     //collect and send data for each server
+    sinsql_stmt_prep(db, "select * from server_maps;", list_statement);
     for ( int i=0; i < num_of_servers; ++i ) {
 
-        rc = sqlite3_step(list_statement);
-            if(rc!=SQLITE_ROW){fprintf(stderr, "SQL error (step loop): %s\n", sqlite3_errmsg(db) ); return; }
+        sinsql_stmt_step(list_statement);
 
         server_id = sqlite3_column_int(list_statement, 0);
         strcpy(server_name, (const char*)sqlite3_column_text(list_statement,2));
@@ -135,10 +138,12 @@ void send_server_list( sinsocket *insocket ) {
         printf("Sent %d [%d:%s] %d %d %d %d\n", server_id, server_name_length, server_name, server_total_pieces, server_pieces_left, total_player_pieces, current_player_pieces);
     }
 
-    rc = sqlite3_finalize(list_statement);
-        if(rc!=SQLITE_OK){fprintf(stderr, "SQL error (prepare loop): %s\n", sqlite3_errmsg(db) ); return; }
+    sinsql_stmt_fin(list_statement);
 
-
+//////////
+  } catch (int error) {
+      throw;
+  }
 }
 
 
@@ -149,13 +154,10 @@ void send_piece( sinsocket *insocket ) {
     //sqlite stuff
     sqlite3_stmt *sql_statement;
 
-    //
-    int rc;
     unsigned char requested_id;
     unsigned char allowed;
     int pieces_per_user;
     int distribution;
-    char temp_query[200];
     char table_name[50];
     char temp_hash[17];
     int piece_x_size, piece_y_size, piece_z_size;
@@ -164,20 +166,21 @@ void send_piece( sinsocket *insocket ) {
     unsigned char *data_to_send;
 
 
+  try {
+
     //find requested table make sure it is valid
     insocket->recv(&requested_id, 1);
-    sprintf(temp_query, "select * from server_maps where id = %d;", requested_id);
-    rc = sqlite3_prepare_v2(db, temp_query, -1, &sql_statement, NULL);
-        if(rc!=SQLITE_OK){fprintf(stderr, "SQL error (prepare check piece): %s\n", sqlite3_errmsg(db) ); return; }
+    sprintf(temp_query, "select null from server_maps where id = %d;", requested_id);
+    if ( !sinsql_existence(db, temp_query) ) {
+        //this server is not found, send back a negatory
+        allowed = false; insocket->send(&allowed, 1);
+        return;
+    }
 
-    rc = sqlite3_step(sql_statement);
-        if(rc==SQLITE_DONE) {
-            //this server is not found, send back a negatory
-            allowed = false; insocket->send(&allowed, 1);
-            return;
-        } else if (rc!=SQLITE_ROW ) {
-            fprintf(stderr, "SQL error (step check piece): %s\n", sqlite3_errmsg(db) ); return;
-        }
+    //fetch actual info from table
+    sprintf(temp_query, "select * from server_maps where id = %d;", requested_id);
+    sinsql_stmt_prep(db,temp_query,sql_statement);
+    sinsql_stmt_step(sql_statement);
 
     //get the table info
     strcpy(table_name,(const char*)sqlite3_column_text(sql_statement, 1));
@@ -190,8 +193,7 @@ void send_piece( sinsocket *insocket ) {
     map_y_size      = sqlite3_column_int(sql_statement,  4);
     map_z_size      = sqlite3_column_int(sql_statement,  5);
 
-    rc = sqlite3_finalize(sql_statement);
-        if(rc!=SQLITE_OK){fprintf(stderr, "SQL error (finalize check piece): %s\n", sqlite3_errmsg(db) ); return; }
+    sinsql_stmt_fin(sql_statement);
 
     //see if this IP can get a piece from table
     ///for now always say true
@@ -211,17 +213,11 @@ void send_piece( sinsocket *insocket ) {
     }
 
     //retrieve the piece hash
-    rc = sqlite3_prepare_v2(db, temp_query, -1, &sql_statement, NULL);
-        if(rc!=SQLITE_OK){fprintf(stderr, "SQL error (prepare retrieve): %s\n", sqlite3_errmsg(db) ); return; }
-    rc = sqlite3_step(sql_statement);
-        if(rc!=SQLITE_ROW){fprintf(stderr, "SQL error (step retrieve): %s\n", sqlite3_errmsg(db) ); return; }
-
-    piece_id = sqlite3_column_int(sql_statement,  0);
-    strcpy(temp_hash, (const char*)sqlite3_column_text(sql_statement,1));
-
-    rc = sqlite3_finalize(sql_statement);
-        if(rc!=SQLITE_OK){fprintf(stderr, "SQL error (finalize retrieve): %s\n", sqlite3_errmsg(db) ); return; }
-
+    sinsql_stmt_prep(db, temp_query, sql_statement);
+    sinsql_stmt_step(sql_statement);
+      piece_id = sqlite3_column_int(sql_statement,  0);
+      strcpy(temp_hash, (const char*)sqlite3_column_text(sql_statement,1));
+    sinsql_stmt_fin(sql_statement);
 
     //send the hash and piece size
     insocket->send(temp_hash, 17);
@@ -232,22 +228,31 @@ void send_piece( sinsocket *insocket ) {
 
     //how much storage do we need?
     int blob_size = piece_x_size*piece_y_size*piece_z_size*26;
-    data_to_send = new char[blob_size];
+    data_to_send = new unsigned char[blob_size];
 
     //construct blob of data to send over the wire
-    construct_blob(data_to_send, piece_id, piece_x_size, piece_y_size, piece_z_size, map_x_size, map_y_size, map_z_size);
+    construct_blob(data_to_send, piece_id, piece_x_size, piece_y_size, piece_z_size, map_x_size, map_y_size, map_z_size, table_name);
 
     insocket->send(data_to_send, blob_size);
 
     delete[] data_to_send;
+
+//////////
+  } catch (int inerror) {
+    throw;
+  }
 }
 
 
 
-void construct_blob( unsigned char *data_in, int id, int p_x, int p_y, int p_z, int m_x, int m_y, int m_z ) {
+void construct_blob( unsigned char *data_in, int id, int p_x, int p_y, int p_z, int m_x, int m_y, int m_z, const char *table_name ) {
 
     int data_counter = 0;
     int check_id;
+    void *temp_blob;
+    int temp_blob_size;
+
+  try {
 
     for (int i=-1; i <= 1; ++i )
         for (int j=-1; j <= 1; ++j)
@@ -261,12 +266,30 @@ void construct_blob( unsigned char *data_in, int id, int p_x, int p_y, int p_z, 
                         data_in[data_counter++] = false;
                 } else {
                     //valid id, check if it is empty
+                    sprintf(temp_query, "select null from %s where id = %d and checkout is null;", table_name, check_id);
+                    if ( sinsql_existence(db, temp_query) ) {
+                        //empty, fill with 0
+                        for ( int ii=0; ii<p_x*p_y*p_z; ++ii )
+                            data_in[data_counter++] = false;
+                    } else {
+                        //not empty! grab the blob
+                        sprintf(temp_query, "select data from %s where id = %d;", table_name, check_id);
+                        sinsql_get_blob(db, temp_query, temp_blob, temp_blob_size);
+                        //loop through the blob, adding to data
+                        for ( int ii=0; ii<p_x*p_y*p_z; ++ii )
+                            data_in[data_counter++] = ((unsigned char*)temp_blob)[ii];
+                        //free the blob
+                        free(temp_blob);
+                    }
+
                 }
             }
 
 
-
-
+//////////
+  } catch (int error) {
+    throw;
+  }
 }
 
 
