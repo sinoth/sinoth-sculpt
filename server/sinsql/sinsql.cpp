@@ -6,466 +6,186 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//
-bool sinsql_existence(sqlite3 *db, const char *query) throw(int) {
-
-  sqlite3_stmt *temp_statement = NULL;
-
-  try {
-
-    bool result;
-    int rc;
-
-    rc = sqlite3_prepare_v2(db, query, -1, &temp_statement, NULL);
+// statement class for RAII magic
+sinsql_statement::sinsql_statement(sqlite3 *db, const char *query) {
+    my_db = db;
+    rc = sqlite3_prepare_v2(db, query, -1, &my_statement, NULL);
     switch ( rc ) {
-        case SQLITE_OK:
-            //everything is fine
-            break;
+        case SQLITE_OK: break;
         default:
-            fprintf(stderr, "SQL error (prepare in existence): %s\n", sqlite3_errmsg(db) );
-            throw (rc);
+            throw (sinsql_exception("sinsql_statement ctor",sqlite3_errmsg(db),rc));
             break;
     }
-
-    rc = sqlite3_step(temp_statement);
+}
+///////////////////////////////////////////////////////////////////////////////
+int sinsql_statement::step() {
+    rc = sqlite3_step(my_statement);
     switch ( rc ) {
+        case SQLITE_DONE: case SQLITE_ROW:
+            //both of these cases are fine.  pass the result
+            return rc; break;
+        default:
+            //everything else is an error, so flip out
+            throw (sinsql_exception("sinsql_statement step",sqlite3_errmsg(my_db),rc));
+            break;
+    }
+}
+///////////////////////////////////////////////////////////////////////////////
+sinsql_statement::~sinsql_statement() throw () {
+    switch( sqlite3_finalize(my_statement) ) {
+        case SQLITE_OK: break;
+        default:
+            fprintf(stderr, "SQL error (sinsql_statement dtor): [%d]%s\n", rc, sqlite3_errmsg(my_db) );
+            //throw (rc); //don't throw! bad things will happen!
+            break;
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+bool sinsql_existence(sqlite3 *db, const char *query) {
+
+    sinsql_statement temp_statement(db, query);
+
+    switch ( temp_statement.step() ) {
         case SQLITE_DONE:
             //no result from query, so send back a negatory
-            result = false;
-            break;
+            return false; break;
         case SQLITE_ROW:
             //found a row! send back an affirmative
-            result = true;
-            break;
+            return true; break;
         default:
-            fprintf(stderr, "SQL error (step in existence): %s\n", sqlite3_errmsg(db) );
-            throw (rc);
             break;
     }
-
-    rc = sqlite3_finalize(temp_statement);
-    switch( rc ) {
-        case SQLITE_OK:
-            //everything is fine
-            break;
-        default:
-            fprintf(stderr, "SQL error (finalize in existence): %s\n", sqlite3_errmsg(db) );
-            throw (rc);
-            break;
-    }
-
-    return result;
-
-//////////
-  } catch (int error) {
-      //free statement if we need to
-      if ( temp_statement != NULL ) {
-          sqlite3_finalize(temp_statement);
-      }
-      throw;
-  }
+    return false;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-bool sinsql_exec(sqlite3 *db, const char *query) throw (int) {
+bool sinsql_exec(sqlite3 *db, const char *query) {
 
-  sqlite3_stmt *temp_statement = NULL;
+    sinsql_statement temp_statement(db, query);
 
-  try {
-
-    bool result;
-    int rc;
-
-    rc = sqlite3_prepare_v2(db, query, -1, &temp_statement, NULL);
-    switch ( rc ) {
-        case SQLITE_OK:
-            //everything is fine
-            break;
-        default:
-            fprintf(stderr, "SQL error (prepare in exec): %s\n", sqlite3_errmsg(db) );
-            throw (rc);
-            break;
-    }
-
-    rc = sqlite3_step(temp_statement);
-    switch ( rc ) {
+    switch ( temp_statement.step() ) {
         case SQLITE_DONE:
             //successful
-            result = false;
-            break;
+            return false; break;
         case SQLITE_ROW:
-            //found a row, this shouldn't be happening but.. whatever..
-            result = false;
-            break;
+            //also okay
+            return false; break;
         default:
-            fprintf(stderr, "SQL error (step in exec): %s\n", sqlite3_errmsg(db) );
-            throw (rc);
             break;
     }
-
-    rc = sqlite3_finalize(temp_statement);
-    switch( rc ) {
-        case SQLITE_OK:
-            //everything is fine
-            break;
-        default:
-            fprintf(stderr, "SQL error (finalize in exec): %s\n", sqlite3_errmsg(db) );
-            throw (rc);
-            break;
-    }
-
-    return result;
-
-//////////
-  } catch (int error) {
-      //free statement if we need to
-      if ( temp_statement != NULL ) {
-          sqlite3_finalize(temp_statement);
-      }
-      throw;
-  }
+    return true;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-bool sinsql_get_int(sqlite3 *db, const char *query, int &output) throw (int) {
+bool sinsql_get_int(sqlite3 *db, const char *query, int &output) {
 
-  sqlite3_stmt *temp_statement = NULL;
+    sinsql_statement temp_statement(db, query);
 
-  try {
-
-    bool result;
-    int rc;
-
-    rc = sqlite3_prepare_v2(db, query, -1, &temp_statement, NULL);
-    switch ( rc ) {
-        case SQLITE_OK:
-            //everything is fine
-            break;
-        default:
-            fprintf(stderr, "SQL error (prepare in get_int): %s\n", sqlite3_errmsg(db) );
-            throw (rc);
-            break;
-    }
-
-    rc = sqlite3_step(temp_statement);
-    switch ( rc ) {
+    switch ( temp_statement.step() ) {
         case SQLITE_DONE:
             //we don't want this! we want a result :( ah well, return error
-            result = true;
-            break;
+            return true; break;
+
         case SQLITE_ROW:
             //yeaaa a result, lets get that sucker
-            output = sqlite3_column_int(temp_statement, 0);
-            result = false;
-            break;
+            output = sqlite3_column_int(temp_statement.me(), 0);
+            return false; break;
+
         default:
-            fprintf(stderr, "SQL error (step in get_int): %s\n", sqlite3_errmsg(db) );
-            throw (rc);
             break;
     }
-
-    rc = sqlite3_finalize(temp_statement);
-    switch( rc ) {
-        case SQLITE_OK:
-            //everything is fine
-            break;
-        default:
-            fprintf(stderr, "SQL error (finalize in get_int): %s\n", sqlite3_errmsg(db) );
-            throw (rc);
-            break;
-    }
-
-    return result;
-
-//////////
-  } catch (int error) {
-      //free statement if we need to
-      if ( temp_statement != NULL ) {
-          sqlite3_finalize(temp_statement);
-      }
-      throw;
-  }
+    return true;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-bool sinsql_get_text(sqlite3 *db, const char *query, char* &output ) throw (int) {
+bool sinsql_get_text(sqlite3 *db, const char *query, char* &output ) {
 
-  sqlite3_stmt *temp_statement = NULL;
-
-  try {
-
-    bool result;
-    int rc;
     int string_size;
+    sinsql_statement temp_statement(db, query);
 
-    rc = sqlite3_prepare_v2(db, query, -1, &temp_statement, NULL);
-    switch ( rc ) {
-        case SQLITE_OK:
-            //everything is fine
-            break;
-        default:
-            fprintf(stderr, "SQL error (prepare in get_text): %s\n", sqlite3_errmsg(db) );
-            throw (rc);
-            break;
-    }
 
-    rc = sqlite3_step(temp_statement);
-    switch ( rc ) {
+    switch ( temp_statement.step() ) {
         case SQLITE_DONE:
             //we don't want this! we want a result :( ah well, return error
             output = NULL;
-            result = true;
-            break;
+            return true; break;
+
         case SQLITE_ROW:
             //make sure its a blob
-            if ( sqlite3_column_type(temp_statement,0) != SQLITE_TEXT ) {
+            if ( sqlite3_column_type(temp_statement.me(),0) != SQLITE_TEXT ) {
                 //not a blob, return error
-                output = NULL; result = true;
-                break;
+                output = NULL;
+                return true; break;
             }
             //grab the result
-            string_size = sqlite3_column_bytes(temp_statement,0);
+            string_size = sqlite3_column_bytes(temp_statement.me(),0);
             output = (char*)malloc(string_size);
-            memcpy(output, sqlite3_column_text(temp_statement, 0), string_size);
-            result = false;
-            break;
+            memcpy(output, sqlite3_column_text(temp_statement.me(), 0), string_size);
+            return false; break;
+
         default:
-            fprintf(stderr, "SQL error (step in get_blob): %s\n", sqlite3_errmsg(db) );
-            throw (rc);
-            break;
+           break;
     }
-
-    rc = sqlite3_finalize(temp_statement);
-    switch( rc ) {
-        case SQLITE_OK:
-            //everything is fine
-            break;
-        default:
-            fprintf(stderr, "SQL error (finalize in get_text): %s\n", sqlite3_errmsg(db) );
-            throw (rc);
-            break;
-    }
-
-    return result;
-
-//////////
-  } catch (int error) {
-      //free statement if we need to
-      if ( temp_statement != NULL ) {
-          sqlite3_finalize(temp_statement);
-      }
-      throw;
-  }
+    return true;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-bool sinsql_get_blob(sqlite3 *db, const char *query, void* &output, int &output_size ) throw(int) {
+bool sinsql_get_blob(sqlite3 *db, const char *query, void* &output, int &output_size ) {
 
-  sqlite3_stmt *temp_statement = NULL;
+    sinsql_statement temp_statement(db, query);
 
-  try {
-
-    bool result;
-    int rc;
-
-    rc = sqlite3_prepare_v2(db, query, -1, &temp_statement, NULL);
-    switch ( rc ) {
-        case SQLITE_OK:
-            //everything is fine
-            break;
-        default:
-            fprintf(stderr, "SQL error (prepare in get_blob): %s\n", sqlite3_errmsg(db) );
-            throw (rc);
-            break;
-    }
-
-    rc = sqlite3_step(temp_statement);
-    switch ( rc ) {
+    switch ( temp_statement.step() ) {
         case SQLITE_DONE:
             //we don't want this! we want a result :( ah well, return error
             output = NULL;
-            result = true;
-            break;
+            return true; break;
+
         case SQLITE_ROW:
             //make sure its a blob
-            if ( sqlite3_column_type(temp_statement,0) != SQLITE_BLOB ) {
+            if ( sqlite3_column_type(temp_statement.me(),0) != SQLITE_BLOB ) {
                 //not a blob, return error
-                output = NULL; output_size = -1; result = true;
-                break;
+                output = NULL; output_size = -1;
+                return true; break;
             }
             //grab the result
-            output_size = sqlite3_column_bytes(temp_statement,0);
+            output_size = sqlite3_column_bytes(temp_statement.me(),0);
             output = (void*)malloc(output_size);
-            memcpy(output, sqlite3_column_blob(temp_statement, 0), output_size);
-            result = false;
-            break;
+            memcpy(output, sqlite3_column_blob(temp_statement.me(), 0), output_size);
+            return false; break;
+
         default:
-            fprintf(stderr, "SQL error (step in get_blob): %s\n", sqlite3_errmsg(db) );
-            throw (rc);
             break;
     }
-
-    rc = sqlite3_finalize(temp_statement);
-    switch( rc ) {
-        case SQLITE_OK:
-            //everything is fine
-            break;
-        default:
-            fprintf(stderr, "SQL error (finalize in get_blob): %s\n", sqlite3_errmsg(db) );
-            throw (rc);
-            break;
-    }
-
-    return result;
-
-//////////
-  } catch (int error) {
-      //free statement if we need to
-      if ( temp_statement != NULL ) {
-          sqlite3_finalize(temp_statement);
-      }
-      throw;
-  }
+    return true;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-bool sinsql_open_db(const char *db_name, sqlite3* &db ) throw (int) {
-  try {
+bool sinsql_open_db(const char *db_name, sqlite3* &db ) {
 
     int rc;
-    int result;
 
     rc = sqlite3_open(db_name, &db);
     switch ( rc ) {
         case SQLITE_OK:
             //everything is fine
-            result = false;
-            break;
+            return false; break;
         default:
             //freak out!
-            fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-            sqlite3_close(db);
-            db = NULL;
-            throw (rc);
+            throw (sinsql_exception("sinsql_open_db",sqlite3_errmsg(db),rc));
             break;
     }
-
-    return result;
-
-//////////
-  } catch ( int error ) {
-      throw;
-  }
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
-//
-bool sinsql_stmt_prep(sqlite3 *db, const char *query, sqlite3_stmt* &statement) throw (int) {
-  try {
-
-    int rc;
-    int result;
-
-    rc = sqlite3_prepare_v2(db,         // Database handle
-                            query,      // SQL statement, UTF-8 encoded
-                            -1,         // Maximum length of zSql in bytes (-1 is till \0)
-                            &statement, // OUT: Statement handle
-                            NULL        // OUT: Pointer to unused portion of zSql
-                            );
-
-    switch ( rc ) {
-        case SQLITE_OK:
-            //everything is fine
-            result = false;
-            break;
-        default:
-            //badness
-            fprintf(stderr, "SQL error (stmt prepare): %s\n", sqlite3_errmsg(db) );
-            sqlite3_finalize(statement);
-            throw (rc);
-            break;
-    }
-
-    return result;
-
-//////////
-  } catch ( int error ) {
-      throw;
-  }
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-//
-bool sinsql_stmt_step(sqlite3_stmt* &statement) throw (int) {
-  try {
-
-    int rc;
-    int result;
-
-    rc = sqlite3_step(statement);
-    switch ( rc ) {
-        case SQLITE_DONE:
-            //everything is fine
-            result = false;
-            break;
-        case SQLITE_ROW:
-            //return a 1 when we get a row
-            result = true;
-            break;
-        default:
-            //badness
-            fprintf(stderr, "SQL error (stmt step): %d\n", rc); //sqlite3_errmsg(db)
-            sqlite3_finalize(statement);
-            throw (rc);
-            break;
-    }
-
-    return result;
-
-//////////
-  } catch ( int error ) {
-      throw;
-  }
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-//
-bool sinsql_stmt_fin(sqlite3_stmt* &statement) throw (int) {
-  try {
-
-    int rc;
-    int result;
-
-    rc = sqlite3_finalize(statement);
-    switch ( rc ) {
-        case SQLITE_OK:
-            //everything is fine
-            result = false;
-            break;
-        default:
-            //badness
-            fprintf(stderr, "SQL error (stmt finalize): %d\n", rc); //sqlite3_errmsg(db)
-            throw (rc);
-            break;
-    }
-
-    return result;
-
-//////////
-  } catch ( int error ) {
-      throw;
-  }
-}

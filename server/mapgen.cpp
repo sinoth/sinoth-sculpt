@@ -44,9 +44,7 @@ bool create_new_map(const char* name_table,
                     int distribution    ) {
 
     sqlite3 *db;
-    char temp_string[200];
-    sqlite3_stmt *insert_statement;
-    bool unique;
+    char temp_string[300];
 
     //temp table values
     unsigned char map_id;
@@ -72,7 +70,7 @@ bool create_new_map(const char* name_table,
     printf("Created table.\n");
 
     //generate a map ID and make sure it isn't in use
-    unique = false;
+    bool unique = false;
     while (!unique) {
         map_id = genrand_open_close()*255;
         sprintf(temp_string, "select null from server_maps where id = %d;", map_id);
@@ -97,7 +95,7 @@ bool create_new_map(const char* name_table,
 
     //prepare map insert statement
     sprintf(temp_string, "insert into %s (id,hash) values (?,?);", name_table);
-    sinsql_stmt_prep(db, temp_string, insert_statement);
+    sinsql_statement insert_statement(db, temp_string);
 
     //populate the database with the correct number of chunks
     sinsql_exec(db, "BEGIN;");
@@ -108,33 +106,32 @@ bool create_new_map(const char* name_table,
         table_hash[16] = '\0';
 
         //bind all the values to insert
-        sqlite3_bind_int(insert_statement, 1, table_id);
-        sqlite3_bind_text(insert_statement, 2, table_hash,-1,SQLITE_STATIC);
+        sqlite3_bind_int(insert_statement.me(), 1, table_id);
+        sqlite3_bind_text(insert_statement.me(), 2, table_hash,-1,SQLITE_STATIC);
 
         //execute the insert
-        sinsql_stmt_step(insert_statement);
+        insert_statement.step();
 
         //reset the statement to be used again
-        sqlite3_reset(insert_statement);
+        insert_statement.reset();
     }
     sinsql_exec(db, "COMMIT;");
 
-    //clean up the statement
-    sinsql_stmt_fin(insert_statement);
     printf("Created map pieces.\n");
 
     sqlite3_close(db);
+    return false;
 
-  } catch ( int error ) {
-        //print the last error if db is valid
-        if ( db != NULL )
-            printf("Last SQL error: %s\n", sqlite3_errmsg(db));
-        //close the database if it isn't already
-        if ( db != NULL ) sqlite3_close(db);
+//////////
+  } catch ( sinsql_exception &ex) {
+        //print the error info
+        printf("SQL error in (%s): [%d]%s\n", ex.getMsg(), ex.getRC(), ex.getDBMsg() );
+
+        //close the database
+        sqlite3_close(db);
 
         return true;
   }
-    return false;
 }
 
 
