@@ -356,3 +356,11 @@ void scene::serverlist_refresh() {
 
     myself->retrieveServerList();
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+void scene::serverbutton_one() {
+
+    myself->participateInServer(1);
+}

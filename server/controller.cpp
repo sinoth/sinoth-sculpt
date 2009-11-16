@@ -13,10 +13,10 @@ int main( int, char** ) {
     unsigned char terminate_request = 0x55;
     client_socket.send( &terminate_request, 1 );
 
-    need to fix sinsocket so this isn't needed!
-    scanf("%c",&terminate_request);
+    //need to fix sinsocket so this isn't needed!
+    //scanf("%c",&terminate_request);
 
-    client_socket.disconnect();
+    client_socket.beginDisconnect();
 
     return 0;
 }

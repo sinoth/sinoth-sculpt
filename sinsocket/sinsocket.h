@@ -15,7 +15,9 @@ public:
     //shared functions
     int send( const void *data, int len ); //blocking
     int recv( const void *buf, int len ); //blocking
-    int disconnect();
+    int beginDisconnect();
+    int endDisconnect();
+    int closeSinsocket();
 
     sinsocket(int my_sockd=-1);
     ~sinsocket();

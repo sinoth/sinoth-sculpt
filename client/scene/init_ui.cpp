@@ -469,7 +469,7 @@ void scene::init_ui() {
     ui_button *server1_button = (ui_button*)mainGui.addWidget("serverbutton_1", UI_WIDGET_BUTTON);
     server1_button->setStyle(list_button_style);
     server1_button->setXY(10,40); server1_button->setWH(480,20);
-    //server1_button->setPayload(options_res_right);
+    server1_button->setPayload(serverbutton_one);
     ui_button *server2_button = (ui_button*)mainGui.addWidget("serverbutton_2", UI_WIDGET_BUTTON);
     server2_button->setStyle(list_button_style);
     server2_button->setXY(10,60); server2_button->setWH(480,20);

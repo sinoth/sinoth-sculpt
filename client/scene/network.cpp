@@ -1,20 +1,9 @@
 
 #include "scene.h"
 
-typedef struct serverinfo_s {
-    unsigned char server_id;
-    char server_name[100];
-    int total_pieces;
-    int pieces_left;
-    unsigned char player_total;
-    unsigned char player_left;
-} serverinfo;
-
-
 bool scene::retrieveServerList() {
 
     sinsocket client_socket;
-    serverinfo servers[5];
     unsigned char list_request = 0x28;
     unsigned char num_of_servers;
     unsigned char server_name_length;
@@ -53,7 +42,7 @@ bool scene::retrieveServerList() {
     }
 
     //clean up the socket
-    client_socket.disconnect();
+    client_socket.beginDisconnect();
 
     //populate list with correct values
     for ( int i=0; i < 5; ++i ) {
@@ -97,4 +86,50 @@ bool scene::retrieveServerList() {
     return 0;
 }
 
+
+
+bool scene::participateInServer( int inserver ) {
+
+    sinsocket client_socket;
+    unsigned char participate_request = 0x43;
+    unsigned char can_participate = 0;
+    unsigned int selected_server = servers[inserver-1].server_id;
+
+    if ( client_socket.connect("localhost",35610) ) {
+        printf("ERROR: could not connect to localhost!\n"); return 1; }
+
+    //ask to participate (0x43) in a specific server
+    client_socket.send( &participate_request, 1 );
+    client_socket.send( &selected_server, 1 );
+
+    //see if we're able to get a piece
+    client_socket.recv( &can_participate, 1 );
+
+    if ( !can_participate ) {
+        printf("* NETWORK: cannot participate in server_id %d!\n", servers[inserver-1].server_id);
+        return 1;
+    }
+
+    //grab the hash for our piece
+    client_socket.recv( &my_hash, 17 );
+    printf("* NETWORK: received hash [%s] for our piece\n", my_hash);
+
+    //grab the size
+    client_socket.recv( &piece_x_size, 1 );
+    client_socket.recv( &piece_y_size, 1 );
+    client_socket.recv( &piece_z_size, 1 );
+
+    int blob_size = piece_x_size*piece_y_size*piece_z_size*26;
+    piece_blob = new unsigned char[blob_size];
+
+    //get da blob
+    client_socket.recv( &piece_blob, blob_size );
+
+    //we're done!
+    client_socket.beginDisconnect();
+
+    printf("Successfully received blob of size %d\n", blob_size);
+
+    return 0;
+}
 

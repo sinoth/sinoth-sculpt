@@ -118,7 +118,7 @@ sinsocket::sinsocket(int in_fd) : ready_for_action(false),
 //
 sinsocket::~sinsocket() {
 
-    if ( ready_for_action ) disconnect();
+    if ( ready_for_action ) closeSinsocket();
 
     //if this guy is the last socket, go ahead and uninit
     if ( socket_count == 1 && done_init ) {
@@ -225,6 +225,8 @@ sinsocket* sinsocket::accept() {
     printf("sinsocket.accept: got connection from %s\n", connection_name);
     #endif
 
+    ready_for_action = true;
+
     return new sinsocket(new_fd);
 
 }
@@ -254,6 +256,12 @@ int sinsocket::send( const void *indata, int inlength ) {
 ///////////////////////////////////////////////////////////////////////////////
 // returns -1 if the peer disconnected, -2 for error, bytes received otherwise
 int sinsocket::recv( const void *inbuffer, int inlength ) {
+
+    //make sure we have a valid connection
+    if ( !ready_for_action ) {
+        fprintf(stderr, "ERROR: sinsocket.recv: socket not ready to receive\n");
+        return -2; }
+
     //int bytes_recv = bytes_in_buffer;
     int bytes_left = inlength-bytes_in_buffer;
     int temp_recv = 0;
@@ -265,6 +273,12 @@ int sinsocket::recv( const void *inbuffer, int inlength ) {
         bytes_left -= temp_recv;
     }
 
+    //error
+    if ( temp_recv == -1 ) {
+        printf("WSAError: %d\n", WSAGetLastError());
+        perror("ERROR: sinsocket.recv");
+        return -2; }
+
     //copy data from internal buffer to passed buffer
     for ( int i=0; i < inlength; ++i )
         { ((char*)inbuffer)[i] = recv_buffer[i]; }
@@ -273,12 +287,6 @@ int sinsocket::recv( const void *inbuffer, int inlength ) {
     bytes_in_buffer -= inlength;
     for ( int i=0; i < bytes_in_buffer; ++i )
         { recv_buffer[i] = recv_buffer[i+inlength]; }
-
-
-    //error
-    if ( temp_recv == -1 ) {
-        perror("ERROR: sinsocket.recv");
-        return -2; }
 
     //peer disconnected
     if ( temp_recv == 0 ) {
@@ -293,10 +301,73 @@ int sinsocket::recv( const void *inbuffer, int inlength ) {
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-int sinsocket::disconnect() {
+int sinsocket::closeSinsocket() {
     close(my_socket);
     ready_for_action = false;
     return 0;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// returns 0 on success, 1 on error
+//
+int sinsocket::beginDisconnect() {
+    //tell the client we are done
+    shutdown(my_socket, SD_SEND);
+
+    //wait for recv to return a 0, meaning client has disconnected
+    int temp_recv = ::recv(my_socket,NULL,0,0);
+
+    if ( temp_recv == 0 ) {
+        //we're done here
+        closeSinsocket();
+        return 0;
+    } else if ( temp_recv == -1 ) {
+        //ah well, report it and close anyway
+        fprintf(stderr, "ERROR: sinsocket.beginDisconnect: recv returned -1\n");
+        closeSinsocket();
+        return 1;
+    } else {
+        //who knows! lets just report and move on..
+        fprintf(stderr, "ERROR: sinsocket.beginDisconnect: recv returned %d\n", temp_recv);
+        closeSinsocket();
+        return 1;
+    }
+
+    //shouldn't be here..
+    return 1;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+int sinsocket::endDisconnect() {
+    //wait for recv to return a 0, meaning client has disconnected
+    int temp_recv = ::recv(my_socket,NULL,0,0);
+
+    if ( temp_recv == 0 ) {
+        //tell the client we are done
+        shutdown(my_socket, SD_SEND);
+
+        temp_recv = ::recv(my_socket,NULL,0,0);
+        if ( temp_recv == -1 ) {
+            //other side is down, let us end as well
+            closeSinsocket();
+            return 0;
+        }
+    } else if ( temp_recv == -1 ) {
+        //ah well, close and move on
+        fprintf(stderr, "ERROR: sinsocket.endDisconnect: recv returned -1\n");
+        closeSinsocket();
+        return 1;
+    } else {
+        //wtf, who knows!
+        fprintf(stderr, "ERROR: sinsocket.endDisconnect: recv returned %d\n",temp_recv);
+        closeSinsocket();
+        return 1;
+    }
+
+    //shouldn't be here..
+    return 1;
 }
 
 
@@ -349,6 +420,8 @@ int sinsocket::connect(const char* inaddress, int inport ) {
     #endif
 
     freeaddrinfo(servinfo); // all done with this structure
+
+    ready_for_action = true;
 
     return 0;
 }

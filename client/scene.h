@@ -11,6 +11,16 @@
 //#include <sinprim.h>
 
 
+typedef struct serverinfo_s {
+    unsigned char server_id;
+    char server_name[100];
+    int total_pieces;
+    int pieces_left;
+    unsigned char player_total;
+    unsigned char player_left;
+} serverinfo;
+
+
 class scene
 {
 public:
@@ -55,6 +65,13 @@ public:
     freetype_font_controller fontController;
     freetype_font font12,font18;
 
+    //network stuff
+    serverinfo servers[5];
+    char my_hash[17];
+    unsigned char piece_x_size, piece_y_size, piece_z_size;
+    unsigned char *piece_blob;
+
+
     //client stuff
     char username[30];
     bool loaded_username;
@@ -89,6 +106,7 @@ public:
 
     //network stuff
     bool retrieveServerList();
+    bool participateInServer(int);
 
     //input and callbacks
 	void keyboardInput(int, int);
@@ -128,6 +146,7 @@ public:
     void static options_res_apply();
     void static serverlist_refresh();
     void static serverlist_close();
+    void static serverbutton_one();
 
     //self-reference variable
     //required for C callbacks

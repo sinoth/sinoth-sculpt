@@ -21,7 +21,7 @@ int main(int, char **) {
                         5,5,5,     //x,y,z size
                         5,5,5,     //piece x,y,z size
                         20,        //pieces per user
-                        1,          //recharge rate (hours)
+                        1,         //recharge rate (hours)
                         0          //distribution method
                         ) ) {
         //something went wrong!

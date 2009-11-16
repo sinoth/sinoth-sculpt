@@ -64,7 +64,7 @@ int main(int, char **) {
                 break;
         }
 
-        incoming_connection->disconnect();
+        incoming_connection->endDisconnect();
 
     }
 
@@ -160,14 +160,15 @@ void send_piece( sinsocket *insocket ) {
     if ( !sinsql_existence(db, temp_query) ) {
         //this server is not found, send back a negatory
         allowed = false; insocket->send(&allowed, 1);
+        printf("ERROR: requested invalid server_id %d\n",requested_id);
         return;
     }
-
+printf("x");
     //fetch actual info from table
     sprintf(temp_query, "select * from server_maps where id = %d;", requested_id);
     sinsql_statement fetch_statement(db,temp_query);
     fetch_statement.step();
-
+printf("x");
     //get the table info
     strcpy(table_name,(const char*)sqlite3_column_text(fetch_statement.me(), 1));
     distribution    = sqlite3_column_int(fetch_statement.me(), 13);
@@ -179,7 +180,7 @@ void send_piece( sinsocket *insocket ) {
     map_y_size      = sqlite3_column_int(fetch_statement.me(),  4);
     map_z_size      = sqlite3_column_int(fetch_statement.me(),  5);
 
-
+printf("x");
     //see if this IP can get a piece from table
     ///for now always say true
     //sprintf(temp_query, "select name from server_maps where id = %d;", requested_id);
@@ -188,7 +189,7 @@ void send_piece( sinsocket *insocket ) {
     allowed = true;
     insocket->send(&allowed, 1);
 
-
+printf("x");
     //pick a piece to send based on distribution method
     switch ( distribution ) {
         case 0: //purely random
@@ -196,19 +197,19 @@ void send_piece( sinsocket *insocket ) {
             break;
         default: break;
     }
-
+printf("x");
     //retrieve the piece hash
     sinsql_statement piece_statement(db, temp_query);
     piece_statement.step();
     piece_id = sqlite3_column_int(piece_statement.me(),  0);
     strcpy(temp_hash, (const char*)sqlite3_column_text(piece_statement.me(),1));
-
+printf("x");
     //send the hash and piece size
     insocket->send(temp_hash, 17);
     insocket->send(&piece_x_size, 1);
     insocket->send(&piece_y_size, 1);
     insocket->send(&piece_z_size, 1);
-
+printf("x");
 
     //how much storage do we need?
     int blob_size = piece_x_size*piece_y_size*piece_z_size*26;
@@ -216,10 +217,14 @@ void send_piece( sinsocket *insocket ) {
 
     //construct blob of data to send over the wire
     construct_blob(data_to_send, piece_id, piece_x_size, piece_y_size, piece_z_size, map_x_size, map_y_size, map_z_size, table_name);
+printf("x");
 
     insocket->send(data_to_send, blob_size);
+printf("x");
 
-    delete[] data_to_send;
+    //delete[] data_to_send;
+
+    printf("Successfully sent blob of size %d\n", blob_size);
 
 }
 
@@ -233,6 +238,7 @@ void construct_blob( unsigned char *data_in, int id, int p_x, int p_y, int p_z, 
     void *temp_blob;
     int temp_blob_size;
 
+    printf("\nInside construct blob...\n");
 
     for (int i=-1; i <= 1; ++i )
         for (int j=-1; j <= 1; ++j)
