@@ -11,7 +11,7 @@
 
 //global database stuff
 sqlite3 *db;
-char temp_query[200];
+char temp_query[300];
 
 
 //prototypes
@@ -65,6 +65,7 @@ int main(int, char **) {
         }
 
         incoming_connection->endDisconnect();
+        delete incoming_connection;
 
     }
 
@@ -163,12 +164,12 @@ void send_piece( sinsocket *insocket ) {
         printf("ERROR: requested invalid server_id %d\n",requested_id);
         return;
     }
-printf("x");
+
     //fetch actual info from table
     sprintf(temp_query, "select * from server_maps where id = %d;", requested_id);
     sinsql_statement fetch_statement(db,temp_query);
     fetch_statement.step();
-printf("x");
+
     //get the table info
     strcpy(table_name,(const char*)sqlite3_column_text(fetch_statement.me(), 1));
     distribution    = sqlite3_column_int(fetch_statement.me(), 13);
@@ -180,7 +181,7 @@ printf("x");
     map_y_size      = sqlite3_column_int(fetch_statement.me(),  4);
     map_z_size      = sqlite3_column_int(fetch_statement.me(),  5);
 
-printf("x");
+
     //see if this IP can get a piece from table
     ///for now always say true
     //sprintf(temp_query, "select name from server_maps where id = %d;", requested_id);
@@ -189,7 +190,7 @@ printf("x");
     allowed = true;
     insocket->send(&allowed, 1);
 
-printf("x");
+
     //pick a piece to send based on distribution method
     switch ( distribution ) {
         case 0: //purely random
@@ -197,19 +198,19 @@ printf("x");
             break;
         default: break;
     }
-printf("x");
+
     //retrieve the piece hash
     sinsql_statement piece_statement(db, temp_query);
     piece_statement.step();
     piece_id = sqlite3_column_int(piece_statement.me(),  0);
     strcpy(temp_hash, (const char*)sqlite3_column_text(piece_statement.me(),1));
-printf("x");
+
     //send the hash and piece size
     insocket->send(temp_hash, 17);
     insocket->send(&piece_x_size, 1);
     insocket->send(&piece_y_size, 1);
     insocket->send(&piece_z_size, 1);
-printf("x");
+
 
     //how much storage do we need?
     int blob_size = piece_x_size*piece_y_size*piece_z_size*26;
@@ -217,11 +218,11 @@ printf("x");
 
     //construct blob of data to send over the wire
     construct_blob(data_to_send, piece_id, piece_x_size, piece_y_size, piece_z_size, map_x_size, map_y_size, map_z_size, table_name);
-printf("x");
+
 
     insocket->send(data_to_send, blob_size);
-printf("x");
 
+    ///memory leak :/ not sure why it crashes
     //delete[] data_to_send;
 
     printf("Successfully sent blob of size %d\n", blob_size);
@@ -238,11 +239,14 @@ void construct_blob( unsigned char *data_in, int id, int p_x, int p_y, int p_z, 
     void *temp_blob;
     int temp_blob_size;
 
-    printf("\nInside construct blob...\n");
+    //printf("\nInside construct blob...\n");
 
     for (int i=-1; i <= 1; ++i )
         for (int j=-1; j <= 1; ++j)
             for (int k=-1; k <= 1; ++k) {
+
+                //skip the one in the middle
+                if ( !i && !j && !k ) continue;
 
                 check_id = id + (i) + (j*m_x) + (k*m_x*m_y);
 
@@ -253,12 +257,15 @@ void construct_blob( unsigned char *data_in, int id, int p_x, int p_y, int p_z, 
                 } else {
                     //valid id, check if it is empty
                     sprintf(temp_query, "select null from %s where id = %d and checkout is null;", table_name, check_id);
+                    //printf("%s\n",temp_query);
                     if ( sinsql_existence(db, temp_query) ) {
+                        //printf("empty\n");
                         //empty, fill with 0
                         for ( int ii=0; ii<p_x*p_y*p_z; ++ii )
                             data_in[data_counter++] = false;
                     } else {
                         //not empty! grab the blob
+                        //printf("not empty\n");
                         sprintf(temp_query, "select data from %s where id = %d;", table_name, check_id);
                         sinsql_get_blob(db, temp_query, temp_blob, temp_blob_size);
                         //loop through the blob, adding to data
@@ -271,6 +278,8 @@ void construct_blob( unsigned char *data_in, int id, int p_x, int p_y, int p_z, 
                 }
             }
 
+
+    //printf("counter: %d\n", data_counter);
 
 }
 

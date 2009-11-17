@@ -111,24 +111,44 @@ bool scene::participateInServer( int inserver ) {
     }
 
     //grab the hash for our piece
-    client_socket.recv( &my_hash, 17 );
+    client_socket.recv( my_hash, 17 );
     printf("* NETWORK: received hash [%s] for our piece\n", my_hash);
 
     //grab the size
     client_socket.recv( &piece_x_size, 1 );
     client_socket.recv( &piece_y_size, 1 );
     client_socket.recv( &piece_z_size, 1 );
+    //printf("* NETWORK: received piece size of %d, %d, %d\n", piece_x_size, piece_y_size, piece_z_size);
+
 
     int blob_size = piece_x_size*piece_y_size*piece_z_size*26;
-    piece_blob = new unsigned char[blob_size];
+    piece_blob = new char[blob_size];
 
     //get da blob
-    client_socket.recv( &piece_blob, blob_size );
+    //printf("* NETWORK: attempting to receive blob size %d\n", blob_size);
+    client_socket.recv( piece_blob, blob_size );
 
     //we're done!
     client_socket.beginDisconnect();
+    printf("* NETWORK: Successfully received blob of size %d\n", blob_size);
 
-    printf("Successfully received blob of size %d\n", blob_size);
+    //make our grid and cubes
+    generateVA();
+
+    //reset the camera in a random orientation
+    resetCamera();
+
+    //close all the menus
+    myself->mainGui.getWindow("ServerList")->doFade(UI_FADE_OUT, 10);
+
+    //grab the mouse
+    mouseGrab = true;
+    glfwDisable( GLFW_MOUSE_CURSOR );
+
+    //let the program know we have a piece
+    have_piece = true;
+
+
 
     return 0;
 }

@@ -33,6 +33,7 @@ scene::scene() {
     confirm_quit = false;
     mainmenu_visible = true;
     current_vid_mode = 0;
+    have_piece = false;
 }
 
 scene::~scene() {}

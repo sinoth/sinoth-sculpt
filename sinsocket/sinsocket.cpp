@@ -223,9 +223,11 @@ sinsocket* sinsocket::accept() {
 
     #ifdef _DEBUG
     printf("sinsocket.accept: got connection from %s\n", connection_name);
+    //int optlen = sizeof(int);
+    //int optval;
+    //getsockopt(new_fd, SOL_SOCKET, SO_MAX_MSG_SIZE, (char *)&optval, &optlen);
+    //printf("sinsocket.accept: maximum packet size: %d\n", optval);
     #endif
-
-    ready_for_action = true;
 
     return new sinsocket(new_fd);
 
@@ -267,7 +269,8 @@ int sinsocket::recv( const void *inbuffer, int inlength ) {
     int temp_recv = 0;
 
     while ( bytes_in_buffer < inlength ) {
-        temp_recv = ::recv(my_socket, recv_buffer+bytes_in_buffer, bytes_left, 0);
+        //printf("SINSOCKET.RECV: bytes_in_buffer: %d, inlength: %d, bytes_left: %d\n", bytes_in_buffer, inlength, bytes_left);
+        temp_recv = ::recv(my_socket, recv_buffer+bytes_in_buffer, bytes_left, 0 ); //MSG_WAITALL = 0x8
         if ( temp_recv == -1 || temp_recv == 0 ) break; //something bad happened or disconnect
         bytes_in_buffer += temp_recv;
         bytes_left -= temp_recv;
@@ -279,9 +282,10 @@ int sinsocket::recv( const void *inbuffer, int inlength ) {
         perror("ERROR: sinsocket.recv");
         return -2; }
 
+
     //copy data from internal buffer to passed buffer
     for ( int i=0; i < inlength; ++i )
-        { ((char*)inbuffer)[i] = recv_buffer[i]; }
+        { /*printf("%d ",i);*/ ((char*)inbuffer)[i] = recv_buffer[i]; }
 
     //shift back any data that remains in the buffer
     bytes_in_buffer -= inlength;

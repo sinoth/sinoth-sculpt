@@ -50,5 +50,11 @@ void scene::render() {
 }
 
 
+void scene::resetCamera() {
+
+}
 
 
+void scene::generateVA() {
+
+}

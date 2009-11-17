@@ -572,23 +572,6 @@ void scene::init_ui() {
 
     /////////////////
 
-    ui_label *serverlabel_status = (ui_label*)mainGui.addWidget("serverlabel_status", UI_WIDGET_LABEL);
-    serverlabel_status->setXY(10,170);
-    serverlabel_status->setWH(200,20);
-    serverlabel_status->my_font.setFont(&font12);
-    serverlabel_status->my_font.setColor(0.2,0.2,0.2,1.0);
-    //serverlabel_status->my_font.setVertAlign(FONT_ALIGN_CENTER);
-    serverlabel_status->my_font.setText("Communication status:");
-    serverlabel_status->my_font.cook();
-
-    ui_label *comm_status = (ui_label*)mainGui.addWidget("comm_status", UI_WIDGET_LABEL);
-    comm_status->setXY(10,190);
-    comm_status->setWH(400,20);
-    comm_status->my_font.setFont(&font12, FONT_HINT_DYNAMIC);
-    comm_status->my_font.setColor(0.2,0.2,0.2,1.0);
-    //comm_status->my_font.setVertAlign(FONT_ALIGN_CENTER);
-    comm_status->my_font.setText("No connection");
-    comm_status->my_font.cook();
 
     ui_button_np *serverlist_yes_button = (ui_button_np*)mainGui.addWidget("list_refresh", UI_WIDGET_BUTTON_NP);
     serverlist_yes_button->setStyle(default_np_style);
@@ -615,6 +598,26 @@ void scene::init_ui() {
     serverlist_no_button->my_font.setText("Close");
     serverlist_no_button->my_font.cook();
     serverlist_no_button->setPayload(serverlist_close);
+
+    ui_label *serverlabel_status = (ui_label*)mainGui.addWidget("serverlabel_status", UI_WIDGET_LABEL);
+    serverlabel_status->setXY(10,170);
+    serverlabel_status->setWH(200,20);
+    serverlabel_status->my_font.setFont(&font12);
+    serverlabel_status->my_font.setColor(0.2,0.2,0.2,1.0);
+    //serverlabel_status->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    serverlabel_status->my_font.setText("Communication status:");
+    serverlabel_status->my_font.cook();
+
+    ui_label *comm_status = (ui_label*)mainGui.addWidget("comm_status", UI_WIDGET_LABEL);
+    comm_status->setXY(10,190);
+    comm_status->setWH(400,20);
+    comm_status->my_font.setFont(&font12, FONT_HINT_DYNAMIC);
+    comm_status->my_font.setColor(0.2,0.2,0.2,1.0);
+    //comm_status->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    comm_status->my_font.setText("No connection");
+    comm_status->my_font.cook();
+
+
 
     serverlist_window->cook();
     serverlist_window->setVisible(true);

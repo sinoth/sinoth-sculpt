@@ -55,6 +55,7 @@ public:
 
     // camera stuff
     sinCamera mainCamera;
+    void resetCamera();
 
     // light stuff
     sinLighting mainLighting;
@@ -69,8 +70,15 @@ public:
     serverinfo servers[5];
     char my_hash[17];
     unsigned char piece_x_size, piece_y_size, piece_z_size;
-    unsigned char *piece_blob;
+    char *piece_blob;
 
+    //edit mode stuff
+    void generateVA();
+    bool have_piece;
+    std::vector<float> vec_grid_lines;
+    std::vector<float> vec_grid_lines_color;
+    std::vector<float> vec_grid_triangles;
+    std::vector<float> vec_grid_triangles_color;
 
     //client stuff
     char username[30];

@@ -29,7 +29,7 @@ private:
     char my_port[6];
 
     //buffer madness
-    char recv_buffer[1024];
+    char recv_buffer[32768];
     int bytes_in_buffer;
 
     //to know if the program-wide init has been run
