@@ -52,9 +52,29 @@ void scene::render() {
 
 void scene::resetCamera() {
 
+    mainCamera.reset();
+
+    float random_heading = ((float)rand()/(float)(RAND_MAX) * 360.0);
+    float random_pitch = ((float)rand()/(float)(RAND_MAX) * mainCamera.getMaxPitch() * 2) - mainCamera.getMaxPitch();
+
+    mainCamera.setHeading(random_heading);
+    mainCamera.setPitch(random_pitch);
+
+    mainCamera.recalculateAngle();
 }
 
 
 void scene::generateVA() {
+
+
+    for (int i=0; i < piece_x_size; ++i) {
+      for (int i=0; i < piece_x_size; ++i) {
+        for (int i=0; i < piece_x_size; ++i) {
+
+            here
+
+        }
+      }
+    }
 
 }

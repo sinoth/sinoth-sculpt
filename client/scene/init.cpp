@@ -1,5 +1,7 @@
 
 #include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
 
 #include "scene.h"
 
@@ -91,6 +93,9 @@ bool scene::init() {
     glfwSetMouseButtonCallback( wrapper_mouse_click );
     glfwSetMouseWheelCallback( wrapper_mouse_wheel );
     glfwSetWindowCloseCallback( wrapper_window_close );
+
+    //seed the randomness
+    srand(time(NULL));
 
     printf("* init: Scene initalization complete. [%fs]\n", glfwGetTime()-elapsed_time);
 

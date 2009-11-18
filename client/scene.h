@@ -69,12 +69,12 @@ public:
     //network stuff
     serverinfo servers[5];
     char my_hash[17];
-    unsigned char piece_x_size, piece_y_size, piece_z_size;
     char *piece_blob;
 
     //edit mode stuff
     void generateVA();
     bool have_piece;
+    unsigned char piece_x_size, piece_y_size, piece_z_size;
     std::vector<float> vec_grid_lines;
     std::vector<float> vec_grid_lines_color;
     std::vector<float> vec_grid_triangles;
