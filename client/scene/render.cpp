@@ -63,15 +63,20 @@ void scene::resetCamera() {
     mainCamera.recalculateAngle();
 }
 
-
 void scene::generateVA() {
 
 
-    for (int i=0; i < piece_x_size; ++i) {
-      for (int i=0; i < piece_x_size; ++i) {
-        for (int i=0; i < piece_x_size; ++i) {
+    for (int i=0; i < piece_x_size+1; ++i) {
+      for (int j=0; j < piece_y_size+1; ++j) {
+        for (int k=0; k < piece_z_size+1; ++k) {
 
-            here
+            vec_grid_lines.push_back( );
+
+            vec_grid_lines_color.push_back( );
+            vec_grid_lines_color.push_back( );
+            vec_grid_lines_color.push_back( );
+            vec_grid_lines_color.push_back( );
+
 
         }
       }
