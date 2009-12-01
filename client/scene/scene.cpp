@@ -34,6 +34,9 @@ scene::scene() {
     mainmenu_visible = true;
     current_vid_mode = 0;
     have_piece = false;
+
+    piece_x_size = piece_y_size = piece_z_size = 5;
+
 }
 
 scene::~scene() {}

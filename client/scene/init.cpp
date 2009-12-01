@@ -72,7 +72,7 @@ bool scene::init() {
 
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-    //glPointSize(1.0);
+    glPointSize(3.0);
     //glLineWidth(1.0);
 
     loadTextures();
@@ -155,8 +155,8 @@ bool scene::reInit() {
 
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-    //glPointSize(1.0);
-    //glLineWidth(1.0);
+    //glPointSize(5.0);
+    //glLineWidth(5.0);
 
     loadTextures();
 
@@ -178,6 +178,7 @@ bool scene::reInit() {
 
     return 0;
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // initialize 2D
