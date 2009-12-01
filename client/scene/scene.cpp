@@ -11,8 +11,8 @@ scene::scene() {
     // screen stuff
     fullscreen = false;
     fullscreen_checkbox = fullscreen;
-    res_win_x = 800; res_win_y = 600;
-    res_full_x = 800; res_full_y = 600;
+    res_win_x = 640; res_win_y = 480;
+    res_full_x = 640; res_full_y = 480;
 
     // input stuff
     mouseGrab = false;

@@ -252,6 +252,7 @@ void scene::init_ui() {
     mainmenu_exit_button->my_font.cook();
     mainmenu_exit_button->setPayload(mainmenu_quit);
 
+    mainmenu_window->setVisible(false);
     mainmenu_window->cook();
 
 
@@ -620,7 +621,7 @@ void scene::init_ui() {
 
 
     serverlist_window->cook();
-    serverlist_window->setVisible(true);
+    serverlist_window->setVisible(false);
 
 
 

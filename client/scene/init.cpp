@@ -97,6 +97,9 @@ bool scene::init() {
     //seed the randomness
     srand(time(NULL));
 
+    //\/for testing
+    generateVA();
+
     printf("* init: Scene initalization complete. [%fs]\n", glfwGetTime()-elapsed_time);
 
     return 0;

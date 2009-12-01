@@ -11,6 +11,7 @@ void scene::render() {
     mainCamera.setPerspective();
     mainLighting.doLighting();
 
+    glDisable(GL_TEXTURE_2D);
 
     glBegin(GL_TRIANGLES);
         glColor4f(1.0,0.0,0.0,1.0); glVertex3f(0,0,-5);
@@ -70,16 +71,33 @@ void scene::generateVA() {
       for (int j=0; j < piece_y_size+1; ++j) {
         for (int k=0; k < piece_z_size+1; ++k) {
 
-            vec_grid_lines.push_back( );
+            //first we'll generate the vertex index list
+            //starts at the front, bottom, left corner
+            //travels back, then up, then right
+            vec_grid_lines_indices.push_back(i);
+            vec_grid_lines_indices.push_back(j);
+            vec_grid_lines_indices.push_back(k);
 
-            vec_grid_lines_color.push_back( );
-            vec_grid_lines_color.push_back( );
-            vec_grid_lines_color.push_back( );
-            vec_grid_lines_color.push_back( );
+            //now for the color index list
+            vec_grid_lines_color_indices.push_back(1.0);
+            vec_grid_lines_color_indices.push_back(1.0);
+            vec_grid_lines_color_indices.push_back(1.0);
+            vec_grid_lines_color_indices.push_back(1.0);
 
+            //now the actual lines..
+            if ( i < piece_x_size ) { //xaxis
+                vec_grid_lines.push_back(k   +  (j*(piece_z_size+1))  +  (i*((piece_y_size+1)*(piece_z_size+1))));
+                vec_grid_lines.push_back(k+1 +  (j*(piece_z_size+1))  +  (i*((piece_y_size+1)*(piece_z_size+1)))); }
+            if ( j < piece_y_size ) { //yaxis
+                vec_grid_lines.push_back(k +  ( j   *(piece_z_size+1))  +  (i*((piece_y_size+1)*(piece_z_size+1))));
+                vec_grid_lines.push_back(k +  ((j+1)*(piece_z_size+1))  +  (i*((piece_y_size+1)*(piece_z_size+1)))); }
+            if ( k < piece_z_size ) { //zaxis
+                vec_grid_lines.push_back(k +  (j*(piece_z_size+1))  +  (i    *((piece_y_size+1)*(piece_z_size+1))));
+                vec_grid_lines.push_back(k +  (j*(piece_z_size+1))  +  ((i+1)*((piece_y_size+1)*(piece_z_size+1)))); }
 
         }
       }
     }
+
 
 }
