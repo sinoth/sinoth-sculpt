@@ -75,8 +75,6 @@ public:
     void generateVA();
     bool have_piece;
     unsigned char piece_x_size, piece_y_size, piece_z_size;
-    std::vector<float> vec_grid_lines_indices;
-    std::vector<float> vec_grid_lines_color_indices;
     std::vector<GLuint> vec_grid_lines;
     std::vector<GLuint> vec_grid_lines_color;
     //std::vector<float> vec_grid_triangles;
