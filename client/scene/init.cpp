@@ -73,7 +73,7 @@ bool scene::init() {
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
     glPointSize(3.0);
-    //glLineWidth(1.0);
+    glLineWidth(1.0);
 
     loadTextures();
 

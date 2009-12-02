@@ -75,10 +75,10 @@ public:
     void generateVA();
     bool have_piece;
     unsigned char piece_x_size, piece_y_size, piece_z_size;
-    std::vector<GLuint> vec_grid_lines;
-    std::vector<GLuint> vec_grid_lines_color;
-    //std::vector<float> vec_grid_triangles;
-    //std::vector<float> vec_grid_triangles_color;
+    std::vector<GLfloat> vec_grid_lines;
+    std::vector<GLfloat> vec_grid_lines_color;
+    std::vector<GLfloat> vec_grid_quads;
+    std::vector<GLfloat> vec_grid_quads_color;
 
     //client stuff
     char username[30];
