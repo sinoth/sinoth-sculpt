@@ -87,6 +87,11 @@ void scene::mousePosInput( int x, int y ) {
         //}
 
     } else {
+        if ( mouseL ) {
+
+
+
+        }
         mainGui.insertMousePos(x,res_cur_y - y);
     }
 

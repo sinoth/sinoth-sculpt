@@ -73,7 +73,7 @@ void scene::resetCamera() {
 }
 
 void scene::generateVA() {
-
+/*
     for (int i=0; i < 3*piece_x_size+1; ++i) {
         vec_grid_lines.push_back(i); vec_grid_lines.push_back(0); vec_grid_lines.push_back(0);
         vec_grid_lines.push_back(i); vec_grid_lines.push_back(0); vec_grid_lines.push_back(3*piece_z_size);
@@ -116,7 +116,7 @@ void scene::generateVA() {
         vec_grid_lines_color.push_back(0.0);
         vec_grid_lines_color.push_back(0.1);
     }
-
+*/
     ///////////////////
 
     for (int i=piece_x_size; i <= 2*piece_x_size; ++i) {
@@ -161,6 +161,9 @@ void scene::generateVA() {
         vec_grid_lines_color.push_back(0.0);
         vec_grid_lines_color.push_back(0.1);
     }
+
+
+    //position camera facing the thing
 
 
 }
