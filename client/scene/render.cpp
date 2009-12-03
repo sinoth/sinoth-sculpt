@@ -164,6 +164,11 @@ void scene::generateVA() {
 
 
     //position camera facing the thing
-
+    //quaternion temp_q;
+    //temp_q.createFromAxisAngle(0,1,0,0);
+    //mainCamera.arcSetRotation(temp_q);
+    mainCamera.arcSetCenter(vec3f(0,0,0));
+    mainCamera.arcSetRadius(5.0);
+    mainCamera.arcRecalculate();
 
 }

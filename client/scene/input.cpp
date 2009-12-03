@@ -89,6 +89,9 @@ void scene::mousePosInput( int x, int y ) {
     } else {
         if ( mouseL ) {
 
+            mainCamera.arcSpinMouseX( (x-mouseX)*0.5 );
+            mainCamera.arcSpinMouseY( (y-mouseY)*0.5 );
+            printf("position: %f,%f,%f | facing: %f, %f, %f\n", mainCamera.p_position.x, mainCamera.p_position.y, mainCamera.p_position.z, mainCamera.arc_strafe.x, mainCamera.arc_strafe.y, mainCamera.arc_strafe.z );
 
 
         }
@@ -130,7 +133,33 @@ void scene::mouseClickInput( int button, int state ) {
                 break;
         }
     } else {
-        mainGui.insertMouseClick(button,state,mouseX,res_cur_y-mouseY);
+        if ( mainGui.insertMouseClick(button,state,mouseX,res_cur_y-mouseY) ) return;
+        switch ( state ) {
+            case GLFW_PRESS:
+                switch ( button ) {
+                    case GLFW_MOUSE_BUTTON_LEFT:
+                        mouseL=1;
+                        break;
+
+                    case GLFW_MOUSE_BUTTON_RIGHT:
+                    case GLFW_MOUSE_BUTTON_MIDDLE:
+                        break;
+                }
+                break;
+
+            case GLFW_RELEASE:
+                switch ( button ) {
+                    case GLFW_MOUSE_BUTTON_LEFT:
+                        mouseL=0;
+                        break;
+
+                    case GLFW_MOUSE_BUTTON_RIGHT:
+                        break;
+                    case GLFW_MOUSE_BUTTON_MIDDLE:
+                        break;
+                }
+                break;
+        }
     }
 
 }
