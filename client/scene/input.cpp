@@ -89,11 +89,16 @@ void scene::mousePosInput( int x, int y ) {
     } else {
         if ( mouseL ) {
 
-            mainCamera.arcSpinMouseX( (x-mouseX)*0.5 );
-            mainCamera.arcSpinMouseY( (y-mouseY)*0.5 );
-            printf("position: %f,%f,%f | facing: %f, %f, %f\n", mainCamera.p_position.x, mainCamera.p_position.y, mainCamera.p_position.z, mainCamera.arc_strafe.x, mainCamera.arc_strafe.y, mainCamera.arc_strafe.z );
+            mainCamera.arcSpinMouseX( (x-mouseX)*0.4 );
+            mainCamera.arcSpinMouseY( (y-mouseY)*0.4 );
+            printf("* position: %f,%f,%f\nstrafe: %f, %f, %f\nup: %f, %f, %f\nfacing: %f, %f, %f\n", mainCamera.p_position.x, mainCamera.p_position.y, mainCamera.p_position.z,
+                                                                                     mainCamera.arc_strafe.x, mainCamera.arc_strafe.y, mainCamera.arc_strafe.z,
+                                                                                     mainCamera.arc_up.x, mainCamera.arc_up.y, mainCamera.arc_up.z,
+                                                                                     mainCamera.arc_facing.x, mainCamera.arc_facing.y, mainCamera.arc_facing.z );
 
-
+        }
+        if (mouseR) {
+            mainCamera.arcZoom( (y-mouseY)*0.2 );
         }
         mainGui.insertMousePos(x,res_cur_y - y);
     }
@@ -140,8 +145,9 @@ void scene::mouseClickInput( int button, int state ) {
                     case GLFW_MOUSE_BUTTON_LEFT:
                         mouseL=1;
                         break;
-
                     case GLFW_MOUSE_BUTTON_RIGHT:
+                        mouseR=1;
+                        break;
                     case GLFW_MOUSE_BUTTON_MIDDLE:
                         break;
                 }
@@ -152,8 +158,8 @@ void scene::mouseClickInput( int button, int state ) {
                     case GLFW_MOUSE_BUTTON_LEFT:
                         mouseL=0;
                         break;
-
                     case GLFW_MOUSE_BUTTON_RIGHT:
+                        mouseR=0;
                         break;
                     case GLFW_MOUSE_BUTTON_MIDDLE:
                         break;

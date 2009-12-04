@@ -56,7 +56,7 @@ void scene::FPS()
     frames++;
     if( fpsTimer.needUpdateNoCarry() )
     {
-		printf("FPS: %d\n",frames);//,settings.ull_counter);
+		//printf("FPS: %d\n",frames);//,settings.ull_counter);
         frames = 0;
     }
 }

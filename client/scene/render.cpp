@@ -15,9 +15,9 @@ void scene::render() {
     //glDisable(GL_TEXTURE_2D);
 
     glBegin(GL_TRIANGLES);
-        glColor4f(1.0,0.0,0.0,1.0); glVertex3f(0,0,-5);
-        glColor4f(0.0,1.0,0.0,1.0); glVertex3f(0,1,-5);
-        glColor4f(0.0,0.0,1.0,1.0); glVertex3f(1,0,-5);
+        glColor4f(1.0,0.0,0.0,1.0); glVertex3f(0,0,0);
+        glColor4f(0.0,1.0,0.0,1.0); glVertex3f(0,1,0);
+        glColor4f(0.0,0.0,1.0,1.0); glVertex3f(1,0,0);
     glEnd();
 
 
@@ -164,11 +164,16 @@ void scene::generateVA() {
 
 
     //position camera facing the thing
-    //quaternion temp_q;
-    //temp_q.createFromAxisAngle(0,1,0,0);
-    //mainCamera.arcSetRotation(temp_q);
-    mainCamera.arcSetCenter(vec3f(0,0,0));
-    mainCamera.arcSetRadius(5.0);
+    quaternion temp_q;
+    temp_q.createFromAxisAngle(1,0,0,0);
+    mainCamera.arcSetRotation(temp_q);
+
+    mainCamera.arcSetCenter(vec3f(piece_x_size*1.5,piece_y_size*1.5,piece_z_size*1.5));
+    mainCamera.arcSetRadius(3*piece_x_size);
+
+    //mainCamera.arcSetCenter(vec3f(0,0,0));
+    //mainCamera.arcSetRadius(5);
+
     mainCamera.arcRecalculate();
 
 }
