@@ -21,6 +21,40 @@ void scene::render() {
     glEnd();
 
 
+    //cube
+    glBegin(GL_QUADS);
+        //top
+        glColor4f(1.0,0.0,0.0,1.0);
+        glVertex3f(-0.5, 0.5, 0.5);
+        glVertex3f(-0.5, 0.5,-0.5);
+        glVertex3f( 0.5, 0.5,-0.5);
+        glVertex3f( 0.5, 0.5, 0.5);
+        //bottom
+        glColor4f(0.0,1.0,0.0,1.0);
+        glVertex3f(-0.5,-0.5, 0.5);
+        glVertex3f(-0.5,-0.5,-0.5);
+        glVertex3f( 0.5,-0.5,-0.5);
+        glVertex3f( 0.5,-0.5, 0.5);
+    glEnd();
+    glBegin(GL_LINES);
+        //four connecting lines
+        glColor4f(0.0,0.0,1.0,1.0);
+        glVertex3f(-0.5, 0.5,-0.5);
+        glVertex3f(-0.5,-0.5,-0.5);
+
+        glColor4f(1.0,1.0,0.0,1.0);
+        glVertex3f(-0.5, 0.5, 0.5);
+        glVertex3f(-0.5,-0.5, 0.5);
+
+        glColor4f(0.0,0.0,1.0,1.0);
+        glVertex3f( 0.5, 0.5,-0.5);
+        glVertex3f( 0.5,-0.5,-0.5);
+
+        glColor4f(1.0,1.0,0.0,1.0);
+        glVertex3f( 0.5, 0.5, 0.5);
+        glVertex3f( 0.5,-0.5, 0.5);
+    glEnd();
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     //glEnableClientState(GL_NORMAL_ARRAY);
@@ -168,11 +202,11 @@ void scene::generateVA() {
     temp_q.createFromAxisAngle(1,0,0,0);
     mainCamera.arcSetRotation(temp_q);
 
-    mainCamera.arcSetCenter(vec3f(piece_x_size*1.5,piece_y_size*1.5,piece_z_size*1.5));
-    mainCamera.arcSetRadius(3*piece_x_size);
+    //mainCamera.arcSetCenter(vec3f(piece_x_size*1.5,piece_y_size*1.5,piece_z_size*1.5));
+    //mainCamera.arcSetRadius(3*piece_x_size);
 
-    //mainCamera.arcSetCenter(vec3f(0,0,0));
-    //mainCamera.arcSetRadius(5);
+    mainCamera.arcSetCenter(vec3f(0,0,0));
+    mainCamera.arcSetRadius(4);
 
     mainCamera.arcRecalculate();
 
