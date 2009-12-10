@@ -14,6 +14,9 @@ void scene::render() {
 
     //glDisable(GL_TEXTURE_2D);
 
+
+
+
     glBegin(GL_TRIANGLES);
         glColor4f(1.0,0.0,0.0,1.0); glVertex3f(0,0,0);
         glColor4f(0.0,1.0,0.0,1.0); glVertex3f(0,1,0);
