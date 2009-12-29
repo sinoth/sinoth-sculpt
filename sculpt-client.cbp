@@ -5,7 +5,6 @@
 		<Option title="sculpt-client" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="sinsocket\;" />
 		<Build>
 			<Target title="Windows Client Debug">
 				<Option platforms="Windows;" />
@@ -19,26 +18,25 @@
 					<Add option="-g" />
 					<Add option="-D_WIN32_WINNT=0x0501" />
 					<Add option="-D_DEBUG" />
-					<Add directory="sinsocket" />
 					<Add directory="client" />
 					<Add directory="..\..\libs\libsin\include" />
 					<Add directory="..\..\libs\glfw\include" />
 					<Add directory="..\..\libs\freetype\include" />
+					<Add directory="..\..\libs\win-pthreads\include" />
 				</Compiler>
 				<Linker>
-					<Add library="sincam" />
-					<Add library="sinlight" />
-					<Add library="sintimer" />
-					<Add library="sinprim" />
 					<Add library="sinui" />
 					<Add library="sinfont" />
 					<Add library="freetype" />
 					<Add library="glfw" />
 					<Add library="opengl32" />
+					<Add library="sinsocket" />
 					<Add library="ws2_32" />
+					<Add library="pthreadGC2" />
 					<Add directory="..\..\libs\libsin\lib" />
 					<Add directory="..\..\libs\glfw\lib" />
 					<Add directory="..\..\libs\freetype\lib" />
+					<Add directory="..\..\libs\win-pthreads\lib" />
 				</Linker>
 			</Target>
 			<Target title="Windows Client Release">
@@ -75,12 +73,6 @@
 		<Unit filename="client\scene\scene.cpp" />
 		<Unit filename="client\scene\update.cpp" />
 		<Unit filename="client\todo.txt" />
-		<Unit filename="sinsocket\sinsocket.cpp">
-			<Option virtualFolder="sinsocket\" />
-		</Unit>
-		<Unit filename="sinsocket\sinsocket.h">
-			<Option virtualFolder="sinsocket\" />
-		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />
