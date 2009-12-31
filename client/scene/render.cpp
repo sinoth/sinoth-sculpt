@@ -52,7 +52,18 @@ void scene::render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //glLoadIdentity();
 
+
     begin3D();
+/*
+    glBegin(GL_QUADS);
+        //top
+        glColor4f(1.0,0.0,0.0,0.2);
+        glVertex3f(-0.04,-0.04142135623730950488016887242097,-0.1);
+        glVertex3f(-0.04, 0.04142135623730950488016887242097,-0.1);
+        glVertex3f( 0.04, 0.04142135623730950488016887242097,-0.1);
+        glVertex3f( 0.04,-0.04142135623730950488016887242097,-0.1);
+    glEnd();
+*/
     mainCamera.setPerspective();
     //mainLighting.doLighting();
 

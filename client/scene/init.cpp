@@ -242,6 +242,7 @@ void scene::begin3D()
 	// Calculate The Aspect Ratio Of The Window
               perspectiveGL(45.0f,((GLfloat)res_cur_x)/((GLfloat)res_cur_y),0.1f,1000.0f);
     mainCamera.setInternals(45.0f,((GLfloat)res_cur_x)/((GLfloat)res_cur_y),0.1f,1000.0f);
+    mainCamera.setWindowWH(res_cur_x, res_cur_y);
 
 	glMatrixMode(GL_MODELVIEW);							// Select The Modelview Matrix
 	glLoadIdentity();									// Reset The Modelview Matrix

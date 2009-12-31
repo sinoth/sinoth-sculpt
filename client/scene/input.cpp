@@ -87,6 +87,10 @@ void scene::mousePosInput( int x, int y ) {
         //}
 
     } else {
+
+        static vec3f mouse_ray_pos, mouse_ray_dir;
+        mainCamera.getMouseRay(mouseX, mouseY, mouse_ray_pos, mouse_ray_dir);
+
         if ( mouseL ) {
 
             //if (mouseR) {
