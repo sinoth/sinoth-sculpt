@@ -5,6 +5,7 @@
 		<Option title="sculpt-client" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
+		<Option virtualFolders="todo\;scene\;main\;" />
 		<Build>
 			<Target title="Windows Client Debug">
 				<Option platforms="Windows;" />
@@ -62,17 +63,39 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="client\main.cpp" />
-		<Unit filename="client\scene.h" />
-		<Unit filename="client\scene\actions.cpp" />
-		<Unit filename="client\scene\init.cpp" />
-		<Unit filename="client\scene\init_ui.cpp" />
-		<Unit filename="client\scene\input.cpp" />
-		<Unit filename="client\scene\network.cpp" />
-		<Unit filename="client\scene\render.cpp" />
-		<Unit filename="client\scene\scene.cpp" />
-		<Unit filename="client\scene\update.cpp" />
-		<Unit filename="client\todo.txt" />
+		<Unit filename="client\main.cpp">
+			<Option virtualFolder="main\" />
+		</Unit>
+		<Unit filename="client\scene.h">
+			<Option virtualFolder="main\" />
+		</Unit>
+		<Unit filename="client\scene\actions.cpp">
+			<Option virtualFolder="scene\" />
+		</Unit>
+		<Unit filename="client\scene\init.cpp">
+			<Option virtualFolder="scene\" />
+		</Unit>
+		<Unit filename="client\scene\init_ui.cpp">
+			<Option virtualFolder="scene\" />
+		</Unit>
+		<Unit filename="client\scene\input.cpp">
+			<Option virtualFolder="scene\" />
+		</Unit>
+		<Unit filename="client\scene\network.cpp">
+			<Option virtualFolder="scene\" />
+		</Unit>
+		<Unit filename="client\scene\render.cpp">
+			<Option virtualFolder="scene\" />
+		</Unit>
+		<Unit filename="client\scene\scene.cpp">
+			<Option virtualFolder="scene\" />
+		</Unit>
+		<Unit filename="client\scene\update.cpp">
+			<Option virtualFolder="scene\" />
+		</Unit>
+		<Unit filename="client\todo.txt">
+			<Option virtualFolder="todo\" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />
