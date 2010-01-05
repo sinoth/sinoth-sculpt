@@ -32,8 +32,8 @@
 					<Add library="glfw" />
 					<Add library="opengl32" />
 					<Add library="sinsocket" />
-					<Add library="ws2_32" />
 					<Add library="pthreadGC2" />
+					<Add library="ws2_32" />
 					<Add directory="..\..\libs\libsin\lib" />
 					<Add directory="..\..\libs\glfw\lib" />
 					<Add directory="..\..\libs\freetype\lib" />
