@@ -88,8 +88,11 @@ void scene::mousePosInput( int x, int y ) {
 
     } else {
 
-        static vec3f mouse_ray_pos, mouse_ray_dir;
-        mainCamera.getMouseRay(mouseX, mouseY, mouse_ray_pos, mouse_ray_dir);
+        static ray3f temp_ray;
+        //static vec3f mouse_ray_pos, mouse_ray_dir;
+
+        mainCamera.getMouseRay(mouseX, mouseY, temp_ray.pos, temp_ray.dir);
+        if ( temp_ray.collideWithCube(vec3f(0,0,0), 1) ) {printf("YEA MOTHERFUCKER!\n"); }
 
         if ( mouseL ) {
 
