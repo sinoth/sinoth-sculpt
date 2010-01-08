@@ -10,6 +10,7 @@ HIGH PRIORITY:
      . Server recv
      . Server send
      . Client recv
+ [ ] - Don't call begin3D all the freakin time, or move some of that code somewhere else
 
 MEDIUM PRIORITY:
 ----------------
