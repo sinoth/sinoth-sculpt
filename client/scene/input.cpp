@@ -92,7 +92,7 @@ void scene::mousePosInput( int x, int y ) {
         //static vec3f mouse_ray_pos, mouse_ray_dir;
 
         mainCamera.getMouseRay(mouseX, mouseY, temp_ray.pos, temp_ray.dir);
-        if ( temp_ray.collideWithCube(vec3f(0,0,0), 1) ) {printf("YEA MOTHERFUCKER! %f\n", glfwGetTime()); }
+        if ( temp_ray.collideWithCube(vec3f(0,0,0), 0.5) ) {printf("YEA MOTHERFUCKER! %f\n", glfwGetTime()); }
 
         if ( mouseL ) {
 
