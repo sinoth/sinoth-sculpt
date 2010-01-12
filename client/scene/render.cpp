@@ -186,6 +186,20 @@ void scene::render() {
     mainGui.render();
 
 
+    //lol
+    ray3f temp_ray;
+    glBegin(GL_POINTS);
+    for ( int i=0; i < res_cur_x; ++i ) {
+        for ( int j=0; j < res_cur_y; ++j ) {
+          mainCamera.getMouseRay(i, j, temp_ray.pos, temp_ray.dir);
+          if ( temp_ray.collideWithCube(vec3f(0,0,0), 0.5) )
+            glVertex2f(i,j);
+        }
+    }
+    glEnd();
+
+
+
     glfwSwapBuffers();
 
     FPS();
