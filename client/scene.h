@@ -43,7 +43,7 @@ public:
 
     // input stuff
     bool mouseGrab;
-    bool mouseL, mouseR;
+    bool mouseL, mouseR, mouseM;
     int mouseX, mouseY;
     int mouseX_old, mouseY_old;
     float mouseSensitivity;
@@ -79,6 +79,9 @@ public:
     std::vector<GLfloat> vec_grid_lines_color;
     std::vector<GLfloat> vec_grid_quads;
     std::vector<GLfloat> vec_grid_quads_color;
+
+    //for selection
+    std::vector<char> selection_list;
 
     //client stuff
     char username[30];

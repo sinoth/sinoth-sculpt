@@ -17,7 +17,7 @@ scene::scene() {
     // input stuff
     mouseGrab = false;
     mouseL = mouseR = false;
-    mouseX = 0; mouseY = 0;
+    mouseX = 0; mouseY = 0; mouseM = 0;
     mouseSensitivity = 1.0;
     keyboardMoveSpeed = 0.1;
     mouseWheel = 0;
@@ -36,6 +36,11 @@ scene::scene() {
     have_piece = false;
 
     piece_x_size = piece_y_size = piece_z_size = 5;
+
+    //initialize the selection bits
+    selection_list.resize(piece_x_size*piece_y_size*piece_z_size);
+    for ( int i=0; i<piece_x_size*piece_y_size*piece_z_size; ++i)
+        selection_list[i] = 0;
 
 }
 

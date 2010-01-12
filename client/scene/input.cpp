@@ -89,12 +89,35 @@ void scene::mousePosInput( int x, int y ) {
     } else {
 
         static ray3f temp_ray;
+        static collision3f temp_collision, nearest_collision;
+        static bool found_collision;
+        nearest_collision.dist = 1000000;
+        found_collision = false;
+
         //static vec3f mouse_ray_pos, mouse_ray_dir;
 
-        //mainCamera.getMouseRay(mouseX, mouseY, temp_ray.pos, temp_ray.dir);
-        //if ( temp_ray.collideWithCube(vec3f(0,0,0), 0.5) ) {printf("YEA MOTHERFUCKER! %f\n", glfwGetTime()); }
+    mainCamera.getMouseRay(x, y, temp_ray.pos, temp_ray.dir);
+    for ( int i=0; i<piece_x_size;++i )
+     for ( int j=0; j<piece_y_size;++j )
+      for ( int k=0; k<piece_z_size;++k ) {
+        temp_collision.pos.set( i+piece_x_size+0.5,j+piece_y_size+0.5,k+piece_z_size+0.5 );
+        if ( temp_ray.collideWithCube(temp_collision, 0.5) ) {
+            //if ( i==0 || i==piece_x_size-1 || j==0 || j==piece_y_size-1 || k==0 || k==piece_z_size-1 )
+            if ( temp_collision.dist < nearest_collision.dist ) {
+                nearest_collision = temp_collision;
+                nearest_collision.pos.set(i,j,k);
+                found_collision = true;
+            } else
+                selection_list[i+j*piece_x_size+k*piece_y_size*piece_x_size] = 0;
+        } else
+            selection_list[i+j*piece_x_size+k*piece_y_size*piece_x_size] = 0;
+      }
 
-        if ( mouseL ) {
+    if ( found_collision )
+        selection_list[nearest_collision.pos.x+nearest_collision.pos.y*piece_x_size+nearest_collision.pos.z*piece_y_size*piece_x_size] = 1;
+
+
+        if ( mouseM ) {
 
             //if (mouseR) {
                 mainCamera.arcSpinMouseX( -(x-mouseX)*0.4 );
@@ -161,6 +184,7 @@ void scene::mouseClickInput( int button, int state ) {
                         mouseR=1;
                         break;
                     case GLFW_MOUSE_BUTTON_MIDDLE:
+                        mouseM=1;
                         break;
                 }
                 break;
@@ -174,6 +198,7 @@ void scene::mouseClickInput( int button, int state ) {
                         mouseR=0;
                         break;
                     case GLFW_MOUSE_BUTTON_MIDDLE:
+                        mouseM=0;
                         break;
                 }
                 break;
