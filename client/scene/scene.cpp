@@ -45,6 +45,9 @@ scene::scene() {
     for (int i=0; i < 6; ++i) show_face[i] = 0;
     show_face[BACK] = 1;
 
+    placing_piece = false;
+    hovering_piece = false;
+
 }
 
 scene::~scene() {}

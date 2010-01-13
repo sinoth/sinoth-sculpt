@@ -86,9 +86,14 @@ public:
     std::vector<GLfloat> vec_grid_lines[6];
     std::vector<GLfloat> vec_grid_lines_color[6];
     bool show_face[6];
-
-    //for selection
+    bool hovering_piece;
+    bool placing_piece;
+    vec3f selected_normal;
+    vec3f selected_piece;
+    int   selected_face;
+    float zoom_factor;
     std::vector<char> selection_list;
+
 
     //client stuff
     char username[30];

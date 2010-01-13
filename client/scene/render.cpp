@@ -15,7 +15,9 @@ void scene::render() {
 
 
     //render the selected cube
-    glColor4f(1.0,0.0,0.0,0.3);
+    if ( placing_piece ) glColor4f(1.0,0.0,0.0,0.3);
+    else glColor4f(1.0,0.0,0.0,0.1);
+
     glBegin(GL_QUADS);
     for ( int i=0; i<piece_x_size;++i )
      for ( int j=0; j<piece_y_size;++j )
