@@ -42,6 +42,9 @@ scene::scene() {
     for ( int i=0; i<piece_x_size*piece_y_size*piece_z_size; ++i)
         selection_list[i] = 0;
 
+    for (int i=0; i < 6; ++i) show_face[i] = 0;
+    show_face[BACK] = 1;
+
 }
 
 scene::~scene() {}

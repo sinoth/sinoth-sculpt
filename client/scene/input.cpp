@@ -96,25 +96,24 @@ void scene::mousePosInput( int x, int y ) {
 
         //static vec3f mouse_ray_pos, mouse_ray_dir;
 
-    mainCamera.getMouseRay(x, y, temp_ray.pos, temp_ray.dir);
-    for ( int i=0; i<piece_x_size;++i )
-     for ( int j=0; j<piece_y_size;++j )
-      for ( int k=0; k<piece_z_size;++k ) {
-        temp_collision.pos.set( i+piece_x_size+0.5,j+piece_y_size+0.5,k+piece_z_size+0.5 );
-        if ( temp_ray.collideWithCube(temp_collision, 0.5) ) {
-            //if ( i==0 || i==piece_x_size-1 || j==0 || j==piece_y_size-1 || k==0 || k==piece_z_size-1 )
-            if ( temp_collision.dist < nearest_collision.dist ) {
-                nearest_collision = temp_collision;
-                nearest_collision.pos.set(i,j,k);
-                found_collision = true;
-            } else
-                selection_list[i+j*piece_x_size+k*piece_y_size*piece_x_size] = 0;
-        } else
+        mainCamera.getMouseRay(x, y, temp_ray.pos, temp_ray.dir);
+        for ( int i=0; i<piece_x_size;++i )
+         for ( int j=0; j<piece_y_size;++j )
+          for ( int k=0; k<piece_z_size;++k ) {
+            temp_collision.pos.set( i+piece_x_size+0.5,j+piece_y_size+0.5,k+piece_z_size+0.5 );
+            if ( temp_ray.collideWithCube(temp_collision, 0.5) ) {
+                //if ( i==0 || i==piece_x_size-1 || j==0 || j==piece_y_size-1 || k==0 || k==piece_z_size-1 )
+                if ( temp_collision.dist < nearest_collision.dist ) {
+                    nearest_collision = temp_collision;
+                    nearest_collision.pos.set(i,j,k);
+                    found_collision = true;
+                }
+            }
             selection_list[i+j*piece_x_size+k*piece_y_size*piece_x_size] = 0;
-      }
+          }
 
-    if ( found_collision )
-        selection_list[nearest_collision.pos.x+nearest_collision.pos.y*piece_x_size+nearest_collision.pos.z*piece_y_size*piece_x_size] = 1;
+        if ( found_collision )
+            selection_list[nearest_collision.pos.x+nearest_collision.pos.y*piece_x_size+nearest_collision.pos.z*piece_y_size*piece_x_size] = 1;
 
 
         if ( mouseM ) {
@@ -130,6 +129,15 @@ void scene::mousePosInput( int x, int y ) {
             //                                                                         mainCamera.arc_facing.x, mainCamera.arc_facing.y, mainCamera.arc_facing.z );
             //printf("* position: %f,%f,%f\nfacing: %f, %f, %f\n", mainCamera.p_position.x, mainCamera.p_position.y, mainCamera.p_position.z,
             //                                                                         mainCamera.arc_facing.x, mainCamera.arc_facing.y, mainCamera.arc_facing.z );
+
+            //only show sides that face camera
+            if ( mainCamera.arc_facing.z <= -0.162847 ) show_face[BACK] = true; else show_face[BACK] = false;
+            if ( mainCamera.arc_facing.y <= -0.162847 ) show_face[UP] = true; else show_face[UP] = false;
+            if ( mainCamera.arc_facing.x <= -0.162847 ) show_face[RIGHT] = true; else show_face[RIGHT] = false;
+            if ( mainCamera.arc_facing.z >=  0.162847 ) show_face[FRONT] = true; else show_face[FRONT] = false;
+            if ( mainCamera.arc_facing.y >=  0.162847 ) show_face[DOWN] = true; else show_face[DOWN] = false;
+            if ( mainCamera.arc_facing.x >=  0.162847 ) show_face[LEFT] = true; else show_face[LEFT] = false;
+
 
         }
         if (mouseR) {

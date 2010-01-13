@@ -11,6 +11,14 @@
 //#include <sinprim.h>
 
 
+#define UP     0
+#define DOWN   1
+#define LEFT   2
+#define RIGHT  3
+#define FRONT  4
+#define BACK   5
+
+
 typedef struct serverinfo_s {
     unsigned char server_id;
     char server_name[100];
@@ -75,10 +83,9 @@ public:
     void generateVA();
     bool have_piece;
     unsigned char piece_x_size, piece_y_size, piece_z_size;
-    std::vector<GLfloat> vec_grid_lines;
-    std::vector<GLfloat> vec_grid_lines_color;
-    std::vector<GLfloat> vec_grid_quads;
-    std::vector<GLfloat> vec_grid_quads_color;
+    std::vector<GLfloat> vec_grid_lines[6];
+    std::vector<GLfloat> vec_grid_lines_color[6];
+    bool show_face[6];
 
     //for selection
     std::vector<char> selection_list;
