@@ -15,15 +15,30 @@ void scene::render() {
 
 
     //render the selected cube
-    if ( placing_piece ) glColor4f(1.0,0.0,0.0,0.3);
-    else glColor4f(1.0,0.0,0.0,0.1);
-
     glBegin(GL_QUADS);
-    for ( int i=0; i<piece_x_size;++i )
-     for ( int j=0; j<piece_y_size;++j )
-      for ( int k=0; k<piece_z_size;++k )
-        if ( selection_list[i+j*piece_x_size+k*piece_y_size*piece_x_size] )
-            drawBox(i+piece_x_size+0.5,j+piece_y_size+0.5,k+piece_z_size+0.5,0.5);
+    //for ( int i=0; i<piece_x_size;++i )
+     //for ( int j=0; j<piece_y_size;++j )
+      //for ( int k=0; k<piece_z_size;++k )
+        //if ( selection_list[i+j*piece_x_size+k*piece_y_size*piece_x_size] )
+            //drawBox(i+piece_x_size+0.5,j+piece_y_size+0.5,k+piece_z_size+0.5,0.5);
+    if ( hovering_piece ) {
+        if ( placing_piece ) {
+            int max_size;
+            switch ( selected_face ) {
+                case UP: case DOWN: max_size = piece_y_size; break;
+                case LEFT: case RIGHT: max_size = piece_x_size; break;
+                case FRONT: case BACK: max_size = piece_z_size; break;
+            }
+
+            for ( int i=0; i < max_size; ++i) {
+                glColor4f(1.0,0.0,0.0,0.3);
+                drawBox(selected_piece.x+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.5);
+            }
+        } else {
+            glColor4f(1.0,0.0,0.0,0.1);
+            drawBox(selected_piece.x+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.5);
+        }
+    }
     glEnd();
 
 

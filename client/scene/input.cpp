@@ -97,11 +97,11 @@ void scene::mousePosInput( int x, int y ) {
                 found_collision = true;
             }
         }
-        selection_list[i+j*piece_x_size+k*piece_y_size*piece_x_size] = 0;
+        //selection_list[i+j*piece_x_size+k*piece_y_size*piece_x_size] = 0;
       }
 
     if ( found_collision ) {
-        selection_list[nearest_collision.pos.x+nearest_collision.pos.y*piece_x_size+nearest_collision.pos.z*piece_y_size*piece_x_size] = 1;
+        //selection_list[nearest_collision.pos.x+nearest_collision.pos.y*piece_x_size+nearest_collision.pos.z*piece_y_size*piece_x_size] = 1;
         selected_piece = nearest_collision.pos;
         hovering_piece = true;
         vec3f col;
