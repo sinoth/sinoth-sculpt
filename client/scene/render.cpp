@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <algorithm>
 #include "scene.h"
 
 void drawBox(float,float,float,float);
@@ -16,29 +17,56 @@ void scene::render() {
 
     //render the selected cube
     glBegin(GL_QUADS);
-    //for ( int i=0; i<piece_x_size;++i )
-     //for ( int j=0; j<piece_y_size;++j )
-      //for ( int k=0; k<piece_z_size;++k )
-        //if ( selection_list[i+j*piece_x_size+k*piece_y_size*piece_x_size] )
-            //drawBox(i+piece_x_size+0.5,j+piece_y_size+0.5,k+piece_z_size+0.5,0.5);
-    if ( hovering_piece ) {
-        if ( placing_piece ) {
-            int max_size;
-            switch ( selected_face ) {
-                case UP: case DOWN: max_size = piece_y_size; break;
-                case LEFT: case RIGHT: max_size = piece_x_size; break;
-                case FRONT: case BACK: max_size = piece_z_size; break;
-            }
 
-            for ( int i=0; i < max_size; ++i) {
-                glColor4f(1.0,0.0,0.0,0.3);
-                drawBox(selected_piece.x+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.5);
-            }
-        } else {
+    static std::vector<collision3f> sorted_blocks;
+    sorted_blocks.clear();
+
+    for ( int i=0; i<piece_x_size;++i )
+     for ( int j=0; j<piece_y_size;++j )
+      for ( int k=0; k<piece_z_size;++k )
+        if ( built_list[i+j*piece_x_size+k*piece_y_size*piece_x_size] )
+            sorted_blocks.push_back( collision3f( vec3f(i+piece_x_size+0.5,j+piece_y_size+0.5,k+piece_z_size+0.5), mainCamera.getPosition().distance( vec3f(i+piece_x_size+0.5,j+piece_y_size+0.5,k+piece_z_size+0.5) ) ) );
+
+    if ( sorted_blocks.size() ) {
+        if ( view_method ) sort(sorted_blocks.begin(), sorted_blocks.end(), collision3f::greaterThan);
+        else sort(sorted_blocks.begin(), sorted_blocks.end());
+        glColor4f(0.0,0.0,0.0,0.5);
+        for ( std::vector<collision3f>::iterator it=sorted_blocks.begin(); it != sorted_blocks.end(); it++ )
+            drawBox((*it).pos.x,(*it).pos.y,(*it).pos.z,0.5);
+    }
+
+
+    if ( placing_piece ) {
+        switch ( selected_face ) {
+            case CUBE_UP: case CUBE_DOWN:
+                for (int i=0; i<piece_y_size; ++i) {
+                    if ( i == selected_piece.y ) glColor4f(1.0,0.0,0.0,0.3);
+                    else glColor4f(1.0,0.0,0.0,0.1);
+                    drawBox(selected_piece.x+piece_x_size+0.5,i+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.5);
+                }
+                break;
+            case CUBE_LEFT: case CUBE_RIGHT:
+                for (int i=0; i<piece_x_size; ++i) {
+                    if ( i == selected_piece.x ) glColor4f(1.0,0.0,0.0,0.3);
+                    else glColor4f(1.0,0.0,0.0,0.1);
+                    drawBox(i+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.5);
+                }
+                break;
+            case CUBE_FRONT: case CUBE_BACK:
+                for (int i=0; i<piece_z_size; ++i) {
+                    if ( i == selected_piece.z ) glColor4f(1.0,0.0,0.0,0.3);
+                    else glColor4f(1.0,0.0,0.0,0.1);
+                    drawBox(selected_piece.x+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,i+piece_z_size+0.5,0.5);
+                }
+                break;
+        }
+    } else {
+        if ( hovering_piece ) {
             glColor4f(1.0,0.0,0.0,0.1);
             drawBox(selected_piece.x+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.5);
         }
     }
+
     glEnd();
 
 
@@ -103,58 +131,58 @@ void scene::generateVA() {
     {
     //upper grid face
     for (int i=piece_x_size; i <= 2*piece_x_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[UP].push_back(1.0); vec_grid_lines_color[UP].push_back(0.0); vec_grid_lines_color[UP].push_back(0.0); vec_grid_lines_color[UP].push_back(0.1); }
-        vec_grid_lines[UP].push_back(i); vec_grid_lines[UP].push_back(piece_y_size*2); vec_grid_lines[UP].push_back(piece_z_size);
-        vec_grid_lines[UP].push_back(i); vec_grid_lines[UP].push_back(piece_y_size*2); vec_grid_lines[UP].push_back(piece_z_size*2); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_UP].push_back(1.0); vec_grid_lines_color[CUBE_UP].push_back(0.0); vec_grid_lines_color[CUBE_UP].push_back(0.0); vec_grid_lines_color[CUBE_UP].push_back(0.1); }
+        vec_grid_lines[CUBE_UP].push_back(i); vec_grid_lines[CUBE_UP].push_back(piece_y_size*2); vec_grid_lines[CUBE_UP].push_back(piece_z_size);
+        vec_grid_lines[CUBE_UP].push_back(i); vec_grid_lines[CUBE_UP].push_back(piece_y_size*2); vec_grid_lines[CUBE_UP].push_back(piece_z_size*2); }
     for (int i=piece_z_size; i <= 2*piece_z_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[UP].push_back(1.0); vec_grid_lines_color[UP].push_back(0.0); vec_grid_lines_color[UP].push_back(0.0); vec_grid_lines_color[UP].push_back(0.1); }
-        vec_grid_lines[UP].push_back(piece_x_size); vec_grid_lines[UP].push_back(piece_y_size*2); vec_grid_lines[UP].push_back(i);
-        vec_grid_lines[UP].push_back(piece_x_size*2); vec_grid_lines[UP].push_back(piece_y_size*2); vec_grid_lines[UP].push_back(i); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_UP].push_back(1.0); vec_grid_lines_color[CUBE_UP].push_back(0.0); vec_grid_lines_color[CUBE_UP].push_back(0.0); vec_grid_lines_color[CUBE_UP].push_back(0.1); }
+        vec_grid_lines[CUBE_UP].push_back(piece_x_size); vec_grid_lines[CUBE_UP].push_back(piece_y_size*2); vec_grid_lines[CUBE_UP].push_back(i);
+        vec_grid_lines[CUBE_UP].push_back(piece_x_size*2); vec_grid_lines[CUBE_UP].push_back(piece_y_size*2); vec_grid_lines[CUBE_UP].push_back(i); }
     //lower grid face
     for (int i=piece_x_size; i <= 2*piece_x_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[DOWN].push_back(1.0); vec_grid_lines_color[DOWN].push_back(0.0); vec_grid_lines_color[DOWN].push_back(0.0); vec_grid_lines_color[DOWN].push_back(0.1); }
-        vec_grid_lines[DOWN].push_back(i); vec_grid_lines[DOWN].push_back(piece_y_size); vec_grid_lines[DOWN].push_back(piece_z_size);
-        vec_grid_lines[DOWN].push_back(i); vec_grid_lines[DOWN].push_back(piece_y_size); vec_grid_lines[DOWN].push_back(piece_z_size*2); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_DOWN].push_back(1.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.1); }
+        vec_grid_lines[CUBE_DOWN].push_back(i); vec_grid_lines[CUBE_DOWN].push_back(piece_y_size); vec_grid_lines[CUBE_DOWN].push_back(piece_z_size);
+        vec_grid_lines[CUBE_DOWN].push_back(i); vec_grid_lines[CUBE_DOWN].push_back(piece_y_size); vec_grid_lines[CUBE_DOWN].push_back(piece_z_size*2); }
     for (int i=piece_z_size; i <= 2*piece_z_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[DOWN].push_back(1.0); vec_grid_lines_color[DOWN].push_back(0.0); vec_grid_lines_color[DOWN].push_back(0.0); vec_grid_lines_color[DOWN].push_back(0.1); }
-        vec_grid_lines[DOWN].push_back(piece_x_size); vec_grid_lines[DOWN].push_back(piece_y_size); vec_grid_lines[DOWN].push_back(i);
-        vec_grid_lines[DOWN].push_back(piece_x_size*2); vec_grid_lines[DOWN].push_back(piece_y_size); vec_grid_lines[DOWN].push_back(i); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_DOWN].push_back(1.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.1); }
+        vec_grid_lines[CUBE_DOWN].push_back(piece_x_size); vec_grid_lines[CUBE_DOWN].push_back(piece_y_size); vec_grid_lines[CUBE_DOWN].push_back(i);
+        vec_grid_lines[CUBE_DOWN].push_back(piece_x_size*2); vec_grid_lines[CUBE_DOWN].push_back(piece_y_size); vec_grid_lines[CUBE_DOWN].push_back(i); }
     //left grid face
     for (int i=piece_y_size; i <= 2*piece_y_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[LEFT].push_back(1.0); vec_grid_lines_color[LEFT].push_back(0.0); vec_grid_lines_color[LEFT].push_back(0.0); vec_grid_lines_color[LEFT].push_back(0.1); }
-        vec_grid_lines[LEFT].push_back(piece_x_size); vec_grid_lines[LEFT].push_back(i); vec_grid_lines[LEFT].push_back(piece_z_size);
-        vec_grid_lines[LEFT].push_back(piece_x_size); vec_grid_lines[LEFT].push_back(i); vec_grid_lines[LEFT].push_back(piece_z_size*2); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_LEFT].push_back(1.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.1); }
+        vec_grid_lines[CUBE_LEFT].push_back(piece_x_size); vec_grid_lines[CUBE_LEFT].push_back(i); vec_grid_lines[CUBE_LEFT].push_back(piece_z_size);
+        vec_grid_lines[CUBE_LEFT].push_back(piece_x_size); vec_grid_lines[CUBE_LEFT].push_back(i); vec_grid_lines[CUBE_LEFT].push_back(piece_z_size*2); }
     for (int i=piece_z_size; i <= 2*piece_z_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[LEFT].push_back(1.0); vec_grid_lines_color[LEFT].push_back(0.0); vec_grid_lines_color[LEFT].push_back(0.0); vec_grid_lines_color[LEFT].push_back(0.1); }
-        vec_grid_lines[LEFT].push_back(piece_x_size); vec_grid_lines[LEFT].push_back(piece_y_size); vec_grid_lines[LEFT].push_back(i);
-        vec_grid_lines[LEFT].push_back(piece_x_size); vec_grid_lines[LEFT].push_back(piece_y_size*2); vec_grid_lines[LEFT].push_back(i); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_LEFT].push_back(1.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.1); }
+        vec_grid_lines[CUBE_LEFT].push_back(piece_x_size); vec_grid_lines[CUBE_LEFT].push_back(piece_y_size); vec_grid_lines[CUBE_LEFT].push_back(i);
+        vec_grid_lines[CUBE_LEFT].push_back(piece_x_size); vec_grid_lines[CUBE_LEFT].push_back(piece_y_size*2); vec_grid_lines[CUBE_LEFT].push_back(i); }
     //right grid face
     for (int i=piece_y_size; i <= 2*piece_y_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[RIGHT].push_back(1.0); vec_grid_lines_color[RIGHT].push_back(0.0); vec_grid_lines_color[RIGHT].push_back(0.0); vec_grid_lines_color[RIGHT].push_back(0.1); }
-        vec_grid_lines[RIGHT].push_back(piece_x_size*2); vec_grid_lines[RIGHT].push_back(i); vec_grid_lines[RIGHT].push_back(piece_z_size);
-        vec_grid_lines[RIGHT].push_back(piece_x_size*2); vec_grid_lines[RIGHT].push_back(i); vec_grid_lines[RIGHT].push_back(piece_z_size*2); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_RIGHT].push_back(1.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.1); }
+        vec_grid_lines[CUBE_RIGHT].push_back(piece_x_size*2); vec_grid_lines[CUBE_RIGHT].push_back(i); vec_grid_lines[CUBE_RIGHT].push_back(piece_z_size);
+        vec_grid_lines[CUBE_RIGHT].push_back(piece_x_size*2); vec_grid_lines[CUBE_RIGHT].push_back(i); vec_grid_lines[CUBE_RIGHT].push_back(piece_z_size*2); }
     for (int i=piece_z_size; i <= 2*piece_z_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[RIGHT].push_back(1.0); vec_grid_lines_color[RIGHT].push_back(0.0); vec_grid_lines_color[RIGHT].push_back(0.0); vec_grid_lines_color[RIGHT].push_back(0.1); }
-        vec_grid_lines[RIGHT].push_back(piece_x_size*2); vec_grid_lines[RIGHT].push_back(piece_y_size); vec_grid_lines[RIGHT].push_back(i);
-        vec_grid_lines[RIGHT].push_back(piece_x_size*2); vec_grid_lines[RIGHT].push_back(piece_y_size*2); vec_grid_lines[RIGHT].push_back(i); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_RIGHT].push_back(1.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.1); }
+        vec_grid_lines[CUBE_RIGHT].push_back(piece_x_size*2); vec_grid_lines[CUBE_RIGHT].push_back(piece_y_size); vec_grid_lines[CUBE_RIGHT].push_back(i);
+        vec_grid_lines[CUBE_RIGHT].push_back(piece_x_size*2); vec_grid_lines[CUBE_RIGHT].push_back(piece_y_size*2); vec_grid_lines[CUBE_RIGHT].push_back(i); }
     //forward grid face
     for (int i=piece_x_size; i <= 2*piece_x_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[FRONT].push_back(1.0); vec_grid_lines_color[FRONT].push_back(0.0); vec_grid_lines_color[FRONT].push_back(0.0); vec_grid_lines_color[FRONT].push_back(0.1); }
-        vec_grid_lines[FRONT].push_back(i); vec_grid_lines[FRONT].push_back(piece_y_size); vec_grid_lines[FRONT].push_back(piece_z_size);
-        vec_grid_lines[FRONT].push_back(i); vec_grid_lines[FRONT].push_back(piece_y_size*2); vec_grid_lines[FRONT].push_back(piece_z_size); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_FRONT].push_back(1.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.1); }
+        vec_grid_lines[CUBE_FRONT].push_back(i); vec_grid_lines[CUBE_FRONT].push_back(piece_y_size); vec_grid_lines[CUBE_FRONT].push_back(piece_z_size);
+        vec_grid_lines[CUBE_FRONT].push_back(i); vec_grid_lines[CUBE_FRONT].push_back(piece_y_size*2); vec_grid_lines[CUBE_FRONT].push_back(piece_z_size); }
     for (int i=piece_y_size; i <= 2*piece_y_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[FRONT].push_back(1.0); vec_grid_lines_color[FRONT].push_back(0.0); vec_grid_lines_color[FRONT].push_back(0.0); vec_grid_lines_color[FRONT].push_back(0.1); }
-        vec_grid_lines[FRONT].push_back(piece_x_size); vec_grid_lines[FRONT].push_back(i); vec_grid_lines[FRONT].push_back(piece_z_size);
-        vec_grid_lines[FRONT].push_back(piece_x_size*2); vec_grid_lines[FRONT].push_back(i); vec_grid_lines[FRONT].push_back(piece_z_size); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_FRONT].push_back(1.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.1); }
+        vec_grid_lines[CUBE_FRONT].push_back(piece_x_size); vec_grid_lines[CUBE_FRONT].push_back(i); vec_grid_lines[CUBE_FRONT].push_back(piece_z_size);
+        vec_grid_lines[CUBE_FRONT].push_back(piece_x_size*2); vec_grid_lines[CUBE_FRONT].push_back(i); vec_grid_lines[CUBE_FRONT].push_back(piece_z_size); }
     //back grid face
     for (int i=piece_x_size; i <= 2*piece_x_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[BACK].push_back(1.0); vec_grid_lines_color[BACK].push_back(0.0); vec_grid_lines_color[BACK].push_back(0.0); vec_grid_lines_color[BACK].push_back(0.1); }
-        vec_grid_lines[BACK].push_back(i); vec_grid_lines[BACK].push_back(piece_y_size); vec_grid_lines[BACK].push_back(piece_z_size*2);
-        vec_grid_lines[BACK].push_back(i); vec_grid_lines[BACK].push_back(piece_y_size*2); vec_grid_lines[BACK].push_back(piece_z_size*2); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_BACK].push_back(1.0); vec_grid_lines_color[CUBE_BACK].push_back(0.0); vec_grid_lines_color[CUBE_BACK].push_back(0.0); vec_grid_lines_color[CUBE_BACK].push_back(0.1); }
+        vec_grid_lines[CUBE_BACK].push_back(i); vec_grid_lines[CUBE_BACK].push_back(piece_y_size); vec_grid_lines[CUBE_BACK].push_back(piece_z_size*2);
+        vec_grid_lines[CUBE_BACK].push_back(i); vec_grid_lines[CUBE_BACK].push_back(piece_y_size*2); vec_grid_lines[CUBE_BACK].push_back(piece_z_size*2); }
     for (int i=piece_y_size; i <= 2*piece_y_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[BACK].push_back(1.0); vec_grid_lines_color[BACK].push_back(0.0); vec_grid_lines_color[BACK].push_back(0.0); vec_grid_lines_color[BACK].push_back(0.1); }
-        vec_grid_lines[BACK].push_back(piece_x_size); vec_grid_lines[BACK].push_back(i); vec_grid_lines[BACK].push_back(piece_z_size*2);
-        vec_grid_lines[BACK].push_back(piece_x_size*2); vec_grid_lines[BACK].push_back(i); vec_grid_lines[BACK].push_back(piece_z_size*2); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_BACK].push_back(1.0); vec_grid_lines_color[CUBE_BACK].push_back(0.0); vec_grid_lines_color[CUBE_BACK].push_back(0.0); vec_grid_lines_color[CUBE_BACK].push_back(0.1); }
+        vec_grid_lines[CUBE_BACK].push_back(piece_x_size); vec_grid_lines[CUBE_BACK].push_back(i); vec_grid_lines[CUBE_BACK].push_back(piece_z_size*2);
+        vec_grid_lines[CUBE_BACK].push_back(piece_x_size*2); vec_grid_lines[CUBE_BACK].push_back(i); vec_grid_lines[CUBE_BACK].push_back(piece_z_size*2); }
     }
 
 

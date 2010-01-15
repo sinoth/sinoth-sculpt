@@ -45,6 +45,13 @@ void scene::keyboardInput( int key, int action ) {
                 case 'S': mainCamera.changeStrafeVelocity(1*keyboardMoveSpeed); break;
                 case 'F': mainCamera.changeStrafeVelocity(-1*keyboardMoveSpeed); break;
 
+                case GLFW_KEY_TAB:
+                    switch ( view_method ) {
+                        case 0: view_method = 1; break;
+                        case 1: view_method = 0; break;
+                    }
+                    break;
+
                 case GLFW_KEY_ESC:
                     if ( !confirm_quit ) {
                         confirm_quit = true;
@@ -92,26 +99,50 @@ void scene::mousePosInput( int x, int y ) {
         if ( temp_ray.collideWithCube(temp_collision, 0.5) ) {
             //if ( i==0 || i==piece_x_size-1 || j==0 || j==piece_y_size-1 || k==0 || k==piece_z_size-1 )
             if ( temp_collision.dist < nearest_collision.dist ) {
-                nearest_collision = temp_collision;
-                nearest_collision.pos.set(i,j,k);
-                found_collision = true;
+                if ( placing_piece ) {
+                    bool valid = false;
+                    switch ( selected_face ) {
+                        case CUBE_UP: case CUBE_DOWN: if ( i == outside_piece.x && k == outside_piece.z ) valid = true; break;
+                        case CUBE_LEFT: case CUBE_RIGHT: if ( j == outside_piece.y && k == outside_piece.z ) valid = true; break;
+                        case CUBE_FRONT: case CUBE_BACK: if ( i == outside_piece.x && j == outside_piece.y ) valid = true; break;
+                    }
+                    if ( valid ) {
+                        nearest_collision = temp_collision;
+                        nearest_collision.pos.set(i,j,k);
+                        found_collision = true;
+                    }
+                } else {
+                    nearest_collision = temp_collision;
+                    nearest_collision.pos.set(i,j,k);
+                    found_collision = true;
+                }
             }
         }
         //selection_list[i+j*piece_x_size+k*piece_y_size*piece_x_size] = 0;
       }
 
     if ( found_collision ) {
-        //selection_list[nearest_collision.pos.x+nearest_collision.pos.y*piece_x_size+nearest_collision.pos.z*piece_y_size*piece_x_size] = 1;
-        selected_piece = nearest_collision.pos;
+        if ( placing_piece ) {
+            selected_piece = nearest_collision.pos;
+        } else {
+            //selection_list[nearest_collision.pos.x+nearest_collision.pos.y*piece_x_size+nearest_collision.pos.z*piece_y_size*piece_x_size] = 1;
+            selected_piece = nearest_collision.pos;
+            vec3f col;
+            col = temp_ray.pos + temp_ray.dir * nearest_collision.dist;
+            //printf("col: %f, %f, %f -- %d, %d\n", col.x, col.y, col.z, piece_x_size, piece_x_size*2);
+            //printf("col: %.17f, %.17f, %.17f -- %d, %d\n", col.x, col.y, col.z, piece_x_size, piece_x_size*2);
+
+            if ( fabs(col.x - piece_x_size) < 0.0001 ) selected_face = CUBE_LEFT;
+            if ( fabs(col.x - piece_x_size*2) < 0.0001 ) selected_face = CUBE_RIGHT;
+            if ( fabs(col.y - piece_y_size) < 0.0001 ) selected_face = CUBE_DOWN;
+            if ( fabs(col.y - piece_y_size*2) < 0.0001 ) selected_face = CUBE_UP;
+            if ( fabs(col.z - piece_z_size) < 0.0001 ) selected_face = CUBE_FRONT;
+            if ( fabs(col.z - piece_z_size*2) < 0.0001 ) selected_face = CUBE_BACK;
+
+            //printf("%d\n", selected_face);
+
+        }
         hovering_piece = true;
-        vec3f col;
-        col = temp_ray.pos + temp_ray.dir * nearest_collision.dist;
-        if ( col.x == piece_x_size ) selected_face = LEFT;
-        if ( col.x == piece_x_size*2 ) selected_face = RIGHT;
-        if ( col.y == piece_y_size ) selected_face = DOWN;
-        if ( col.y == piece_y_size*2 ) selected_face = UP;
-        if ( col.z == piece_z_size ) selected_face = FRONT;
-        if ( col.z == piece_z_size*2 ) selected_face = BACK;
     } else {
         hovering_piece = false;
     }
@@ -132,12 +163,20 @@ void scene::mousePosInput( int x, int y ) {
         //                                                                         mainCamera.arc_facing.x, mainCamera.arc_facing.y, mainCamera.arc_facing.z );
 
         //only show sides that face camera
-        if ( mainCamera.arc_facing.z <= -0.162847 ) show_face[BACK] = true; else show_face[BACK] = false;
-        if ( mainCamera.arc_facing.y <= -0.162847 ) show_face[UP] = true; else show_face[UP] = false;
-        if ( mainCamera.arc_facing.x <= -0.162847 ) show_face[RIGHT] = true; else show_face[RIGHT] = false;
-        if ( mainCamera.arc_facing.z >=  0.162847 ) show_face[FRONT] = true; else show_face[FRONT] = false;
-        if ( mainCamera.arc_facing.y >=  0.162847 ) show_face[DOWN] = true; else show_face[DOWN] = false;
-        if ( mainCamera.arc_facing.x >=  0.162847 ) show_face[LEFT] = true; else show_face[LEFT] = false;
+        if ( mainCamera.arc_facing.z <= -0.162847 ) show_face[CUBE_BACK] = true; else show_face[CUBE_BACK] = false;
+        if ( mainCamera.arc_facing.y <= -0.162847 ) show_face[CUBE_UP] = true; else show_face[CUBE_UP] = false;
+        if ( mainCamera.arc_facing.x <= -0.162847 ) show_face[CUBE_RIGHT] = true; else show_face[CUBE_RIGHT] = false;
+        if ( mainCamera.arc_facing.z >=  0.162847 ) show_face[CUBE_FRONT] = true; else show_face[CUBE_FRONT] = false;
+        if ( mainCamera.arc_facing.y >=  0.162847 ) show_face[CUBE_DOWN] = true; else show_face[CUBE_DOWN] = false;
+        if ( mainCamera.arc_facing.x >=  0.162847 ) show_face[CUBE_LEFT] = true; else show_face[CUBE_LEFT] = false;
+
+        vec3f lawl(-1,0,0);
+        vec3f cam2face = vec3f(5,7.5,7.5) - mainCamera.getPosition();
+        cam2face.normalize();
+        here
+        //lawl.inv_mult_by_matrix(mainCamera.af_Matrix_rot);
+        printf("%f\n", cam2face*lawl);
+
 
 
     }
@@ -162,12 +201,11 @@ void scene::mouseClickInput( int button, int state ) {
             switch ( button ) {
                 case GLFW_MOUSE_BUTTON_LEFT:
                     mouseL=1;
-
                     //set selected cube if hovering over
                     if ( hovering_piece ) {
                         placing_piece = true;
+                        outside_piece = selected_piece;
                     }
-
                     break;
                 case GLFW_MOUSE_BUTTON_RIGHT:
                     mouseR=1;
@@ -182,7 +220,14 @@ void scene::mouseClickInput( int button, int state ) {
             switch ( button ) {
                 case GLFW_MOUSE_BUTTON_LEFT:
                     mouseL=0;
-                    if ( placing_piece ) placing_piece = false;
+                    if ( placing_piece ) {
+                        if ( hovering_piece ) {
+                            built_list[selected_piece.x+selected_piece.y*piece_x_size+selected_piece.z*piece_y_size*piece_x_size] ^= 1;
+                            //hovering_piece = false;
+                        }
+                        placing_piece = false;
+                        selected_piece = outside_piece;
+                    }
                     break;
                 case GLFW_MOUSE_BUTTON_RIGHT:
                     mouseR=0;
@@ -230,7 +275,7 @@ int GLFWCALL scene::wrapper_window_close( void ) {
     //return true;
 }
 
-void GLFWCALL scene::wrapper_window_size( int xres, int yres ) {
+void GLFWCALL scene::wrapper_window_size( int , int  ) {
 //\/    myself->initResize(xres,yres);
 }
 

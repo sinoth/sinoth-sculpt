@@ -38,15 +38,17 @@ scene::scene() {
     piece_x_size = piece_y_size = piece_z_size = 5;
 
     //initialize the selection bits
-    selection_list.resize(piece_x_size*piece_y_size*piece_z_size);
+    built_list.resize(piece_x_size*piece_y_size*piece_z_size);
     for ( int i=0; i<piece_x_size*piece_y_size*piece_z_size; ++i)
-        selection_list[i] = 0;
+        built_list[i] = 0;
 
-    for (int i=0; i < 6; ++i) show_face[i] = 0;
-    show_face[BACK] = 1;
+    for (int i=0; i < 6; ++i) show_face[i] = 1;
+    show_face[CUBE_BACK] = 1;
 
     placing_piece = false;
     hovering_piece = false;
+    view_method = 0;
+    selected_face = 0;
 
 }
 

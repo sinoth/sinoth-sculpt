@@ -11,12 +11,12 @@
 //#include <sinprim.h>
 
 
-#define UP     0
-#define DOWN   1
-#define LEFT   2
-#define RIGHT  3
-#define FRONT  4
-#define BACK   5
+#define CUBE_UP     0
+#define CUBE_DOWN   1
+#define CUBE_LEFT   2
+#define CUBE_RIGHT  3
+#define CUBE_FRONT  4
+#define CUBE_BACK   5
 
 
 typedef struct serverinfo_s {
@@ -88,11 +88,12 @@ public:
     bool show_face[6];
     bool hovering_piece;
     bool placing_piece;
-    vec3f selected_normal;
-    vec3f selected_piece;
     int   selected_face;
+    vec3f selected_piece;
+    vec3f outside_piece;
     float zoom_factor;
-    std::vector<char> selection_list;
+    std::vector<char> built_list;
+    int view_method;
 
 
     //client stuff
