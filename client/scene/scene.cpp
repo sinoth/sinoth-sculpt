@@ -42,7 +42,7 @@ scene::scene() {
     for ( int i=0; i<piece_x_size*piece_y_size*piece_z_size; ++i)
         built_list[i] = 0;
 
-    for (int i=0; i < 6; ++i) show_face[i] = 1;
+    for (int i=0; i < 6; ++i) show_face[i] = 0;
     show_face[CUBE_BACK] = 1;
 
     placing_piece = false;

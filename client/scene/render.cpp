@@ -3,7 +3,7 @@
 #include <algorithm>
 #include "scene.h"
 
-void drawBox(float,float,float,float);
+void drawBox(float,float,float,float,bool);
 
 void scene::render() {
 
@@ -12,11 +12,16 @@ void scene::render() {
 
     begin3D();
     mainCamera.setPerspective();
-    //mainLighting.doLighting();
+    mainLighting.doLighting();
 
+    for ( int i=0; i < 4; ++i) {
+        vec3f da_light = mainLighting.getPosition(i);
+        glBegin(GL_QUADS);
+        drawBox(da_light.x, da_light.y, da_light.z, 0.5, 0);
+        glEnd();
+    }
 
     //render the selected cube
-    glBegin(GL_QUADS);
 
     static std::vector<collision3f> sorted_blocks;
     sorted_blocks.clear();
@@ -30,44 +35,51 @@ void scene::render() {
     if ( sorted_blocks.size() ) {
         if ( view_method ) sort(sorted_blocks.begin(), sorted_blocks.end(), collision3f::greaterThan);
         else sort(sorted_blocks.begin(), sorted_blocks.end());
-        glColor4f(0.0,0.0,0.0,0.5);
+        glColor4f(1.0,1.0,1.0,0.7);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture( GL_TEXTURE_2D, noise_texture );
+        glBegin(GL_QUADS);
         for ( std::vector<collision3f>::iterator it=sorted_blocks.begin(); it != sorted_blocks.end(); it++ )
-            drawBox((*it).pos.x,(*it).pos.y,(*it).pos.z,0.5);
+            drawBox((*it).pos.x,(*it).pos.y,(*it).pos.z,0.5,1);
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
     }
 
 
-    if ( placing_piece ) {
+    if ( hovering_piece || placing_piece ) {
+        glDisable(GL_LIGHTING);
+        glBegin(GL_QUADS);
         switch ( selected_face ) {
             case CUBE_UP: case CUBE_DOWN:
                 for (int i=0; i<piece_y_size; ++i) {
-                    if ( i == selected_piece.y ) glColor4f(1.0,0.0,0.0,0.3);
+                    if ( placing_piece && i == selected_piece.y ) glColor4f(1.0,0.0,0.0,0.3);
                     else glColor4f(1.0,0.0,0.0,0.1);
-                    drawBox(selected_piece.x+piece_x_size+0.5,i+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.5);
+                    drawBox(selected_piece.x+piece_x_size+0.5,i+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.5,0);
                 }
                 break;
             case CUBE_LEFT: case CUBE_RIGHT:
                 for (int i=0; i<piece_x_size; ++i) {
-                    if ( i == selected_piece.x ) glColor4f(1.0,0.0,0.0,0.3);
+                    if ( placing_piece && i == selected_piece.x ) glColor4f(1.0,0.0,0.0,0.3);
                     else glColor4f(1.0,0.0,0.0,0.1);
-                    drawBox(i+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.5);
+                    drawBox(i+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.5,0);
                 }
                 break;
             case CUBE_FRONT: case CUBE_BACK:
                 for (int i=0; i<piece_z_size; ++i) {
-                    if ( i == selected_piece.z ) glColor4f(1.0,0.0,0.0,0.3);
+                    if ( placing_piece &&  i == selected_piece.z ) glColor4f(1.0,0.0,0.0,0.3);
                     else glColor4f(1.0,0.0,0.0,0.1);
-                    drawBox(selected_piece.x+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,i+piece_z_size+0.5,0.5);
+                    drawBox(selected_piece.x+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,i+piece_z_size+0.5,0.5,0);
                 }
                 break;
         }
-    } else {
-        if ( hovering_piece ) {
-            glColor4f(1.0,0.0,0.0,0.1);
-            drawBox(selected_piece.x+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.5);
-        }
+    //} else {
+    //    if ( hovering_piece ) {
+    //        glColor4f(1.0,0.0,0.0,0.1);
+    //        drawBox(selected_piece.x+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.5);
+    //    }
+        glEnd();
     }
 
-    glEnd();
 
 
 
@@ -203,37 +215,37 @@ void scene::generateVA() {
 
 
 
-void drawBox(float x, float y, float z, float s) {
+void drawBox(float x, float y, float z, float s, bool tex) {
     //top
-    glVertex3f(x-s,y+s,z+s);
-    glVertex3f(x-s,y+s,z-s);
-    glVertex3f(x+s,y+s,z-s);
-    glVertex3f(x+s,y+s,z+s);
+    if (tex) glTexCoord2f(0,0); glNormal3f(0,1,0); glVertex3f(x-s,y+s,z+s);
+    if (tex) glTexCoord2f(0,1); glNormal3f(0,1,0); glVertex3f(x-s,y+s,z-s);
+    if (tex) glTexCoord2f(1,1); glNormal3f(0,1,0); glVertex3f(x+s,y+s,z-s);
+    if (tex) glTexCoord2f(1,0); glNormal3f(0,1,0); glVertex3f(x+s,y+s,z+s);
     //bottom
-    glVertex3f(x+s,y-s,z+s);
-    glVertex3f(x+s,y-s,z-s);
-    glVertex3f(x-s,y-s,z-s);
-    glVertex3f(x-s,y-s,z+s);
+    if (tex) glTexCoord2f(1,0); glNormal3f(0,-1,0); glVertex3f(x+s,y-s,z+s);
+    if (tex) glTexCoord2f(1,1); glNormal3f(0,-1,0); glVertex3f(x+s,y-s,z-s);
+    if (tex) glTexCoord2f(0,1); glNormal3f(0,-1,0); glVertex3f(x-s,y-s,z-s);
+    if (tex) glTexCoord2f(0,0); glNormal3f(0,-1,0); glVertex3f(x-s,y-s,z+s);
     //left
-    glVertex3f(x-s,y-s,z+s);
-    glVertex3f(x-s,y-s,z-s);
-    glVertex3f(x-s,y+s,z-s);
-    glVertex3f(x-s,y+s,z+s);
+    if (tex) glTexCoord2f(1,0); glNormal3f(-1,0,0); glVertex3f(x-s,y-s,z+s);
+    if (tex) glTexCoord2f(0,0); glNormal3f(-1,0,0); glVertex3f(x-s,y-s,z-s);
+    if (tex) glTexCoord2f(0,1); glNormal3f(-1,0,0); glVertex3f(x-s,y+s,z-s);
+    if (tex) glTexCoord2f(1,1); glNormal3f(-1,0,0); glVertex3f(x-s,y+s,z+s);
     //right
-    glVertex3f(x+s,y+s,z+s);
-    glVertex3f(x+s,y+s,z-s);
-    glVertex3f(x+s,y-s,z-s);
-    glVertex3f(x+s,y-s,z+s);
+    if (tex) glTexCoord2f(1,1); glNormal3f(1,0,0); glVertex3f(x+s,y+s,z+s);
+    if (tex) glTexCoord2f(0,1); glNormal3f(1,0,0); glVertex3f(x+s,y+s,z-s);
+    if (tex) glTexCoord2f(0,0); glNormal3f(1,0,0); glVertex3f(x+s,y-s,z-s);
+    if (tex) glTexCoord2f(1,0); glNormal3f(1,0,0); glVertex3f(x+s,y-s,z+s);
     //front
-    glVertex3f(x+s,y-s,z-s);
-    glVertex3f(x+s,y+s,z-s);
-    glVertex3f(x-s,y+s,z-s);
-    glVertex3f(x-s,y-s,z-s);
+    if (tex) glTexCoord2f(1,0); glNormal3f(0,0,-1); glVertex3f(x+s,y-s,z-s);
+    if (tex) glTexCoord2f(1,1); glNormal3f(0,0,-1); glVertex3f(x+s,y+s,z-s);
+    if (tex) glTexCoord2f(0,1); glNormal3f(0,0,-1); glVertex3f(x-s,y+s,z-s);
+    if (tex) glTexCoord2f(0,0); glNormal3f(0,0,-1); glVertex3f(x-s,y-s,z-s);
     //back
-    glVertex3f(x-s,y-s,z+s);
-    glVertex3f(x-s,y+s,z+s);
-    glVertex3f(x+s,y+s,z+s);
-    glVertex3f(x+s,y-s,z+s);
+    if (tex) glTexCoord2f(0,0); glNormal3f(0,0,1); glVertex3f(x-s,y-s,z+s);
+    if (tex) glTexCoord2f(0,1); glNormal3f(0,0,1); glVertex3f(x-s,y+s,z+s);
+    if (tex) glTexCoord2f(1,1); glNormal3f(0,0,1); glVertex3f(x+s,y+s,z+s);
+    if (tex) glTexCoord2f(1,0); glNormal3f(0,0,1); glVertex3f(x+s,y-s,z+s);
 }
 
 

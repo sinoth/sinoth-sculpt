@@ -80,6 +80,7 @@ public:
     char *piece_blob;
 
     //edit mode stuff
+    GLuint noise_texture;
     void generateVA();
     bool have_piece;
     unsigned char piece_x_size, piece_y_size, piece_z_size;

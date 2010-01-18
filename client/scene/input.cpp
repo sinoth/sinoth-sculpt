@@ -150,39 +150,24 @@ void scene::mousePosInput( int x, int y ) {
 
     if ( mouseM ) {
 
-        //if (mouseR) {
-            mainCamera.arcSpinMouseX( -(x-mouseX)*0.4 );
-        //} else {
-            mainCamera.arcSpinMouseY( (y-mouseY)*0.4 );
-        //}
-        //printf("* position: %f,%f,%f\nstrafe: %f, %f, %f\nup: %f, %f, %f\nfacing: %f, %f, %f\n", mainCamera.p_position.x, mainCamera.p_position.y, mainCamera.p_position.z,
-        //                                                                         mainCamera.arc_strafe.x, mainCamera.arc_strafe.y, mainCamera.arc_strafe.z,
-        //                                                                         mainCamera.arc_up.x, mainCamera.arc_up.y, mainCamera.arc_up.z,
-        //                                                                         mainCamera.arc_facing.x, mainCamera.arc_facing.y, mainCamera.arc_facing.z );
-        //printf("* position: %f,%f,%f\nfacing: %f, %f, %f\n", mainCamera.p_position.x, mainCamera.p_position.y, mainCamera.p_position.z,
-        //                                                                         mainCamera.arc_facing.x, mainCamera.arc_facing.y, mainCamera.arc_facing.z );
-
-        //only show sides that face camera
-        if ( mainCamera.arc_facing.z <= -0.162847 ) show_face[CUBE_BACK] = true; else show_face[CUBE_BACK] = false;
-        if ( mainCamera.arc_facing.y <= -0.162847 ) show_face[CUBE_UP] = true; else show_face[CUBE_UP] = false;
-        if ( mainCamera.arc_facing.x <= -0.162847 ) show_face[CUBE_RIGHT] = true; else show_face[CUBE_RIGHT] = false;
-        if ( mainCamera.arc_facing.z >=  0.162847 ) show_face[CUBE_FRONT] = true; else show_face[CUBE_FRONT] = false;
-        if ( mainCamera.arc_facing.y >=  0.162847 ) show_face[CUBE_DOWN] = true; else show_face[CUBE_DOWN] = false;
-        if ( mainCamera.arc_facing.x >=  0.162847 ) show_face[CUBE_LEFT] = true; else show_face[CUBE_LEFT] = false;
-
-        vec3f lawl(-1,0,0);
-        vec3f cam2face = vec3f(5,7.5,7.5) - mainCamera.getPosition();
-        cam2face.normalize();
-        here
-        //lawl.inv_mult_by_matrix(mainCamera.af_Matrix_rot);
-        printf("%f\n", cam2face*lawl);
-
-
+        mainCamera.arcZoom( (y-mouseY)*0.2 );
 
     }
 
     if (mouseR) {
-        mainCamera.arcZoom( (y-mouseY)*0.2 );
+
+        mainCamera.arcSpinMouseX( -(x-mouseX)*0.4 );
+        mainCamera.arcSpinMouseY( (y-mouseY)*0.4 );
+
+        vec3f cam_position = mainCamera.getPosition();
+
+        if ( vec3f(-1,0,0) * ( vec3f(piece_x_size,piece_y_size*1.5,piece_z_size*1.5) - cam_position) < 0 ) show_face[CUBE_LEFT] = true; else show_face[CUBE_LEFT] = false;
+        if ( vec3f(1,0,0) * ( vec3f(piece_x_size*2,piece_y_size*1.5,piece_z_size*1.5) - cam_position) < 0 ) show_face[CUBE_RIGHT] = true; else show_face[CUBE_RIGHT] = false;
+        if ( vec3f(0,-1,0) * ( vec3f(piece_x_size*1.5,piece_y_size,piece_z_size*1.5) - cam_position) < 0 ) show_face[CUBE_DOWN] = true; else show_face[CUBE_DOWN] = false;
+        if ( vec3f(0,1,0) * ( vec3f(piece_x_size*1.5,piece_y_size*2,piece_z_size*1.5) - cam_position) < 0 ) show_face[CUBE_UP] = true; else show_face[CUBE_UP] = false;
+        if ( vec3f(0,0,-1) * ( vec3f(piece_x_size*1.5,piece_y_size*1.5,piece_z_size) - cam_position) < 0 ) show_face[CUBE_FRONT] = true; else show_face[CUBE_FRONT] = false;
+        if ( vec3f(0,0,1) * ( vec3f(piece_x_size*1.5,piece_y_size*1.5,piece_z_size*2) - cam_position) < 0 ) show_face[CUBE_BACK] = true; else show_face[CUBE_BACK] = false;
+
     }
 
     mainGui.insertMousePos(x,res_cur_y - y);

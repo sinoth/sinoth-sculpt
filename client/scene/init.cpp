@@ -276,10 +276,28 @@ void scene::initLight() {
 
     mainLighting.init();
 
-    mainLighting.setAmbient(0, 0.3,0.3,0.3);
+    mainLighting.setGlobalAmbient(0,0,0);
+
+    mainLighting.setAmbient(0, 0.0,0.0,0.0);
     mainLighting.setDiffuse(0, 0.6,0.6,0.6);
-    mainLighting.setPosition(0, 0, 20, 0 );
+    mainLighting.setPosition(0, 0*piece_x_size*1.5, 2*piece_y_size*1.5, 0*piece_z_size*1.5,1);
     mainLighting.enableLight(0);
+
+    mainLighting.setAmbient(1, 0.0,0.0,0.0);
+    mainLighting.setDiffuse(1, 0.6,0.6,0.6);
+    mainLighting.setPosition(1, 0*piece_x_size*1.5, 2*piece_y_size*1.5, 2*piece_z_size*1.5,1);
+    mainLighting.enableLight(1);
+
+    mainLighting.setAmbient(2, 0.0,0.0,0.0);
+    mainLighting.setDiffuse(2, 0.6,0.6,0.6);
+    mainLighting.setPosition(2, 2*piece_x_size*1.5, 2*piece_y_size*1.5, 2*piece_z_size*1.5,1);
+    mainLighting.enableLight(2);
+
+    mainLighting.setAmbient(3, 0.0,0.0,0.0);
+    mainLighting.setDiffuse(3, 0.6,0.6,0.6);
+    mainLighting.setPosition(3, 2*piece_x_size*1.5, 2*piece_y_size*1.5, 0*piece_z_size*1.5,1);
+    mainLighting.enableLight(3);
+
 
 /*
         GLfloat fogcolor[4];
@@ -314,6 +332,14 @@ int scene::loadTextures() {
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST ); //GL_LINEAR
     }
 
+    glGenTextures( 1, &noise_texture );
+    glBindTexture( GL_TEXTURE_2D, noise_texture );
 
+    if ( !glfwLoadTexture2D("noise.tga",GLFW_NO_RESCALE_BIT) ) {
+        printf("Unable to load noise.tga\n");
+    } else {
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST ); //GL_LINEAR
+    }
     return 0;
 }
