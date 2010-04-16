@@ -5,7 +5,7 @@
 		<Option title="sculpt-server" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="sinsql\;mapgen\;sinsocket\;sqlite\;server\;controller\;" />
+		<Option virtualFolders="mapgen\;server\;controller\;server\pb\;" />
 		<Build>
 			<Target title="Windows Server Debug">
 				<Option platforms="Windows;" />
@@ -21,13 +21,14 @@
 					<Add option="-g" />
 					<Add option="-D_WIN32_WINNT=0x0501" />
 					<Add option="-D_DEBUG" />
-					<Add directory="server\sqlite" />
-					<Add directory="server\sinsql" />
-					<Add directory="sinsocket" />
+					<Add directory="res" />
 				</Compiler>
 				<Linker>
 					<Add option="-pg -lgmon" />
 					<Add library="ws2_32" />
+					<Add library="sinsocket" />
+					<Add library="mysqlclient" />
+					<Add library="mysqlpp" />
 				</Linker>
 			</Target>
 			<Target title="Windows Server Release">
@@ -90,6 +91,21 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="res\messages.txt">
+			<Option virtualFolder="server\" />
+			<Option target="Windows Server Debug" />
+			<Option target="Windows Server Release" />
+		</Unit>
+		<Unit filename="res\messages.txt.pb.cc">
+			<Option virtualFolder="server\pb\" />
+			<Option target="Windows Server Debug" />
+			<Option target="Windows Server Release" />
+		</Unit>
+		<Unit filename="res\messages.txt.pb.h">
+			<Option virtualFolder="server\pb\" />
+			<Option target="Windows Server Debug" />
+			<Option target="Windows Server Release" />
+		</Unit>
 		<Unit filename="server\controller.cpp">
 			<Option virtualFolder="controller\" />
 			<Option target="Windows Controller" />
@@ -103,53 +119,17 @@
 			<Option virtualFolder="mapgen\" />
 			<Option target="Windows Mapgen" />
 		</Unit>
-		<Unit filename="server\sinsql\sinsql.cpp">
-			<Option virtualFolder="sinsql\" />
+		<Unit filename="server\ssqls.h">
+			<Option compile="1" />
+			<Option link="1" />
+			<Option virtualFolder="server\" />
 			<Option target="Windows Server Debug" />
 			<Option target="Windows Server Release" />
-			<Option target="Windows Mapgen" />
-		</Unit>
-		<Unit filename="server\sinsql\sinsql.h">
-			<Option virtualFolder="sinsql\" />
-			<Option target="Windows Server Debug" />
-			<Option target="Windows Server Release" />
-			<Option target="Windows Mapgen" />
-		</Unit>
-		<Unit filename="server\sqlite\sqlite3.c">
-			<Option compilerVar="CC" />
-			<Option virtualFolder="sqlite\" />
-			<Option target="Windows Server Debug" />
-			<Option target="Windows Server Release" />
-			<Option target="Windows Mapgen" />
-		</Unit>
-		<Unit filename="server\sqlite\sqlite3.h">
-			<Option virtualFolder="sqlite\" />
-			<Option target="Windows Server Debug" />
-			<Option target="Windows Server Release" />
-			<Option target="Windows Mapgen" />
-		</Unit>
-		<Unit filename="server\sqlite\sqlite3ext.h">
-			<Option virtualFolder="sqlite\" />
-			<Option target="Windows Server Debug" />
-			<Option target="Windows Server Release" />
-			<Option target="Windows Mapgen" />
 		</Unit>
 		<Unit filename="server\todo.txt">
 			<Option virtualFolder="server\" />
 			<Option target="Windows Server Debug" />
 			<Option target="Windows Server Release" />
-		</Unit>
-		<Unit filename="sinsocket\sinsocket.cpp">
-			<Option virtualFolder="sinsocket\" />
-			<Option target="Windows Server Debug" />
-			<Option target="Windows Server Release" />
-			<Option target="Windows Controller" />
-		</Unit>
-		<Unit filename="sinsocket\sinsocket.h">
-			<Option virtualFolder="sinsocket\" />
-			<Option target="Windows Server Debug" />
-			<Option target="Windows Server Release" />
-			<Option target="Windows Controller" />
 		</Unit>
 		<Extensions>
 			<code_completion />

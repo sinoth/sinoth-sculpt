@@ -11,7 +11,7 @@ void scene::render() {
     //glLoadIdentity();
 
     begin3D();
-    mainCamera.setPerspective();
+    mainCamera.doPerspective();
     mainLighting.doLighting();
 
     for ( int i=0; i < 4; ++i) {

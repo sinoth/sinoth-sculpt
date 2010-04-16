@@ -1,18 +1,26 @@
 
-#include <vector>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <sqlite3.h>
+#include <vector>
+#include <sinsocket.h>
 
-#include "sinsocket.h"
-#include "sinsql.h"
+#include "messages.txt.pb.h"
+
+#define MAJOR_VERSION 1
+#define MINOR_VERSION 0
+bool check_version( uint8_t &in ) {
+    if ( (in>>4) == MAJOR_VERSION && (in&15) == MINOR_VERSION )
+        return false;
+    else {
+        in = MINOR_VERSION + (MAJOR_VERSION<<4);
+        return true; }
+}
 
 
-//global database stuff
-sqlite3 *db;
-char temp_query[300];
-
+using namespace std::cout;
+using namespace std::cerr;
+using namespace std::newl;
 
 //prototypes
 void send_server_list( sinsocket * );
@@ -26,16 +34,15 @@ int main(int, char **) {
   try {
 
     sinsocket server, *incoming_connection;
+    char incoming_ip[46]; //INET6_ADDRSTRLEN
+    uint8_t major, minor, version;
+
     unsigned char request;
     bool do_quit = false;
 
-    //open the database
-    sinsql_open_db("sculpt-db", db);
-    printf("Opened database.\n");
-
     //create a listening socket on port 81
     if ( server.listen(35610) ) {
-        fprintf(stderr, "error on server.listen()! baaad\n");
+        cerr << "error on server.listen()! baaad\n";
         return 1; }
 
     while (!do_quit) {
@@ -52,7 +59,18 @@ int main(int, char **) {
 
         switch ( request ) {
             case 0x28: //send a server list
+                //first make sure we have the correct version
+                incoming_connection->recv(&version, 1);
+                if ( check_version(version) ) {
+                    cerr << "Rejected!  New version is
+                    break;
                 send_server_list(incoming_connection);
+                    //open the database (db, server, user, pass)
+                    if ( mysqlpp::Connection conn( "sculpt", "localhost", "sculpt_user", "sculpt_password" ) ) {
+                    } else {
+                        cerr << "DB connection failed: " << conn.error() << endl;
+                        return 1; }
+                    //mysqlpp::Query query = conn.query();
                 break;
             case 0x43: //request to claim a piece
                 send_piece(incoming_connection);
