@@ -1,14 +1,16 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#include <sinshadow.h>
 #include <GL/glfw.h>
+#include <sintimer_glfw.h>
+#include <sincamera.h>
+#include <sinui.h>
+#include <sinsocket.h>
+//#include <sinprim.h>
+
 #include <vector>
 
-#include <sincamera.h>
-#include <sinlight.h>
-#include <sinui.h>
-#include "sinsocket.h"
-//#include <sinprim.h>
 
 
 #define CUBE_UP     0
@@ -67,6 +69,8 @@ public:
 
     // light stuff
     sinLighting mainLighting;
+    sinShadow shadows;
+
 
     //ui stuff
     GLuint theme_texture;
@@ -118,6 +122,7 @@ public:
 	void end3D();
 
     void render();
+    void render_cubes();
     void update();
     bool init();
     bool reInit();
@@ -176,8 +181,6 @@ public:
     //self-reference variable
     //required for C callbacks
     static scene *myself;
-
-    void perspectiveGL( GLdouble , GLdouble , GLdouble , GLdouble  );
 
 };
 

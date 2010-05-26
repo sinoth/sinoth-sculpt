@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "scene.h"
+#include <sinopengl.h>
 
 
 bool scene::init() {
@@ -50,7 +51,7 @@ bool scene::init() {
     else glfwEnable( GLFW_MOUSE_CURSOR );
     //glfwEnable( GLFW_MOUSE_CURSOR );
 
-    glfwSetWindowTitle( "sculpt" );
+    glfwSetWindowTitle( "social sculpt" );
 
     // Enable sticky keys
     glfwEnable( GLFW_STICKY_KEYS );
@@ -298,6 +299,9 @@ void scene::initLight() {
     mainLighting.setPosition(3, 2*piece_x_size*1.5, 2*piece_y_size*1.5, 0*piece_z_size*1.5,1);
     mainLighting.enableLight(3);
 
+
+    shadows.setNumLights(4);
+    shadows.setLightStruct(&mainLighting);
 
 /*
         GLfloat fogcolor[4];

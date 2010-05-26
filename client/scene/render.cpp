@@ -45,6 +45,19 @@ void scene::render() {
         glDisable(GL_TEXTURE_2D);
     }
 
+/*
+        //first draw the scene unlit
+        lights.flipOff();
+        draw_scene();
+        //now layer the lit parts on top of eachother
+        shadows.startShadowVodou();
+        while ( shadows.doingShadows() )
+            draw_scene();
+        shadows.endShadowVodou();
+        //turn the lights back on
+        lights.flipOn();
+*/
+
 
     if ( hovering_piece || placing_piece ) {
         glDisable(GL_LIGHTING);
@@ -81,9 +94,6 @@ void scene::render() {
     }
 
 
-
-
-
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     //glEnableClientState(GL_NORMAL_ARRAY);
@@ -99,30 +109,35 @@ void scene::render() {
           }
         }
 
-      //for (unsigned int i = 0; i < vec_vertex.size(); i+=3 ) {
-      //    printf("%f %f %f\n", vec_vertex[i], vec_vertex[i+1], vec_vertex[i+2] );
-      //} printf("\n");
-
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     //glPopClientAttrib();
-
-    //glBegin(GL_LINES);
-    //    glVertex3f(0,0,-1);
-    //    glVertex3f(0,1,-1);
-    //glEnd();
 
     begin2D();
 
     glColor4f(1.0,1.0,1.0,1.0);
     mainGui.render();
 
-
     glfwSwapBuffers();
 
     FPS();
 
 }
+
+void scene::render_cubes() {
+
+
+
+
+
+
+
+
+
+
+
+}
+
 
 
 void scene::resetCamera() {
@@ -210,11 +225,6 @@ void scene::generateVA() {
 
 }
 
-
-
-
-
-
 void drawBox(float x, float y, float z, float s, bool tex) {
     //top
     if (tex) glTexCoord2f(0,0); glNormal3f(0,1,0); glVertex3f(x-s,y+s,z+s);
@@ -247,7 +257,6 @@ void drawBox(float x, float y, float z, float s, bool tex) {
     if (tex) glTexCoord2f(1,1); glNormal3f(0,0,1); glVertex3f(x+s,y+s,z+s);
     if (tex) glTexCoord2f(1,0); glNormal3f(0,0,1); glVertex3f(x+s,y-s,z+s);
 }
-
 
 /*
 

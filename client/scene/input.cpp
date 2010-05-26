@@ -1,6 +1,4 @@
 
-#include <GL/glfw.h>
-#include <sincamera.h>
 #include <stdio.h>
 
 #include "scene.h"
@@ -16,10 +14,10 @@ void scene::keyboardInput( int key, int action ) {
     switch (action) {
         case GLFW_PRESS:
             switch (key) {
-                case 'E': mainCamera.changeVelocity(1*keyboardMoveSpeed); break;
-                case 'D': mainCamera.changeVelocity(-1*keyboardMoveSpeed); break;
-                case 'S': mainCamera.changeStrafeVelocity(-1*keyboardMoveSpeed); break;
-                case 'F': mainCamera.changeStrafeVelocity(1*keyboardMoveSpeed); break;
+                //case 'E': mainCamera.changeVelocity(1*keyboardMoveSpeed); break;
+                //case 'D': mainCamera.changeVelocity(-1*keyboardMoveSpeed); break;
+                //case 'S': mainCamera.changeStrafeVelocity(-1*keyboardMoveSpeed); break;
+                //case 'F': mainCamera.changeStrafeVelocity(1*keyboardMoveSpeed); break;
 
                 case 'Q':
                     if ( alt_status ) { quit = true; glfwTerminate(); }
@@ -40,10 +38,10 @@ void scene::keyboardInput( int key, int action ) {
 
         case GLFW_RELEASE:
             switch (key) {
-                case 'E': mainCamera.changeVelocity(-1*keyboardMoveSpeed); break;
-                case 'D': mainCamera.changeVelocity(1*keyboardMoveSpeed); break;
-                case 'S': mainCamera.changeStrafeVelocity(1*keyboardMoveSpeed); break;
-                case 'F': mainCamera.changeStrafeVelocity(-1*keyboardMoveSpeed); break;
+                //case 'E': mainCamera.changeVelocity(-1*keyboardMoveSpeed); break;
+                //case 'D': mainCamera.changeVelocity(1*keyboardMoveSpeed); break;
+                //case 'S': mainCamera.changeStrafeVelocity(1*keyboardMoveSpeed); break;
+                //case 'F': mainCamera.changeStrafeVelocity(-1*keyboardMoveSpeed); break;
 
                 case GLFW_KEY_TAB:
                     switch ( view_method ) {

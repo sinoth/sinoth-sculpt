@@ -21,25 +21,18 @@
 					<Add option="-D_WIN32_WINNT=0x0501" />
 					<Add option="-D_DEBUG" />
 					<Add directory="client" />
-					<Add directory="..\..\libs\libsin\include" />
-					<Add directory="..\..\libs\glfw\include" />
-					<Add directory="..\..\libs\freetype\include" />
-					<Add directory="..\..\libs\win-pthreads\include" />
 				</Compiler>
 				<Linker>
 					<Add option="-pg -lgmon" />
 					<Add library="sinui" />
 					<Add library="sinfont" />
-					<Add library="freetype" />
-					<Add library="glfw" />
+					<Add library="freetype_static" />
+					<Add library="glfw_static" />
 					<Add library="opengl32" />
 					<Add library="sinsocket" />
-					<Add library="pthreadGC2" />
+					<Add library="pthread_static" />
 					<Add library="ws2_32" />
-					<Add directory="..\..\libs\libsin\lib" />
-					<Add directory="..\..\libs\glfw\lib" />
-					<Add directory="..\..\libs\freetype\lib" />
-					<Add directory="..\..\libs\win-pthreads\lib" />
+					<Add library="z_static" />
 				</Linker>
 			</Target>
 			<Target title="Windows Client Release">
@@ -53,25 +46,18 @@
 					<Add option="-O2" />
 					<Add option="-D_WIN32_WINNT=0x0501" />
 					<Add directory="client" />
-					<Add directory="..\..\libs\libsin\include" />
-					<Add directory="..\..\libs\glfw\include" />
-					<Add directory="..\..\libs\freetype\include" />
-					<Add directory="..\..\libs\win-pthreads\include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 					<Add library="sinui" />
 					<Add library="sinfont" />
-					<Add library="freetype" />
-					<Add library="glfw" />
+					<Add library="freetype_static" />
+					<Add library="glfw_static" />
 					<Add library="opengl32" />
 					<Add library="sinsocket" />
-					<Add library="pthreadGC2" />
+					<Add library="pthread_static" />
 					<Add library="ws2_32" />
-					<Add directory="..\..\libs\libsin\lib" />
-					<Add directory="..\..\libs\glfw\lib" />
-					<Add directory="..\..\libs\freetype\lib" />
-					<Add directory="..\..\libs\win-pthreads\lib" />
+					<Add library="z_static" />
 				</Linker>
 			</Target>
 		</Build>

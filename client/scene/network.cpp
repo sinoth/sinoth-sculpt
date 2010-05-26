@@ -17,20 +17,20 @@ bool scene::retrieveServerList() {
         printf("ERROR: could not connect to localhost!\n"); return 1; }
 
     //ask for a server list (0x28)
-    client_socket.send( &list_request, 1 );
+    client_socket.sendRaw( &list_request, 1 );
 
     //get number of servers being transferred
-    client_socket.recv( &num_of_servers, 1 );
+    client_socket.recvRaw( &num_of_servers, 1 );
     printf("* NETWORK: Preparing to receive %d servers...\n", num_of_servers );
 
     for ( int i=0; i < num_of_servers; ++i ) {
-        client_socket.recv( &servers[i].server_id, 1 );
-        client_socket.recv( &server_name_length, 1 );
-        client_socket.recv( servers[i].server_name, server_name_length );
-        client_socket.recv( &servers[i].total_pieces, 4 );
-        client_socket.recv( &servers[i].pieces_left, 4 );
-        client_socket.recv( &servers[i].player_total, 1 );
-        client_socket.recv( &servers[i].player_left, 1 );
+        client_socket.recvRaw( &servers[i].server_id, 1 );
+        client_socket.recvRaw( &server_name_length, 1 );
+        client_socket.recvRaw( servers[i].server_name, server_name_length );
+        client_socket.recvRaw( &servers[i].total_pieces, 4 );
+        client_socket.recvRaw( &servers[i].pieces_left, 4 );
+        client_socket.recvRaw( &servers[i].player_total, 1 );
+        client_socket.recvRaw( &servers[i].player_left, 1 );
 
         printf("%d(%d): [%s], %d/%d total pieces, %u/%u available pieces\n", i+1,
                                                                          servers[i].server_id,
@@ -99,11 +99,11 @@ bool scene::participateInServer( int inserver ) {
         printf("ERROR: could not connect to localhost!\n"); return 1; }
 
     //ask to participate (0x43) in a specific server
-    client_socket.send( &participate_request, 1 );
-    client_socket.send( &selected_server, 1 );
+    client_socket.sendRaw( &participate_request, 1 );
+    client_socket.sendRaw( &selected_server, 1 );
 
     //see if we're able to get a piece
-    client_socket.recv( &can_participate, 1 );
+    client_socket.recvRaw( &can_participate, 1 );
 
     if ( !can_participate ) {
         printf("* NETWORK: cannot participate in server_id %d!\n", servers[inserver-1].server_id);
@@ -111,13 +111,13 @@ bool scene::participateInServer( int inserver ) {
     }
 
     //grab the hash for our piece
-    client_socket.recv( my_hash, 17 );
+    client_socket.recvRaw( my_hash, 17 );
     printf("* NETWORK: received hash [%s] for our piece\n", my_hash);
 
     //grab the size
-    client_socket.recv( &piece_x_size, 1 );
-    client_socket.recv( &piece_y_size, 1 );
-    client_socket.recv( &piece_z_size, 1 );
+    client_socket.recvRaw( &piece_x_size, 1 );
+    client_socket.recvRaw( &piece_y_size, 1 );
+    client_socket.recvRaw( &piece_z_size, 1 );
     //printf("* NETWORK: received piece size of %d, %d, %d\n", piece_x_size, piece_y_size, piece_z_size);
 
 
@@ -126,7 +126,7 @@ bool scene::participateInServer( int inserver ) {
 
     //get da blob
     //printf("* NETWORK: attempting to receive blob size %d\n", blob_size);
-    client_socket.recv( piece_blob, blob_size );
+    client_socket.recvRaw( piece_blob, blob_size );
 
     //we're done!
     client_socket.beginDisconnect();

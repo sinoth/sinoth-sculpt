@@ -1,6 +1,5 @@
 
 #include <stdio.h>
-#include <sintimer.h>
 #include <math.h>
 
 #include "scene.h"
@@ -73,29 +72,4 @@ void scene::FPS()
         frames = 0;
     }
 }
-
-
-
-// Replaces gluPerspective. Sets the frustum to perspective mode.
-// fovY		- Field of vision in degrees in the y direction
-// aspect	- Aspect ratio of the viewport
-// zNear	- The near clipping distance
-// zFar		- The far clipping distance
-void scene::perspectiveGL( GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar )
-{
-	//static const GLdouble pi = 3.1415926535897932384626433832795;
-	//static const GLdouble pi = 3.14159265;
-    static const GLdouble PI_360 = 0.008726646259; //9716388888888888888889
-	static GLdouble fW, fH;
-
-	//fH = tan( fovY / 360.0 * 3.14159 ) * zNear;
-	fH = tan( fovY * PI_360 ) * zNear;
-	fW = fH * aspect;
-
-	glFrustum( -fW, fW, -fH, fH, zNear, zFar );
-}
-
-
-
-
 
