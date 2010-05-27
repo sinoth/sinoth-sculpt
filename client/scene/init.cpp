@@ -283,7 +283,7 @@ void scene::initLight() {
     mainLighting.setDiffuse(0, 0.6,0.6,0.6);
     mainLighting.setPosition(0, 0*piece_x_size*1.5, 2*piece_y_size*1.5, 0*piece_z_size*1.5,1);
     mainLighting.enableLight(0);
-
+/*
     mainLighting.setAmbient(1, 0.0,0.0,0.0);
     mainLighting.setDiffuse(1, 0.6,0.6,0.6);
     mainLighting.setPosition(1, 0*piece_x_size*1.5, 2*piece_y_size*1.5, 2*piece_z_size*1.5,1);
@@ -298,9 +298,9 @@ void scene::initLight() {
     mainLighting.setDiffuse(3, 0.6,0.6,0.6);
     mainLighting.setPosition(3, 2*piece_x_size*1.5, 2*piece_y_size*1.5, 0*piece_z_size*1.5,1);
     mainLighting.enableLight(3);
+*/
 
-
-    shadows.setNumLights(4);
+    shadows.setNumLights(1);
     shadows.setLightStruct(&mainLighting);
 
 /*

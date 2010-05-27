@@ -28,6 +28,7 @@
 					<Add library="sinfont" />
 					<Add library="freetype_static" />
 					<Add library="glfw_static" />
+					<Add library="glee_static" />
 					<Add library="opengl32" />
 					<Add library="sinsocket" />
 					<Add library="pthread_static" />

@@ -122,7 +122,7 @@ public:
 	void end3D();
 
     void render();
-    void render_cubes();
+    void render_cubes(const box &);
     void update();
     bool init();
     bool reInit();

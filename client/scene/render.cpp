@@ -14,7 +14,7 @@ void scene::render() {
     mainCamera.doPerspective();
     mainLighting.doLighting();
 
-    for ( int i=0; i < 4; ++i) {
+    for ( int i=0; i < 1; ++i) {
         vec3f da_light = mainLighting.getPosition(i);
         glBegin(GL_QUADS);
         drawBox(da_light.x, da_light.y, da_light.z, 0.5, 0);
@@ -39,24 +39,45 @@ void scene::render() {
         glEnable(GL_TEXTURE_2D);
         glBindTexture( GL_TEXTURE_2D, noise_texture );
         glBegin(GL_QUADS);
-        for ( std::vector<collision3f>::iterator it=sorted_blocks.begin(); it != sorted_blocks.end(); it++ )
-            drawBox((*it).pos.x,(*it).pos.y,(*it).pos.z,0.5,1);
+        //for ( std::vector<collision3f>::iterator it=sorted_blocks.begin(); it != sorted_blocks.end(); it++ )
+        //    drawBox((*it).pos.x,(*it).pos.y,(*it).pos.z,0.5,1);
         glEnd();
         glDisable(GL_TEXTURE_2D);
     }
 
-/*
-        //first draw the scene unlit
-        lights.flipOff();
-        draw_scene();
-        //now layer the lit parts on top of eachother
-        shadows.startShadowVodou();
-        while ( shadows.doingShadows() )
-            draw_scene();
-        shadows.endShadowVodou();
-        //turn the lights back on
-        lights.flipOn();
-*/
+    box boxes;
+    if ( sorted_blocks.size() ) {
+        //temporary, until i use box objects permanently
+        for ( std::vector<collision3f>::iterator it=sorted_blocks.begin(); it != sorted_blocks.end(); it++ )
+            boxes.draw((*it).pos.x, (*it).pos.y, (*it).pos.z, 0.5);
+        boxes.optimize();
+
+        shadows.generate_edges(0, boxes.vert, 100);
+    }
+
+glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+glPushAttrib(GL_ALL_ATTRIB_BITS);
+    //first draw the scene unlit
+    mainLighting.flipOff();
+    render_cubes(boxes);
+    //now layer the lit parts on top of eachother
+    shadows.startShadowVodou();
+    while ( shadows.doingShadows() )
+        render_cubes(boxes);
+    shadows.endShadowVodou();
+    //turn the lights back on
+    mainLighting.flipOn();
+glPopAttrib();
+glPopClientAttrib();
+
+    //draw shadows for debugging
+    glColor4f(1.0,1.0,1.0,1.0);
+    glPolygonMode(GL_FRONT, GL_LINE);
+    glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(3, GL_FLOAT, 0, &shadows.triangles[0][0] );
+        glDrawArrays(GL_TRIANGLES, 0, shadows.triangles[0].size()/3 );
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glPolygonMode(GL_FRONT, GL_FILL);
 
 
     if ( hovering_piece || placing_piece ) {
@@ -124,17 +145,31 @@ void scene::render() {
 
 }
 
-void scene::render_cubes() {
+void scene::render_cubes(const box &inboxes) {
 
+    if ( inboxes.vert.size() ) {
 
+        glColor4f(1.0,1.0,1.0,1.0);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+            glVertexPointer(3, GL_FLOAT, 0, &inboxes.vert[0] );
+            glTexCoordPointer(2, GL_FLOAT, 0, &inboxes.tex[0] );
+            glNormalPointer(GL_FLOAT, 0, &inboxes.norm[0] );
+            //glDrawArrays(GL_TRIANGLES, 0, inboxes.vert.size()/3);
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_NORMAL_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+    }
 
-
-
-
-
-
-
+    glColor4f(1.0,1.0,1.0,1.0);
+    glBegin(GL_QUADS);
+        glVertex3f(-60,0,60);
+        glVertex3f(-60,0,-60);
+        glVertex3f(60,0,-60);
+        glVertex3f(60,0,60);
+    glEnd();
 
 }
 
