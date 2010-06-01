@@ -27,7 +27,7 @@ bool scene::init() {
           8, 8, 8,           // Number of red, green, and blue bits for color buffer
           8,                 // Number of bits for alpha buffer
           24,                // Number of bits for depth buffer (Z-buffer)
-          0,                 // Number of bits for stencil buffer
+          8,                 // Number of bits for stencil buffer
           GLFW_WINDOW        // We want a desktop window (could be GLFW_FULLSCREEN)
           ))
         { printf("ERROR: Unable to set resolution\n"); return 1; }
@@ -283,7 +283,7 @@ void scene::initLight() {
     mainLighting.setDiffuse(0, 0.6,0.6,0.6);
     mainLighting.setPosition(0, 0*piece_x_size*1.5, 2*piece_y_size*1.5, 0*piece_z_size*1.5,1);
     mainLighting.enableLight(0);
-/*
+
     mainLighting.setAmbient(1, 0.0,0.0,0.0);
     mainLighting.setDiffuse(1, 0.6,0.6,0.6);
     mainLighting.setPosition(1, 0*piece_x_size*1.5, 2*piece_y_size*1.5, 2*piece_z_size*1.5,1);
@@ -298,9 +298,9 @@ void scene::initLight() {
     mainLighting.setDiffuse(3, 0.6,0.6,0.6);
     mainLighting.setPosition(3, 2*piece_x_size*1.5, 2*piece_y_size*1.5, 0*piece_z_size*1.5,1);
     mainLighting.enableLight(3);
-*/
 
-    shadows.setNumLights(1);
+
+    shadows.setNumLights(4);
     shadows.setLightStruct(&mainLighting);
 
 /*

@@ -7,14 +7,14 @@ void drawBox(float,float,float,float,bool);
 
 void scene::render() {
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT );
     //glLoadIdentity();
 
     begin3D();
     mainCamera.doPerspective();
     mainLighting.doLighting();
 
-    for ( int i=0; i < 1; ++i) {
+    for ( int i=0; i < 4; ++i) {
         vec3f da_light = mainLighting.getPosition(i);
         glBegin(GL_QUADS);
         drawBox(da_light.x, da_light.y, da_light.z, 0.5, 0);
@@ -53,6 +53,10 @@ void scene::render() {
         boxes.optimize();
 
         shadows.generate_edges(0, boxes.vert, 100);
+        shadows.generate_edges(1, boxes.vert, 100);
+        shadows.generate_edges(2, boxes.vert, 100);
+        shadows.generate_edges(3, boxes.vert, 100);
+
     }
 
 glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
@@ -75,7 +79,7 @@ glPopClientAttrib();
     glPolygonMode(GL_FRONT, GL_LINE);
     glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(3, GL_FLOAT, 0, &shadows.triangles[0][0] );
-        glDrawArrays(GL_TRIANGLES, 0, shadows.triangles[0].size()/3 );
+        //glDrawArrays(GL_TRIANGLES, 0, shadows.triangles[0].size()/3 );
     glDisableClientState(GL_VERTEX_ARRAY);
     glPolygonMode(GL_FRONT, GL_FILL);
 
@@ -156,7 +160,7 @@ void scene::render_cubes(const box &inboxes) {
             glVertexPointer(3, GL_FLOAT, 0, &inboxes.vert[0] );
             glTexCoordPointer(2, GL_FLOAT, 0, &inboxes.tex[0] );
             glNormalPointer(GL_FLOAT, 0, &inboxes.norm[0] );
-            //glDrawArrays(GL_TRIANGLES, 0, inboxes.vert.size()/3);
+            glDrawArrays(GL_TRIANGLES, 0, inboxes.vert.size()/3);
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
