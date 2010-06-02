@@ -7,7 +7,6 @@ void scene::init_ui() {
     /////////////////////////////////////////////////////////////////
     // style setup
     /////////////////////////////////////////////////////////////////
-
     np_style default_win_style;
     np_style default_win_style_notitlebar;
     np_style default_win_titlebar_style;
@@ -18,7 +17,7 @@ void scene::init_ui() {
     tex_style res_rightarrow_style;
     tex_style list_button_style;
     tex_style separator_style;
-
+    {
     default_win_titlebar_style.normal.setNP( UI_9P_TL, 128, 128, 1, 1, 3, 5 );
     default_win_titlebar_style.normal.setNP( UI_9P_TM, 128, 128, 5, 1, 1, 5 );
     default_win_titlebar_style.normal.setNP( UI_9P_TR, 128, 128, 7, 1, 3, 5 );
@@ -129,11 +128,12 @@ void scene::init_ui() {
     //
     separator_style.normal.setTex(  128, 128, 1, 17, 1, 1 );
     separator_style.cook();
+    }
 
     /////////////////////////////////////////////////////////////////
     // username window
     /////////////////////////////////////////////////////////////////
-
+    {
     ui_window *username_window = mainGui.addWindow("Username");
     username_window->setThemeTextureID(theme_texture);
     username_window->window_style = default_win_style;
@@ -183,12 +183,12 @@ void scene::init_ui() {
     t_ti->setCustomKeyCallback(username_input_keycallback);
 
     username_window->cook();
-
+    }
 
     /////////////////////////////////////////////////////////////////
     // main menu
     /////////////////////////////////////////////////////////////////
-
+    {
     ui_window *mainmenu_window = mainGui.addWindow("MainMenu");
     mainmenu_window->setThemeTextureID(theme_texture);
     mainmenu_window->window_style = default_win_style;
@@ -197,7 +197,7 @@ void scene::init_ui() {
     mainmenu_window->setCustomKeyCallback(mainmenu_input_keycallback);
 
     mainmenu_window->setXY(res_cur_x/2-75,res_cur_y/2+90);
-    mainmenu_window->setWH(150,180);
+    mainmenu_window->setWH(150,230);
     mainmenu_window->titlebar.setWH(150,20);
     //mainmenu_window->titlebar.can_drag_parent = true;
     mainmenu_window->enableFontController();
@@ -222,13 +222,26 @@ void scene::init_ui() {
     mainmenu_list_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
     mainmenu_list_button->my_font.setStretch(false);
     mainmenu_list_button->my_font.setColor(0.0,0.0,0.0,1.0);
-    mainmenu_list_button->my_font.setText("Server List");
+    mainmenu_list_button->my_font.setText("Current Map");
     mainmenu_list_button->my_font.cook();
     mainmenu_list_button->setPayload(mainmenu_list);
 
+    ui_button_np *mainmenu_archive_button = (ui_button_np*)mainGui.addWidget("main_archive", UI_WIDGET_BUTTON_NP);
+    mainmenu_archive_button->setStyle(default_np_style);
+    mainmenu_archive_button->setXY(10,80);
+    mainmenu_archive_button->setWH(130,40);
+    mainmenu_archive_button->my_font.setFont(&font12);
+    mainmenu_archive_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    mainmenu_archive_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    mainmenu_archive_button->my_font.setStretch(false);
+    mainmenu_archive_button->my_font.setColor(0.0,0.0,0.0,1.0);
+    mainmenu_archive_button->my_font.setText("Completed Maps");
+    mainmenu_archive_button->my_font.cook();
+    mainmenu_archive_button->setPayload(mainmenu_list);
+
     ui_button_np *mainmenu_options_button = (ui_button_np*)mainGui.addWidget("main_options", UI_WIDGET_BUTTON_NP);
     mainmenu_options_button->setStyle(default_np_style);
-    mainmenu_options_button->setXY(10,80);
+    mainmenu_options_button->setXY(10,130);
     mainmenu_options_button->setWH(130,40);
     mainmenu_options_button->my_font.setFont(&font12);
     mainmenu_options_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
@@ -241,7 +254,7 @@ void scene::init_ui() {
 
     ui_button_np *mainmenu_exit_button = (ui_button_np*)mainGui.addWidget("main_quit", UI_WIDGET_BUTTON_NP);
     mainmenu_exit_button->setStyle(default_np_style);
-    mainmenu_exit_button->setXY(10,130);
+    mainmenu_exit_button->setXY(10,180);
     mainmenu_exit_button->setWH(130,40);
     mainmenu_exit_button->my_font.setFont(&font12);
     mainmenu_exit_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
@@ -254,13 +267,12 @@ void scene::init_ui() {
 
     mainmenu_window->setVisible(false);
     mainmenu_window->cook();
-
-
+    }
 
     /////////////////////////////////////////////////////////////////
     // confirm quit menu
     /////////////////////////////////////////////////////////////////
-
+    {
     ui_window *confirmquit_window = mainGui.addWindow("ConfirmQuit");
     confirmquit_window->setThemeTextureID(theme_texture);
     confirmquit_window->window_style = default_win_style_notitlebar;
@@ -309,12 +321,12 @@ void scene::init_ui() {
 
     confirmquit_window->cook();
     confirmquit_window->setVisible(false);
-
+    }
 
     /////////////////////////////////////////////////////////////////
     // options window
     /////////////////////////////////////////////////////////////////
-
+    {
     ui_window *options_window = mainGui.addWindow("Options");
     options_window->setThemeTextureID(theme_texture);
     options_window->window_style = default_win_style;
@@ -402,7 +414,7 @@ void scene::init_ui() {
     options_cancel_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
     options_cancel_button->my_font.setStretch(false);
     options_cancel_button->my_font.setColor(0.0,0.0,0.0,1.0);
-    options_cancel_button->my_font.setText("Cancel");
+    options_cancel_button->my_font.setText("Back");
     options_cancel_button->my_font.cook();
     options_cancel_button->setPayload(options_close);
 
@@ -420,12 +432,12 @@ void scene::init_ui() {
 
     options_window->cook();
     options_window->setVisible(false);
-
+    }
 
     /////////////////////////////////////////////////////////////////
     // server list menu
     /////////////////////////////////////////////////////////////////
-
+    {
     ui_window *serverlist_window = mainGui.addWindow("ServerList");
     serverlist_window->setThemeTextureID(theme_texture);
     serverlist_window->setCustomKeyCallback(serverlist_input_keycallback);
@@ -464,7 +476,6 @@ void scene::init_ui() {
     separator_button->setStyle(separator_style);
     separator_button->setXY(10,30); separator_button->setWH(480,1);
 
-
     ////////////////
 
     ui_button *server1_button = (ui_button*)mainGui.addWidget("serverbutton_1", UI_WIDGET_BUTTON);
@@ -487,7 +498,6 @@ void scene::init_ui() {
     server5_button->setStyle(list_button_style);
     server5_button->setXY(10,120); server5_button->setWH(480,20);
     //server1_button->setPayload(options_res_right);
-
 
     ui_label *server1_name = (ui_label*)mainGui.addWidget("server1_name", UI_WIDGET_LABEL);
     server1_name->setXY(15,44); server1_name->setWH(240,20);
@@ -564,15 +574,12 @@ void scene::init_ui() {
     server5_available->my_font.setFont(&font12, FONT_HINT_DYNAMIC); server5_available->my_font.setColor(0.2,0.2,0.2,1.0);
     server5_available->my_font.setText("10 / 10"); server5_available->my_font.cook();
 
-
-
     ui_button *separator_button2 = (ui_button*)mainGui.addWidget("list_separator2", UI_WIDGET_BUTTON);
     separator_button2->setStyle(separator_style);
     separator_button2->setXY(10,150);
     separator_button2->setWH(480,1);
 
     /////////////////
-
 
     ui_button_np *serverlist_yes_button = (ui_button_np*)mainGui.addWidget("list_refresh", UI_WIDGET_BUTTON_NP);
     serverlist_yes_button->setStyle(default_np_style);
@@ -618,10 +625,10 @@ void scene::init_ui() {
     comm_status->my_font.setText("No connection");
     comm_status->my_font.cook();
 
-
-
     serverlist_window->cook();
     serverlist_window->setVisible(false);
+    }
+
 
 
 

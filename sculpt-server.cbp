@@ -41,7 +41,6 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-D_WIN32_WINNT=0x0501" />
-					<Add directory="server\sqlite" />
 					<Add directory="sinsocket" />
 				</Compiler>
 				<Linker>
@@ -64,8 +63,6 @@
 					<Add option="-D_WIN32_WINNT=0x0501" />
 					<Add option="-D_DEBUG" />
 					<Add option="-DDSFMT_MEXP=19937" />
-					<Add directory="server\sqlite" />
-					<Add directory="server\sinsql" />
 					<Add directory="..\..\libs\dsfmt\include" />
 				</Compiler>
 				<Linker>

@@ -87,6 +87,7 @@ bool scene::init() {
     init_ui();
 
     begin3D();
+    initLight();
 
     glfwSetKeyCallback( wrapper_keyboard );
     glfwSetCharCallback( wrapper_keyboard_char );
@@ -167,6 +168,7 @@ bool scene::reInit() {
     reInit_ui();
 
     begin3D();
+    initLight();
 
     glfwSetKeyCallback( wrapper_keyboard );
     glfwSetCharCallback( wrapper_keyboard_char );
@@ -249,11 +251,11 @@ void scene::begin3D()
 	glLoadIdentity();									// Reset The Modelview Matrix
 
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHTING);
 	glEnable(GL_BLEND);
 	//glEnable( GL_TEXTURE_2D );
 
-    initLight();
+    //initLight();
 }
 
 
@@ -277,13 +279,16 @@ void scene::initLight() {
 
     mainLighting.init();
 
-    mainLighting.setGlobalAmbient(0,0,0);
+    mainLighting.setGlobalAmbient(0.0,0.0,0.0);
 
     mainLighting.setAmbient(0, 0.0,0.0,0.0);
-    mainLighting.setDiffuse(0, 0.6,0.6,0.6);
+    mainLighting.setDiffuse(0, 0.8,0.8,0.8);
     mainLighting.setPosition(0, 0*piece_x_size*1.5, 2*piece_y_size*1.5, 0*piece_z_size*1.5,1);
+    //mainLighting.setPosition(0, vec3f(1.0, -1.0, -1.0).normalize() ,0);
+    //mainLighting.setQuadraticAttenuation(0,0.00016);
+    //mainLighting.setLinearAttenuation(0,0.00016);
     mainLighting.enableLight(0);
-
+/*
     mainLighting.setAmbient(1, 0.0,0.0,0.0);
     mainLighting.setDiffuse(1, 0.6,0.6,0.6);
     mainLighting.setPosition(1, 0*piece_x_size*1.5, 2*piece_y_size*1.5, 2*piece_z_size*1.5,1);
@@ -298,9 +303,9 @@ void scene::initLight() {
     mainLighting.setDiffuse(3, 0.6,0.6,0.6);
     mainLighting.setPosition(3, 2*piece_x_size*1.5, 2*piece_y_size*1.5, 0*piece_z_size*1.5,1);
     mainLighting.enableLight(3);
+*/
 
-
-    shadows.setNumLights(4);
+    shadows.setNumLights(1);
     shadows.setLightStruct(&mainLighting);
 
 /*
@@ -344,6 +349,26 @@ int scene::loadTextures() {
     } else {
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST ); //GL_LINEAR
+    }
+
+    glGenTextures( 1, &cube_texture );
+    glBindTexture( GL_TEXTURE_2D, cube_texture );
+
+    if ( !glfwLoadTexture2D("sculpt_pebbles_i.tga",0) ) {
+        printf("Unable to load sculpt_pebbles_i.tga\n");
+    } else {
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR ); //GL_LINEAR
+    }
+
+    glGenTextures( 1, &background_texture );
+    glBindTexture( GL_TEXTURE_2D, background_texture );
+
+    if ( !glfwLoadTexture2D("sculpt_bark_i.tga",0) ) {
+        printf("Unable to load sculpt_bark_i.tga\n");
+    } else {
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR ); //GL_LINEAR
     }
     return 0;
 }

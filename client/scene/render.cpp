@@ -3,23 +3,61 @@
 #include <algorithm>
 #include "scene.h"
 
-void drawBox(float,float,float,float,bool);
+void drawBox(float,float,float,float,float,float,bool);
 
 void scene::render() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT );
     //glLoadIdentity();
 
+    //spin the camera
+    //vec3f the_light = mainLighting.getPosition(0) - mainCamera.getArcballPosition();
+    //quaternion light_rot;
+    //light_rot.createFromAxisAngle(vec3f(1.0, 1.0, 0.5).normalize(), 1);
+    //the_light = light_rot.mult(the_light);
+    //the_light += mainCamera.getArcballPosition();
+    //mainLighting.setPosition(0, the_light.x, the_light.y, the_light.z);
+
+    //first thing is the background
+    begin2D();
+    glDisable(GL_LIGHTING);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture( GL_TEXTURE_2D, background_texture );
+    glBegin(GL_QUADS);
+        glColor4f(1.0,1.0,1.0,1.0);
+        for (int i=0; i < res_cur_x; i+=1024) {
+         for (int j=0; j < res_cur_y; j+=1024) {
+            glTexCoord2f(0,0); glVertex2f(i,j);
+            glTexCoord2f(0,1); glVertex2f(i,j+1024);
+            glTexCoord2f(1,1); glVertex2f(i+1024,j+1024);
+            glTexCoord2f(1,0); glVertex2f(i+1024,j);
+         }
+        }
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+        glColor4f(0.5,0.5,0.5,0.8);
+        glColor4f(0.5,0.5,0.5,0.8);
+        glVertex2f(0,0);
+        glVertex2f(0,res_cur_y);
+        glVertex2f(res_cur_x,res_cur_y);
+        glVertex2f(res_cur_x,0);
+    glEnd();
+    glEnable(GL_LIGHTING);
+
+
     begin3D();
     mainCamera.doPerspective();
     mainLighting.doLighting();
 
-    for ( int i=0; i < 4; ++i) {
+/*
+    for ( int i=0; i < 1; ++i) {
         vec3f da_light = mainLighting.getPosition(i);
         glBegin(GL_QUADS);
-        drawBox(da_light.x, da_light.y, da_light.z, 0.5, 0);
+        drawBox(da_light.x, da_light.y, da_light.z, 0.5, 0.5, 0.5, 0);
         glEnd();
     }
+*/
 
     //render the selected cube
 
@@ -36,13 +74,13 @@ void scene::render() {
         if ( view_method ) sort(sorted_blocks.begin(), sorted_blocks.end(), collision3f::greaterThan);
         else sort(sorted_blocks.begin(), sorted_blocks.end());
         glColor4f(1.0,1.0,1.0,0.7);
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture( GL_TEXTURE_2D, noise_texture );
-        glBegin(GL_QUADS);
+        //glEnable(GL_TEXTURE_2D);
+        //glBindTexture( GL_TEXTURE_2D, noise_texture );
+        //glBegin(GL_QUADS);
         //for ( std::vector<collision3f>::iterator it=sorted_blocks.begin(); it != sorted_blocks.end(); it++ )
         //    drawBox((*it).pos.x,(*it).pos.y,(*it).pos.z,0.5,1);
-        glEnd();
-        glDisable(GL_TEXTURE_2D);
+        //glEnd();
+        //glDisable(GL_TEXTURE_2D);
     }
 
     box boxes;
@@ -53,14 +91,17 @@ void scene::render() {
         boxes.optimize();
 
         shadows.generate_edges(0, boxes.vert, 100);
-        shadows.generate_edges(1, boxes.vert, 100);
-        shadows.generate_edges(2, boxes.vert, 100);
-        shadows.generate_edges(3, boxes.vert, 100);
+        //shadows.generate_edges(1, boxes.vert, 100);
+        //shadows.generate_edges(2, boxes.vert, 100);
+        //shadows.generate_edges(3, boxes.vert, 100);
 
     }
 
+
 glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 glPushAttrib(GL_ALL_ATTRIB_BITS);
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture( GL_TEXTURE_2D, cube_texture );
     //first draw the scene unlit
     mainLighting.flipOff();
     render_cubes(boxes);
@@ -74,6 +115,7 @@ glPushAttrib(GL_ALL_ATTRIB_BITS);
 glPopAttrib();
 glPopClientAttrib();
 
+/*
     //draw shadows for debugging
     glColor4f(1.0,1.0,1.0,1.0);
     glPolygonMode(GL_FRONT, GL_LINE);
@@ -82,41 +124,89 @@ glPopClientAttrib();
         //glDrawArrays(GL_TRIANGLES, 0, shadows.triangles[0].size()/3 );
     glDisableClientState(GL_VERTEX_ARRAY);
     glPolygonMode(GL_FRONT, GL_FILL);
+*/
+    static std::vector<collision3f> sorted_selection_blocks;
+    static vec3f temp_vec;
+    sorted_selection_blocks.clear();
 
-
+    glDisable(GL_LIGHTING);
     if ( hovering_piece || placing_piece ) {
-        glDisable(GL_LIGHTING);
-        glBegin(GL_QUADS);
         switch ( selected_face ) {
             case CUBE_UP: case CUBE_DOWN:
                 for (int i=0; i<piece_y_size; ++i) {
-                    if ( placing_piece && i == selected_piece.y ) glColor4f(1.0,0.0,0.0,0.3);
-                    else glColor4f(1.0,0.0,0.0,0.1);
-                    drawBox(selected_piece.x+piece_x_size+0.5,i+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.5,0);
+                    if ( placing_piece && i == selected_piece.y ) glColor4f(1.0,0.0,0.0,0.6);
+                    else glColor4f(1.0,0.0,0.0,0.3);
+                    temp_vec.set(selected_piece.x+piece_x_size+0.5, i+piece_y_size+0.5, selected_piece.z+piece_z_size+0.5 );
+                    sorted_selection_blocks.push_back( collision3f( temp_vec, mainCamera.getPosition().distance( temp_vec ) ) );
+                    //drawBox(selected_piece.x+piece_x_size+0.5,i+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.55,0);
                 }
                 break;
             case CUBE_LEFT: case CUBE_RIGHT:
                 for (int i=0; i<piece_x_size; ++i) {
-                    if ( placing_piece && i == selected_piece.x ) glColor4f(1.0,0.0,0.0,0.3);
-                    else glColor4f(1.0,0.0,0.0,0.1);
-                    drawBox(i+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.5,0);
+                    if ( placing_piece && i == selected_piece.x ) glColor4f(1.0,0.0,0.0,0.6);
+                    else glColor4f(1.0,0.0,0.0,0.3);
+                    temp_vec.set(i+piece_x_size+0.5, selected_piece.y+piece_y_size+0.5, selected_piece.z+piece_z_size+0.5);
+                    sorted_selection_blocks.push_back( collision3f( temp_vec, mainCamera.getPosition().distance( temp_vec ) ) );
+                    //drawBox(i+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.55,0);
                 }
                 break;
             case CUBE_FRONT: case CUBE_BACK:
                 for (int i=0; i<piece_z_size; ++i) {
-                    if ( placing_piece &&  i == selected_piece.z ) glColor4f(1.0,0.0,0.0,0.3);
-                    else glColor4f(1.0,0.0,0.0,0.1);
-                    drawBox(selected_piece.x+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,i+piece_z_size+0.5,0.5,0);
+                    if ( placing_piece &&  i == selected_piece.z ) glColor4f(1.0,0.0,0.0,0.6);
+                    else glColor4f(1.0,0.0,0.0,0.3);
+                    temp_vec.set(selected_piece.x+piece_x_size+0.5, selected_piece.y+piece_y_size+0.5, i+piece_z_size+0.5);
+                    sorted_selection_blocks.push_back( collision3f( temp_vec, mainCamera.getPosition().distance( temp_vec ) ) );
+                    //drawBox(selected_piece.x+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,i+piece_z_size+0.5,0.55,0);
                 }
                 break;
         }
+
+    glEnable( GL_POLYGON_OFFSET_FILL );
+    glPolygonOffset( -1.0f, 1.0f );
+
+        //sort then display the cubes
+        sort(sorted_selection_blocks.begin(), sorted_selection_blocks.end());
+        //sort(sorted_selection_blocks.begin(), sorted_selection_blocks.end(), collision3f::greaterThan);
+        //glDisable(GL_DEPTH_TEST);
+        glBegin(GL_QUADS);
+            for (uint32_t i=0; i<sorted_selection_blocks.size(); ++i) {
+                if ( placing_piece &&
+                    (((selected_face==CUBE_UP||selected_face==CUBE_DOWN)    && sorted_selection_blocks[i].pos.y-piece_y_size-0.5 == selected_piece.y) ||
+                     ((selected_face==CUBE_LEFT||selected_face==CUBE_RIGHT) && sorted_selection_blocks[i].pos.x-piece_x_size-0.5 == selected_piece.x) ||
+                     ((selected_face==CUBE_FRONT||selected_face==CUBE_BACK) && sorted_selection_blocks[i].pos.z-piece_z_size-0.5 == selected_piece.z)) ) {
+                        glColor4f(1.0,0.0,0.0,0.6);
+                } else {
+                    switch ( selected_face ) {
+                        case CUBE_UP: case CUBE_DOWN: glColor4f(1.0,0.0,0.0,0.4-((float)i/(float)piece_y_size)*0.3); break;
+                        case CUBE_LEFT: case CUBE_RIGHT: glColor4f(1.0,0.0,0.0,0.4-((float)i/(float)piece_x_size)*0.3); break;
+                        case CUBE_FRONT: case CUBE_BACK: glColor4f(1.0,0.0,0.0,0.4-((float)i/(float)piece_z_size)*0.3); break;
+                        default: glColor4f(1.0,0.0,0.0,0.3); break;
+                    }
+                }
+                switch ( selected_face ) {
+                    case CUBE_UP: case CUBE_DOWN:
+                        drawBox(sorted_selection_blocks[i].pos.x, sorted_selection_blocks[i].pos.y, sorted_selection_blocks[i].pos.z, 0.55, 0.50, 0.55, 0);
+                        break;
+                    case CUBE_LEFT: case CUBE_RIGHT:
+                        drawBox(sorted_selection_blocks[i].pos.x, sorted_selection_blocks[i].pos.y, sorted_selection_blocks[i].pos.z, 0.50, 0.55, 0.55, 0);
+                        break;
+                    case CUBE_FRONT: case CUBE_BACK:
+                        drawBox(sorted_selection_blocks[i].pos.x, sorted_selection_blocks[i].pos.y, sorted_selection_blocks[i].pos.z, 0.55, 0.55, 0.50, 0);
+                        break;
+                    default: break;
+                }
+            }
     //} else {
     //    if ( hovering_piece ) {
     //        glColor4f(1.0,0.0,0.0,0.1);
     //        drawBox(selected_piece.x+piece_x_size+0.5,selected_piece.y+piece_y_size+0.5,selected_piece.z+piece_z_size+0.5,0.5);
     //    }
         glEnd();
+        //glEnable(GL_DEPTH_TEST);
     }
+
+    glDisable( GL_POLYGON_OFFSET_FILL );
+
 
 
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -124,6 +214,7 @@ glPopClientAttrib();
     //glEnableClientState(GL_NORMAL_ARRAY);
     //glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
 
+        glDisable(GL_DEPTH_TEST);
         for ( int i=0; i < 6; ++i ) {
           if ( show_face[i] ) {
               glVertexPointer(3, GL_FLOAT, 0, &vec_grid_lines[i][0] );
@@ -133,6 +224,7 @@ glPopClientAttrib();
               glDrawArrays(GL_LINES, 0, vec_grid_lines[i].size()/3);
           }
         }
+        glEnable(GL_DEPTH_TEST);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
@@ -166,7 +258,7 @@ void scene::render_cubes(const box &inboxes) {
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     }
-
+/*
     glColor4f(1.0,1.0,1.0,1.0);
     glBegin(GL_QUADS);
         glVertex3f(-60,0,60);
@@ -174,7 +266,7 @@ void scene::render_cubes(const box &inboxes) {
         glVertex3f(60,0,-60);
         glVertex3f(60,0,60);
     glEnd();
-
+*/
 }
 
 
@@ -197,56 +289,56 @@ void scene::generateVA() {
     {
     //upper grid face
     for (int i=piece_x_size; i <= 2*piece_x_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_UP].push_back(1.0); vec_grid_lines_color[CUBE_UP].push_back(0.0); vec_grid_lines_color[CUBE_UP].push_back(0.0); vec_grid_lines_color[CUBE_UP].push_back(0.1); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_UP].push_back(1.0); vec_grid_lines_color[CUBE_UP].push_back(0.0); vec_grid_lines_color[CUBE_UP].push_back(0.0); vec_grid_lines_color[CUBE_UP].push_back(0.2); }
         vec_grid_lines[CUBE_UP].push_back(i); vec_grid_lines[CUBE_UP].push_back(piece_y_size*2); vec_grid_lines[CUBE_UP].push_back(piece_z_size);
         vec_grid_lines[CUBE_UP].push_back(i); vec_grid_lines[CUBE_UP].push_back(piece_y_size*2); vec_grid_lines[CUBE_UP].push_back(piece_z_size*2); }
     for (int i=piece_z_size; i <= 2*piece_z_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_UP].push_back(1.0); vec_grid_lines_color[CUBE_UP].push_back(0.0); vec_grid_lines_color[CUBE_UP].push_back(0.0); vec_grid_lines_color[CUBE_UP].push_back(0.1); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_UP].push_back(1.0); vec_grid_lines_color[CUBE_UP].push_back(0.0); vec_grid_lines_color[CUBE_UP].push_back(0.0); vec_grid_lines_color[CUBE_UP].push_back(0.2); }
         vec_grid_lines[CUBE_UP].push_back(piece_x_size); vec_grid_lines[CUBE_UP].push_back(piece_y_size*2); vec_grid_lines[CUBE_UP].push_back(i);
         vec_grid_lines[CUBE_UP].push_back(piece_x_size*2); vec_grid_lines[CUBE_UP].push_back(piece_y_size*2); vec_grid_lines[CUBE_UP].push_back(i); }
     //lower grid face
     for (int i=piece_x_size; i <= 2*piece_x_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_DOWN].push_back(1.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.1); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_DOWN].push_back(1.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.2); }
         vec_grid_lines[CUBE_DOWN].push_back(i); vec_grid_lines[CUBE_DOWN].push_back(piece_y_size); vec_grid_lines[CUBE_DOWN].push_back(piece_z_size);
         vec_grid_lines[CUBE_DOWN].push_back(i); vec_grid_lines[CUBE_DOWN].push_back(piece_y_size); vec_grid_lines[CUBE_DOWN].push_back(piece_z_size*2); }
     for (int i=piece_z_size; i <= 2*piece_z_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_DOWN].push_back(1.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.1); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_DOWN].push_back(1.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.0); vec_grid_lines_color[CUBE_DOWN].push_back(0.2); }
         vec_grid_lines[CUBE_DOWN].push_back(piece_x_size); vec_grid_lines[CUBE_DOWN].push_back(piece_y_size); vec_grid_lines[CUBE_DOWN].push_back(i);
         vec_grid_lines[CUBE_DOWN].push_back(piece_x_size*2); vec_grid_lines[CUBE_DOWN].push_back(piece_y_size); vec_grid_lines[CUBE_DOWN].push_back(i); }
     //left grid face
     for (int i=piece_y_size; i <= 2*piece_y_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_LEFT].push_back(1.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.1); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_LEFT].push_back(1.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.2); }
         vec_grid_lines[CUBE_LEFT].push_back(piece_x_size); vec_grid_lines[CUBE_LEFT].push_back(i); vec_grid_lines[CUBE_LEFT].push_back(piece_z_size);
         vec_grid_lines[CUBE_LEFT].push_back(piece_x_size); vec_grid_lines[CUBE_LEFT].push_back(i); vec_grid_lines[CUBE_LEFT].push_back(piece_z_size*2); }
     for (int i=piece_z_size; i <= 2*piece_z_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_LEFT].push_back(1.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.1); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_LEFT].push_back(1.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.0); vec_grid_lines_color[CUBE_LEFT].push_back(0.2); }
         vec_grid_lines[CUBE_LEFT].push_back(piece_x_size); vec_grid_lines[CUBE_LEFT].push_back(piece_y_size); vec_grid_lines[CUBE_LEFT].push_back(i);
         vec_grid_lines[CUBE_LEFT].push_back(piece_x_size); vec_grid_lines[CUBE_LEFT].push_back(piece_y_size*2); vec_grid_lines[CUBE_LEFT].push_back(i); }
     //right grid face
     for (int i=piece_y_size; i <= 2*piece_y_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_RIGHT].push_back(1.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.1); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_RIGHT].push_back(1.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.2); }
         vec_grid_lines[CUBE_RIGHT].push_back(piece_x_size*2); vec_grid_lines[CUBE_RIGHT].push_back(i); vec_grid_lines[CUBE_RIGHT].push_back(piece_z_size);
         vec_grid_lines[CUBE_RIGHT].push_back(piece_x_size*2); vec_grid_lines[CUBE_RIGHT].push_back(i); vec_grid_lines[CUBE_RIGHT].push_back(piece_z_size*2); }
     for (int i=piece_z_size; i <= 2*piece_z_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_RIGHT].push_back(1.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.1); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_RIGHT].push_back(1.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.0); vec_grid_lines_color[CUBE_RIGHT].push_back(0.2); }
         vec_grid_lines[CUBE_RIGHT].push_back(piece_x_size*2); vec_grid_lines[CUBE_RIGHT].push_back(piece_y_size); vec_grid_lines[CUBE_RIGHT].push_back(i);
         vec_grid_lines[CUBE_RIGHT].push_back(piece_x_size*2); vec_grid_lines[CUBE_RIGHT].push_back(piece_y_size*2); vec_grid_lines[CUBE_RIGHT].push_back(i); }
     //forward grid face
     for (int i=piece_x_size; i <= 2*piece_x_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_FRONT].push_back(1.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.1); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_FRONT].push_back(1.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.2); }
         vec_grid_lines[CUBE_FRONT].push_back(i); vec_grid_lines[CUBE_FRONT].push_back(piece_y_size); vec_grid_lines[CUBE_FRONT].push_back(piece_z_size);
         vec_grid_lines[CUBE_FRONT].push_back(i); vec_grid_lines[CUBE_FRONT].push_back(piece_y_size*2); vec_grid_lines[CUBE_FRONT].push_back(piece_z_size); }
     for (int i=piece_y_size; i <= 2*piece_y_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_FRONT].push_back(1.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.1); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_FRONT].push_back(1.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.0); vec_grid_lines_color[CUBE_FRONT].push_back(0.2); }
         vec_grid_lines[CUBE_FRONT].push_back(piece_x_size); vec_grid_lines[CUBE_FRONT].push_back(i); vec_grid_lines[CUBE_FRONT].push_back(piece_z_size);
         vec_grid_lines[CUBE_FRONT].push_back(piece_x_size*2); vec_grid_lines[CUBE_FRONT].push_back(i); vec_grid_lines[CUBE_FRONT].push_back(piece_z_size); }
     //back grid face
     for (int i=piece_x_size; i <= 2*piece_x_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_BACK].push_back(1.0); vec_grid_lines_color[CUBE_BACK].push_back(0.0); vec_grid_lines_color[CUBE_BACK].push_back(0.0); vec_grid_lines_color[CUBE_BACK].push_back(0.1); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_BACK].push_back(1.0); vec_grid_lines_color[CUBE_BACK].push_back(0.0); vec_grid_lines_color[CUBE_BACK].push_back(0.0); vec_grid_lines_color[CUBE_BACK].push_back(0.2); }
         vec_grid_lines[CUBE_BACK].push_back(i); vec_grid_lines[CUBE_BACK].push_back(piece_y_size); vec_grid_lines[CUBE_BACK].push_back(piece_z_size*2);
         vec_grid_lines[CUBE_BACK].push_back(i); vec_grid_lines[CUBE_BACK].push_back(piece_y_size*2); vec_grid_lines[CUBE_BACK].push_back(piece_z_size*2); }
     for (int i=piece_y_size; i <= 2*piece_y_size; ++i) {
-        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_BACK].push_back(1.0); vec_grid_lines_color[CUBE_BACK].push_back(0.0); vec_grid_lines_color[CUBE_BACK].push_back(0.0); vec_grid_lines_color[CUBE_BACK].push_back(0.1); }
+        for (int ii=0; ii < 2; ++ii ) { vec_grid_lines_color[CUBE_BACK].push_back(1.0); vec_grid_lines_color[CUBE_BACK].push_back(0.0); vec_grid_lines_color[CUBE_BACK].push_back(0.0); vec_grid_lines_color[CUBE_BACK].push_back(0.2); }
         vec_grid_lines[CUBE_BACK].push_back(piece_x_size); vec_grid_lines[CUBE_BACK].push_back(i); vec_grid_lines[CUBE_BACK].push_back(piece_z_size*2);
         vec_grid_lines[CUBE_BACK].push_back(piece_x_size*2); vec_grid_lines[CUBE_BACK].push_back(i); vec_grid_lines[CUBE_BACK].push_back(piece_z_size*2); }
     }
@@ -264,37 +356,37 @@ void scene::generateVA() {
 
 }
 
-void drawBox(float x, float y, float z, float s, bool tex) {
+void drawBox(float x, float y, float z, float s_x, float s_y, float s_z, bool tex) {
     //top
-    if (tex) glTexCoord2f(0,0); glNormal3f(0,1,0); glVertex3f(x-s,y+s,z+s);
-    if (tex) glTexCoord2f(0,1); glNormal3f(0,1,0); glVertex3f(x-s,y+s,z-s);
-    if (tex) glTexCoord2f(1,1); glNormal3f(0,1,0); glVertex3f(x+s,y+s,z-s);
-    if (tex) glTexCoord2f(1,0); glNormal3f(0,1,0); glVertex3f(x+s,y+s,z+s);
+    if (tex) glTexCoord2f(0,0); glNormal3f(0,1,0); glVertex3f(x-s_x,y+s_y,z+s_z);
+    if (tex) glTexCoord2f(0,1); glNormal3f(0,1,0); glVertex3f(x-s_x,y+s_y,z-s_z);
+    if (tex) glTexCoord2f(1,1); glNormal3f(0,1,0); glVertex3f(x+s_x,y+s_y,z-s_z);
+    if (tex) glTexCoord2f(1,0); glNormal3f(0,1,0); glVertex3f(x+s_x,y+s_y,z+s_z);
     //bottom
-    if (tex) glTexCoord2f(1,0); glNormal3f(0,-1,0); glVertex3f(x+s,y-s,z+s);
-    if (tex) glTexCoord2f(1,1); glNormal3f(0,-1,0); glVertex3f(x+s,y-s,z-s);
-    if (tex) glTexCoord2f(0,1); glNormal3f(0,-1,0); glVertex3f(x-s,y-s,z-s);
-    if (tex) glTexCoord2f(0,0); glNormal3f(0,-1,0); glVertex3f(x-s,y-s,z+s);
+    if (tex) glTexCoord2f(1,0); glNormal3f(0,-1,0); glVertex3f(x+s_x,y-s_y,z+s_z);
+    if (tex) glTexCoord2f(1,1); glNormal3f(0,-1,0); glVertex3f(x+s_x,y-s_y,z-s_z);
+    if (tex) glTexCoord2f(0,1); glNormal3f(0,-1,0); glVertex3f(x-s_x,y-s_y,z-s_z);
+    if (tex) glTexCoord2f(0,0); glNormal3f(0,-1,0); glVertex3f(x-s_x,y-s_y,z+s_z);
     //left
-    if (tex) glTexCoord2f(1,0); glNormal3f(-1,0,0); glVertex3f(x-s,y-s,z+s);
-    if (tex) glTexCoord2f(0,0); glNormal3f(-1,0,0); glVertex3f(x-s,y-s,z-s);
-    if (tex) glTexCoord2f(0,1); glNormal3f(-1,0,0); glVertex3f(x-s,y+s,z-s);
-    if (tex) glTexCoord2f(1,1); glNormal3f(-1,0,0); glVertex3f(x-s,y+s,z+s);
+    if (tex) glTexCoord2f(1,0); glNormal3f(-1,0,0); glVertex3f(x-s_x,y-s_y,z+s_z);
+    if (tex) glTexCoord2f(0,0); glNormal3f(-1,0,0); glVertex3f(x-s_x,y-s_y,z-s_z);
+    if (tex) glTexCoord2f(0,1); glNormal3f(-1,0,0); glVertex3f(x-s_x,y+s_y,z-s_z);
+    if (tex) glTexCoord2f(1,1); glNormal3f(-1,0,0); glVertex3f(x-s_x,y+s_y,z+s_z);
     //right
-    if (tex) glTexCoord2f(1,1); glNormal3f(1,0,0); glVertex3f(x+s,y+s,z+s);
-    if (tex) glTexCoord2f(0,1); glNormal3f(1,0,0); glVertex3f(x+s,y+s,z-s);
-    if (tex) glTexCoord2f(0,0); glNormal3f(1,0,0); glVertex3f(x+s,y-s,z-s);
-    if (tex) glTexCoord2f(1,0); glNormal3f(1,0,0); glVertex3f(x+s,y-s,z+s);
+    if (tex) glTexCoord2f(1,1); glNormal3f(1,0,0); glVertex3f(x+s_x,y+s_y,z+s_z);
+    if (tex) glTexCoord2f(0,1); glNormal3f(1,0,0); glVertex3f(x+s_x,y+s_y,z-s_z);
+    if (tex) glTexCoord2f(0,0); glNormal3f(1,0,0); glVertex3f(x+s_x,y-s_y,z-s_z);
+    if (tex) glTexCoord2f(1,0); glNormal3f(1,0,0); glVertex3f(x+s_x,y-s_y,z+s_z);
     //front
-    if (tex) glTexCoord2f(1,0); glNormal3f(0,0,-1); glVertex3f(x+s,y-s,z-s);
-    if (tex) glTexCoord2f(1,1); glNormal3f(0,0,-1); glVertex3f(x+s,y+s,z-s);
-    if (tex) glTexCoord2f(0,1); glNormal3f(0,0,-1); glVertex3f(x-s,y+s,z-s);
-    if (tex) glTexCoord2f(0,0); glNormal3f(0,0,-1); glVertex3f(x-s,y-s,z-s);
+    if (tex) glTexCoord2f(1,0); glNormal3f(0,0,-1); glVertex3f(x+s_x,y-s_y,z-s_z);
+    if (tex) glTexCoord2f(1,1); glNormal3f(0,0,-1); glVertex3f(x+s_x,y+s_y,z-s_z);
+    if (tex) glTexCoord2f(0,1); glNormal3f(0,0,-1); glVertex3f(x-s_x,y+s_y,z-s_z);
+    if (tex) glTexCoord2f(0,0); glNormal3f(0,0,-1); glVertex3f(x-s_x,y-s_y,z-s_z);
     //back
-    if (tex) glTexCoord2f(0,0); glNormal3f(0,0,1); glVertex3f(x-s,y-s,z+s);
-    if (tex) glTexCoord2f(0,1); glNormal3f(0,0,1); glVertex3f(x-s,y+s,z+s);
-    if (tex) glTexCoord2f(1,1); glNormal3f(0,0,1); glVertex3f(x+s,y+s,z+s);
-    if (tex) glTexCoord2f(1,0); glNormal3f(0,0,1); glVertex3f(x+s,y-s,z+s);
+    if (tex) glTexCoord2f(0,0); glNormal3f(0,0,1); glVertex3f(x-s_x,y-s_y,z+s_z);
+    if (tex) glTexCoord2f(0,1); glNormal3f(0,0,1); glVertex3f(x-s_x,y+s_y,z+s_z);
+    if (tex) glTexCoord2f(1,1); glNormal3f(0,0,1); glVertex3f(x+s_x,y+s_y,z+s_z);
+    if (tex) glTexCoord2f(1,0); glNormal3f(0,0,1); glVertex3f(x+s_x,y-s_y,z+s_z);
 }
 
 /*

@@ -162,7 +162,6 @@ void scene::mainmenu_options() {
     temp_window->setActive(true);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 //
 void scene::mainmenu_list() {
@@ -179,10 +178,23 @@ void scene::mainmenu_list() {
 
 ////////////////////////////////////////////////////////////////////////////////
 //
+void scene::mainmenu_archive() {
+
+    ui_window *temp_window;
+    temp_window = myself->mainGui.getWindow("MainMenu");
+    temp_window->doFade(UI_FADE_OUT, 10);
+    temp_window->setActive(false);
+
+    temp_window = myself->mainGui.getWindow("Archive");
+    temp_window->doFade(UI_FADE_IN, 10);
+    temp_window->setActive(true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
 void scene::confirmquit_YES() {
     myself->quit = true;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -190,7 +202,6 @@ void scene::confirmquit_NO() {
     myself->mainGui.getWindow("ConfirmQuit")->doFade(UI_FADE_OUT, 10);
     myself->confirm_quit = false;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -210,7 +221,6 @@ void scene::load_username() {
     return;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 //
 void scene::save_username() {
@@ -226,8 +236,6 @@ void scene::save_username() {
     fwrite(username, 1, strlen(username)+1, username_file);
     fclose(username_file);
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //

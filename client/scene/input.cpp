@@ -33,6 +33,9 @@ void scene::keyboardInput( int key, int action ) {
                     alt_status = true;
                     break;
 
+                case GLFW_KEY_SPACE:
+                    //mainLighting.setPosition(0, mainCamera.getPosition()+(mainCamera.getPosition()-mainCamera.getArcballPosition()), 1.0);
+                    break;
             }
             break;
 
@@ -120,6 +123,7 @@ void scene::mousePosInput( int x, int y ) {
       }
 
     if ( found_collision ) {
+        glLineWidth(2.0);
         if ( placing_piece ) {
             selected_piece = nearest_collision.pos;
         } else {
@@ -142,17 +146,28 @@ void scene::mousePosInput( int x, int y ) {
         }
         hovering_piece = true;
     } else {
+        if ( hovering_piece ) glLineWidth(1.0);
         hovering_piece = false;
     }
 
 
     if ( mouseM ) {
 
-        mainCamera.arcZoom( (y-mouseY)*0.2 );
+        if (  (y-mouseY<0 && mainCamera.arcGetRadius() > ( vec3f(piece_x_size, piece_y_size, piece_z_size).distance(vec3f(0,0,0)) ) )
+           || (y-mouseY>0 && mainCamera.arcGetRadius() < ( vec3f(piece_x_size, piece_y_size, piece_z_size).distance(vec3f(0,0,0)) * 5 ) ))
+            mainCamera.arcZoom( (y-mouseY)*0.2 );
+
+        vec3f cam_position = mainCamera.getPosition();
+        if ( vec3f(-1,0,0) * ( vec3f(piece_x_size,piece_y_size*1.5,piece_z_size*1.5) - cam_position) < 0 ) show_face[CUBE_LEFT] = true; else show_face[CUBE_LEFT] = false;
+        if ( vec3f(1,0,0) * ( vec3f(piece_x_size*2,piece_y_size*1.5,piece_z_size*1.5) - cam_position) < 0 ) show_face[CUBE_RIGHT] = true; else show_face[CUBE_RIGHT] = false;
+        if ( vec3f(0,-1,0) * ( vec3f(piece_x_size*1.5,piece_y_size,piece_z_size*1.5) - cam_position) < 0 ) show_face[CUBE_DOWN] = true; else show_face[CUBE_DOWN] = false;
+        if ( vec3f(0,1,0) * ( vec3f(piece_x_size*1.5,piece_y_size*2,piece_z_size*1.5) - cam_position) < 0 ) show_face[CUBE_UP] = true; else show_face[CUBE_UP] = false;
+        if ( vec3f(0,0,-1) * ( vec3f(piece_x_size*1.5,piece_y_size*1.5,piece_z_size) - cam_position) < 0 ) show_face[CUBE_FRONT] = true; else show_face[CUBE_FRONT] = false;
+        if ( vec3f(0,0,1) * ( vec3f(piece_x_size*1.5,piece_y_size*1.5,piece_z_size*2) - cam_position) < 0 ) show_face[CUBE_BACK] = true; else show_face[CUBE_BACK] = false;
 
     }
 
-    if (mouseR) {
+    if ( mouseR ) {
 
         mainCamera.arcSpinMouseX( -(x-mouseX)*0.4 );
         mainCamera.arcSpinMouseY( (y-mouseY)*0.4 );
@@ -165,6 +180,15 @@ void scene::mousePosInput( int x, int y ) {
         if ( vec3f(0,1,0) * ( vec3f(piece_x_size*1.5,piece_y_size*2,piece_z_size*1.5) - cam_position) < 0 ) show_face[CUBE_UP] = true; else show_face[CUBE_UP] = false;
         if ( vec3f(0,0,-1) * ( vec3f(piece_x_size*1.5,piece_y_size*1.5,piece_z_size) - cam_position) < 0 ) show_face[CUBE_FRONT] = true; else show_face[CUBE_FRONT] = false;
         if ( vec3f(0,0,1) * ( vec3f(piece_x_size*1.5,piece_y_size*1.5,piece_z_size*2) - cam_position) < 0 ) show_face[CUBE_BACK] = true; else show_face[CUBE_BACK] = false;
+
+        //set the light to always be above and to the right
+
+        vec3f light_position = (mainCamera.getUpVector() - mainCamera.getStrafeVector()).normalize();
+        quaternion light_rot; light_rot.createFromAxisAngle( light_position, 30 );
+        vec3f factor(piece_x_size, piece_y_size, piece_z_size); factor *= 2.5;
+        light_position = light_rot.mult( (mainCamera.getPosition() - mainCamera.getArcballPosition()).normalize()*factor.distance(vec3f(0,0,0)));
+        light_position += mainCamera.getArcballPosition();
+        mainLighting.setPosition(0, light_position, 1);
 
     }
 
@@ -213,6 +237,7 @@ void scene::mouseClickInput( int button, int state ) {
                     }
                     break;
                 case GLFW_MOUSE_BUTTON_RIGHT:
+                    //mainLighting.setPosition(0, mainCamera.getPosition()/*+(mainCamera.getPosition()-mainCamera.getArcballPosition())*/, 1.0);
                     mouseR=0;
                     break;
                 case GLFW_MOUSE_BUTTON_MIDDLE:

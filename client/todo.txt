@@ -1,3 +1,9 @@
+stuff:
+need to decide on lights.  light at the position of camera is useless, casts no shadow.  just add ambient
+
+(free) textures taken from:
+http://esterliquoridesign.blogspot.com/2009/11/free-high-resolution-seamless-texture_12.html
+
 HIGH PRIORITY:
 --------------
  [X] UI needs to redraw every text on a reInit
@@ -87,6 +93,7 @@ hostname = hostname of above
 checkout = timestamp of checkout
 checkin  = timestamp of checkin
 data     = starts as NULL, is eventually set to submitted data (of size cubesize^3)
+
 
 
 

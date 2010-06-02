@@ -85,6 +85,8 @@ public:
 
     //edit mode stuff
     GLuint noise_texture;
+    GLuint cube_texture;
+    GLuint background_texture;
     void generateVA();
     bool have_piece;
     unsigned char piece_x_size, piece_y_size, piece_z_size;
@@ -163,6 +165,7 @@ public:
     void static gui2closebutton();
     void static mainmenu_quit();
     void static mainmenu_list();
+    void static mainmenu_archive();
     void static mainmenu_options();
     void static mainmenu_close();
     void static confirmquit_YES();
