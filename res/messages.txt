@@ -15,9 +15,25 @@ message ServerList {
 }
 
 message ServerPiece {
-    required string hash = 1;
-    required uint32 size_x = 2;
-    required uint32 size_y = 3;
-    required uint32 size_z = 4;
+    required int32 map_id = 1;
+    required int32 piece_id = 2;
+    required string hash = 4;
+    required uint32 size_x = 5;
+    required uint32 size_y = 6;
+    required uint32 size_z = 7;
+    required bytes data = 8;
+}
+
+message CurrentMap {
+    required string name = 1;
+    required string completed_pieces = 2;
+    required uint32 available = 3;
+}
+
+message SubmitPiece {
+    required int32 map_id = 1;
+    required int32 piece_id = 2;
+    required string hash = 3;
+    required string username = 4;
     required bytes data = 5;
 }

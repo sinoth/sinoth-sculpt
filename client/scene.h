@@ -12,6 +12,14 @@
 #include <vector>
 
 
+#define VERSION_MAJOR 1
+#define VERSION_MINOR 0
+#ifdef __MINGW32__
+  #define VERSION_PLATFORM 1
+#elif __linux
+  #define VERSION_PLATFORM 2
+#endif
+
 
 #define CUBE_UP     0
 #define CUBE_DOWN   1
@@ -99,7 +107,6 @@ public:
     vec3f selected_piece;
     vec3f outside_piece;
     float zoom_factor;
-    std::vector<char> built_list;
     int view_method;
 
 
@@ -138,7 +145,18 @@ public:
 
     //network stuff
     bool retrieveServerList();
+    bool retrieveCurrentMap();
+    bool retrievePiece();
+    bool submitPiece();
     bool participateInServer(int);
+
+    //cubes stuff
+    std::string my_piece_hash;
+    int my_piece_map_id;
+    int my_piece_id;
+    box user_boxes;
+    box surrounding_boxes;
+    std::vector<uint8_t> built_list;
 
     //input and callbacks
 	void keyboardInput(int, int);
@@ -160,12 +178,16 @@ public:
     bool static username_input_keycallback(int,int);
     bool static confirmquit_input_keycallback(int,int);
     bool static mainmenu_input_keycallback(int,int);
+    bool static connectmenu_input_keycallback(int,int);
+    bool static infowindow_input_keycallback(int,int);
     bool static options_input_keycallback(int,int);
     bool static serverlist_input_keycallback(int,int);
+    bool static currentmap_input_keycallback(int,int);
+    bool static currentmapsubmit_input_keycallback(int,int);
     void static gui2closebutton();
     void static mainmenu_quit();
-    void static mainmenu_list();
-    void static mainmenu_archive();
+    void static mainmenu_connect();
+    void static mainmenu_info();
     void static mainmenu_options();
     void static mainmenu_close();
     void static confirmquit_YES();
@@ -175,11 +197,21 @@ public:
     void static options_full_checkbox();
     void static options_full_checkbox_text();
     void static options_username();
+    void static options_controls();
     void static options_close();
     void static options_res_apply();
     void static serverlist_refresh();
     void static serverlist_close();
     void static serverbutton_one();
+    void static infowindow_close();
+    void static connectmenu_close();
+    void static connectmenu_current();
+    void static connectmenu_archive();
+    void static currentmapmenu_close();
+    void static currentmapmenu_request();
+    void static currentmapsubmit_submit();
+    void static currentmapsubmit_discard();
+    void static currentmapsubmit_close();
 
     //self-reference variable
     //required for C callbacks

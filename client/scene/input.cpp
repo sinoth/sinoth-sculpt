@@ -54,14 +54,15 @@ void scene::keyboardInput( int key, int action ) {
                     break;
 
                 case GLFW_KEY_ESC:
-                    if ( !confirm_quit ) {
-                        confirm_quit = true;
-                        mainGui.getWindow("ConfirmQuit")->doFade(UI_FADE_IN, 10);
-                        mainGui.bringToFront(mainGui.getWindow("ConfirmQuit"));
-                    } else {
-                        printf("* MAIN: Received ESC key, quitting...\n");
-                        quit = true;
-                    }
+                    //if ( !confirm_quit ) {
+                    //    confirm_quit = true;
+                    //    mainGui.getWindow("ConfirmQuit")->doFade(UI_FADE_IN, 10);
+                    //    mainGui.bringToFront(mainGui.getWindow("ConfirmQuit"));
+                    //} else {
+                    //    printf("* MAIN: Received ESC key, quitting...\n");
+                    //    quit = true;
+                    //}
+                    mainGui.getWindow("CurrentMapSubmit")->doFade(UI_FADE_IN, 10);
                     break;
                 case GLFW_KEY_F1:
                     mainGui.getWindow("MainMenu")->doFade(UI_FADE_IN, 10);
@@ -78,7 +79,6 @@ void scene::keyboardInput( int key, int action ) {
 void scene::keyboardCharInput(int inchar, int instate) {
     mainGui.insertKeyChar(inchar,instate);
 }
-
 
 void scene::mousePosInput( int x, int y ) {
 
@@ -198,8 +198,6 @@ void scene::mousePosInput( int x, int y ) {
     mouseX = x; mouseY = y;
 }
 
-
-
 void scene::mouseClickInput( int button, int state ) {
 
     if ( mainGui.insertMouseClick(button,state,mouseX,res_cur_y-mouseY) ) return;
@@ -229,7 +227,7 @@ void scene::mouseClickInput( int button, int state ) {
                     mouseL=0;
                     if ( placing_piece ) {
                         if ( hovering_piece ) {
-                            built_list[selected_piece.x+selected_piece.y*piece_x_size+selected_piece.z*piece_y_size*piece_x_size] ^= 1;
+                            built_list[selected_piece.x+selected_piece.z*piece_x_size+selected_piece.y*piece_z_size*piece_x_size] ^= 1;
                             //hovering_piece = false;
                         }
                         placing_piece = false;
@@ -248,8 +246,6 @@ void scene::mouseClickInput( int button, int state ) {
     }
 
 }
-
-
 
 void scene::mouseWheelInput( int pos ) {
     // i_mouseWheel - pos

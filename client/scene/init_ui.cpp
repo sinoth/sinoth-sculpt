@@ -196,7 +196,7 @@ void scene::init_ui() {
     mainmenu_window->closebutton.setStyle(default_win_closebutton_style);
     mainmenu_window->setCustomKeyCallback(mainmenu_input_keycallback);
 
-    mainmenu_window->setXY(res_cur_x/2-75,res_cur_y/2+90);
+    mainmenu_window->setXY(res_cur_x/2-75,res_cur_y/2+115);
     mainmenu_window->setWH(150,230);
     mainmenu_window->titlebar.setWH(150,20);
     //mainmenu_window->titlebar.can_drag_parent = true;
@@ -213,7 +213,7 @@ void scene::init_ui() {
     mainmenu_window->titlebar.my_font.cook();
 
 
-    ui_button_np *mainmenu_list_button = (ui_button_np*)mainGui.addWidget("main_list", UI_WIDGET_BUTTON_NP);
+    ui_button_np *mainmenu_list_button = (ui_button_np*)mainGui.addWidget("main_connect", UI_WIDGET_BUTTON_NP);
     mainmenu_list_button->setStyle(default_np_style);
     mainmenu_list_button->setXY(10,30);
     mainmenu_list_button->setWH(130,40);
@@ -222,11 +222,11 @@ void scene::init_ui() {
     mainmenu_list_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
     mainmenu_list_button->my_font.setStretch(false);
     mainmenu_list_button->my_font.setColor(0.0,0.0,0.0,1.0);
-    mainmenu_list_button->my_font.setText("Current Map");
+    mainmenu_list_button->my_font.setText("Connect to Server");
     mainmenu_list_button->my_font.cook();
-    mainmenu_list_button->setPayload(mainmenu_list);
+    mainmenu_list_button->setPayload(mainmenu_connect);
 
-    ui_button_np *mainmenu_archive_button = (ui_button_np*)mainGui.addWidget("main_archive", UI_WIDGET_BUTTON_NP);
+    ui_button_np *mainmenu_archive_button = (ui_button_np*)mainGui.addWidget("main_options", UI_WIDGET_BUTTON_NP);
     mainmenu_archive_button->setStyle(default_np_style);
     mainmenu_archive_button->setXY(10,80);
     mainmenu_archive_button->setWH(130,40);
@@ -235,11 +235,11 @@ void scene::init_ui() {
     mainmenu_archive_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
     mainmenu_archive_button->my_font.setStretch(false);
     mainmenu_archive_button->my_font.setColor(0.0,0.0,0.0,1.0);
-    mainmenu_archive_button->my_font.setText("Completed Maps");
+    mainmenu_archive_button->my_font.setText("Options");
     mainmenu_archive_button->my_font.cook();
-    mainmenu_archive_button->setPayload(mainmenu_list);
+    mainmenu_archive_button->setPayload(mainmenu_options);
 
-    ui_button_np *mainmenu_options_button = (ui_button_np*)mainGui.addWidget("main_options", UI_WIDGET_BUTTON_NP);
+    ui_button_np *mainmenu_options_button = (ui_button_np*)mainGui.addWidget("main_help", UI_WIDGET_BUTTON_NP);
     mainmenu_options_button->setStyle(default_np_style);
     mainmenu_options_button->setXY(10,130);
     mainmenu_options_button->setWH(130,40);
@@ -248,9 +248,9 @@ void scene::init_ui() {
     mainmenu_options_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
     mainmenu_options_button->my_font.setStretch(false);
     mainmenu_options_button->my_font.setColor(0.0,0.0,0.0,1.0);
-    mainmenu_options_button->my_font.setText("Options");
+    mainmenu_options_button->my_font.setText("What is Sculpt?");
     mainmenu_options_button->my_font.cook();
-    mainmenu_options_button->setPayload(mainmenu_options);
+    mainmenu_options_button->setPayload(mainmenu_info);
 
     ui_button_np *mainmenu_exit_button = (ui_button_np*)mainGui.addWidget("main_quit", UI_WIDGET_BUTTON_NP);
     mainmenu_exit_button->setStyle(default_np_style);
@@ -268,6 +268,78 @@ void scene::init_ui() {
     mainmenu_window->setVisible(false);
     mainmenu_window->cook();
     }
+
+
+    /////////////////////////////////////////////////////////////////
+    // connect menu
+    /////////////////////////////////////////////////////////////////
+    {
+    ui_window *connect_window = mainGui.addWindow("ConnectMenu");
+    connect_window->setThemeTextureID(theme_texture);
+    connect_window->window_style = default_win_style;
+    connect_window->titlebar.setStyle(default_win_titlebar_style);
+    connect_window->closebutton.setStyle(default_win_closebutton_style);
+    connect_window->setCustomKeyCallback(connectmenu_input_keycallback);
+
+    connect_window->setXY(res_cur_x/2-75,res_cur_y/2+90);
+    connect_window->setWH(150,180);
+    connect_window->titlebar.setWH(150,20);
+    //connect_window->titlebar.can_drag_parent = true;
+    connect_window->enableFontController();
+    connect_window->enableCloseButton();
+    connect_window->closebutton.setPayload(connectmenu_close);
+    connect_window->enableTitlebar();
+    connect_window->titlebar.my_font.setFont(&font12);
+    connect_window->titlebar.my_font.setVertAlign(FONT_ALIGN_CENTER);
+    connect_window->titlebar.my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    connect_window->titlebar.my_font.setStretch(true);
+    connect_window->titlebar.my_font.setColor(1.0,1.0,1.0,1.0);
+    connect_window->titlebar.my_font.setText("Connect Menu");
+    connect_window->titlebar.my_font.cook();
+
+
+    ui_button_np *connect_current_button = (ui_button_np*)mainGui.addWidget("connect_current", UI_WIDGET_BUTTON_NP);
+    connect_current_button->setStyle(default_np_style);
+    connect_current_button->setXY(10,30);
+    connect_current_button->setWH(130,40);
+    connect_current_button->my_font.setFont(&font12);
+    connect_current_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    connect_current_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    connect_current_button->my_font.setStretch(false);
+    connect_current_button->my_font.setColor(0.0,0.0,0.0,1.0);
+    connect_current_button->my_font.setText("Current Map");
+    connect_current_button->my_font.cook();
+    connect_current_button->setPayload(connectmenu_current);
+
+    ui_button_np *connect_archive_button = (ui_button_np*)mainGui.addWidget("connect_archive", UI_WIDGET_BUTTON_NP);
+    connect_archive_button->setStyle(default_np_style);
+    connect_archive_button->setXY(10,80);
+    connect_archive_button->setWH(130,40);
+    connect_archive_button->my_font.setFont(&font12);
+    connect_archive_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    connect_archive_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    connect_archive_button->my_font.setStretch(false);
+    connect_archive_button->my_font.setColor(0.0,0.0,0.0,1.0);
+    connect_archive_button->my_font.setText("Map Archive");
+    connect_archive_button->my_font.cook();
+    connect_archive_button->setPayload(connectmenu_archive);
+
+    ui_button_np *connect_back_button = (ui_button_np*)mainGui.addWidget("connect_back", UI_WIDGET_BUTTON_NP);
+    connect_back_button->setStyle(default_np_style);
+    connect_back_button->setXY(10,130);
+    connect_back_button->setWH(130,40);
+    connect_back_button->my_font.setFont(&font12);
+    connect_back_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    connect_back_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    connect_back_button->my_font.setStretch(false);
+    connect_back_button->my_font.setColor(0.0,0.0,0.0,1.0);
+    connect_back_button->my_font.setText("Back");
+    connect_back_button->my_font.cook();
+    connect_back_button->setPayload(connectmenu_close);
+    connect_window->setVisible(false);
+    connect_window->cook();
+    }
+
 
     /////////////////////////////////////////////////////////////////
     // confirm quit menu
@@ -337,7 +409,7 @@ void scene::init_ui() {
     options_window->setXY(res_cur_x/2-70,res_cur_y/2+85);
     options_window->setWH(140,170);
     options_window->titlebar.setWH(140,20);
-    options_window->titlebar.can_drag_parent = true;
+    options_window->titlebar.can_drag_parent = false;
     options_window->enableFontController();
     options_window->enableCloseButton();
     options_window->enableTitlebar();
@@ -630,7 +702,211 @@ void scene::init_ui() {
     }
 
 
+    /////////////////////////////////////////////////////////////////
+    // current map menu
+    /////////////////////////////////////////////////////////////////
+    {
+    ui_window *currentmap_window = mainGui.addWindow("CurrentMapMenu");
+    currentmap_window->setThemeTextureID(theme_texture);
+    currentmap_window->setCustomKeyCallback(currentmap_input_keycallback);
+    currentmap_window->window_style = default_win_style;
+    currentmap_window->titlebar.setStyle(default_win_titlebar_style);
+    currentmap_window->closebutton.setStyle(default_win_closebutton_style);
 
+    currentmap_window->setXY(res_cur_x/2-250,res_cur_y/2+110);
+    currentmap_window->setWH(500,220);
+    currentmap_window->titlebar.setWH(500,20);
+    currentmap_window->titlebar.can_drag_parent = false;
+    currentmap_window->enableFontController();
+    currentmap_window->enableCloseButton();
+    currentmap_window->enableTitlebar();
+    currentmap_window->titlebar.my_font.setFont(&font12);
+    currentmap_window->titlebar.my_font.setVertAlign(FONT_ALIGN_CENTER);
+    currentmap_window->titlebar.my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    currentmap_window->titlebar.my_font.setStretch(true);
+    currentmap_window->titlebar.my_font.setColor(1.0,1.0,1.0,1.0);
+    currentmap_window->titlebar.my_font.setText("Current Map");
+    currentmap_window->titlebar.my_font.cook();
+    currentmap_window->closebutton.setPayload(currentmapmenu_close);
+
+    ui_label *currentmaplabel_name = (ui_label*)mainGui.addWidget("currentmaplabel_name", UI_WIDGET_LABEL);
+    currentmaplabel_name->setXY(15,30); currentmaplabel_name->setWH(470,30);
+    currentmaplabel_name->my_font.setFont(&font18);
+    currentmaplabel_name->my_font.setColor(1.0,1.0,1.0,1.0);
+    currentmaplabel_name->my_font.setText("Map Name:");
+    currentmaplabel_name->my_font.cook();
+
+    ui_label *currentmaplabel_completion = (ui_label*)mainGui.addWidget("currentmaplabel_completion", UI_WIDGET_LABEL);
+    currentmaplabel_completion->setXY(15,70); currentmaplabel_completion->setWH(240,20);
+    currentmaplabel_completion->my_font.setFont(&font18);
+    currentmaplabel_completion->my_font.setColor(1.0,1.0,1.0,1.0);
+    currentmaplabel_completion->my_font.setText("Completion:");
+    currentmaplabel_completion->my_font.cook();
+
+    ui_label *currentmaplabel_available = (ui_label*)mainGui.addWidget("currentmaplabel_available", UI_WIDGET_LABEL);
+    currentmaplabel_available->setXY(15,110); currentmaplabel_available->setWH(240,20);
+    currentmaplabel_available->my_font.setFont(&font18);
+    currentmaplabel_available->my_font.setColor(1.0,1.0,1.0,1.0);
+    currentmaplabel_available->my_font.setText("Available to you:");
+    currentmaplabel_available->my_font.cook();
+
+    ui_label *cmap_name = (ui_label*)mainGui.addWidget("cmap_name", UI_WIDGET_LABEL);
+    cmap_name->setXY(130,30); cmap_name->setWH(355,30);
+    cmap_name->my_font.setFont(&font18, FONT_HINT_DYNAMIC); cmap_name->my_font.setColor(0.2,0.2,0.2,1.0);
+    cmap_name->my_font.setText(" "); cmap_name->my_font.cook();
+
+    ui_label *cmap_complete = (ui_label*)mainGui.addWidget("cmap_complete", UI_WIDGET_LABEL);
+    cmap_complete->setXY(140,70); cmap_complete->setWH(345,30);
+    cmap_complete->my_font.setFont(&font18, FONT_HINT_DYNAMIC); cmap_complete->my_font.setColor(0.2,0.2,0.2,1.0);
+    cmap_complete->my_font.setText(" "); cmap_complete->my_font.cook();
+
+    ui_label *cmap_available = (ui_label*)mainGui.addWidget("cmap_available", UI_WIDGET_LABEL);
+    cmap_available->setXY(180,110); cmap_available->setWH(305,30);
+    cmap_available->my_font.setFont(&font18, FONT_HINT_DYNAMIC); cmap_available->my_font.setColor(0.2,0.2,0.2,1.0);
+    cmap_available->my_font.setText(" "); cmap_available->my_font.cook();
+
+    ui_button_np *request_piece_button = (ui_button_np*)mainGui.addWidget("current_request_button", UI_WIDGET_BUTTON_NP);
+    request_piece_button->setStyle(default_np_style);
+    request_piece_button->setXY(370,180);
+    request_piece_button->setWH(120,30);
+    request_piece_button->my_font.setFont(&font12);
+    request_piece_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    request_piece_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    request_piece_button->my_font.setStretch(false);
+    request_piece_button->my_font.setColor(0.0,0.0,0.0,1.0);
+    request_piece_button->my_font.setText("Request Piece");
+    request_piece_button->my_font.cook();
+    request_piece_button->setPayload(currentmapmenu_request);
+
+    currentmap_window->cook();
+    currentmap_window->setVisible(false);
+    }
+
+
+    /////////////////////////////////////////////////////////////////
+    // current map submit menu
+    /////////////////////////////////////////////////////////////////
+    {
+    ui_window *currentmapsubmit_window = mainGui.addWindow("CurrentMapSubmit");
+    currentmapsubmit_window->setThemeTextureID(theme_texture);
+    currentmapsubmit_window->window_style = default_win_style;
+    currentmapsubmit_window->titlebar.setStyle(default_win_titlebar_style);
+    currentmapsubmit_window->closebutton.setStyle(default_win_closebutton_style);
+    currentmapsubmit_window->setCustomKeyCallback(currentmapsubmit_input_keycallback);
+
+    currentmapsubmit_window->setXY(res_cur_x/2-75,res_cur_y/2+90);
+    currentmapsubmit_window->setWH(150,180);
+    currentmapsubmit_window->titlebar.setWH(150,20);
+    //currentmapsubmit_window->titlebar.can_drag_parent = true;
+    currentmapsubmit_window->enableFontController();
+    currentmapsubmit_window->enableCloseButton();
+    currentmapsubmit_window->closebutton.setPayload(currentmapsubmit_close);
+    currentmapsubmit_window->enableTitlebar();
+    currentmapsubmit_window->titlebar.my_font.setFont(&font12);
+    currentmapsubmit_window->titlebar.my_font.setVertAlign(FONT_ALIGN_CENTER);
+    currentmapsubmit_window->titlebar.my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    currentmapsubmit_window->titlebar.my_font.setStretch(true);
+    currentmapsubmit_window->titlebar.my_font.setColor(1.0,1.0,1.0,1.0);
+    currentmapsubmit_window->titlebar.my_font.setText("Current Map");
+    currentmapsubmit_window->titlebar.my_font.cook();
+
+
+    ui_button_np *currentmapsubmit_submit_button = (ui_button_np*)mainGui.addWidget("currentmap_submit", UI_WIDGET_BUTTON_NP);
+    currentmapsubmit_submit_button->setStyle(default_np_style);
+    currentmapsubmit_submit_button->setXY(10,30);
+    currentmapsubmit_submit_button->setWH(130,40);
+    currentmapsubmit_submit_button->my_font.setFont(&font12);
+    currentmapsubmit_submit_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    currentmapsubmit_submit_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    currentmapsubmit_submit_button->my_font.setStretch(false);
+    currentmapsubmit_submit_button->my_font.setColor(0.0,0.0,0.0,1.0);
+    currentmapsubmit_submit_button->my_font.setText("Submit to Server");
+    currentmapsubmit_submit_button->my_font.cook();
+    currentmapsubmit_submit_button->setPayload(currentmapsubmit_submit);
+
+    ui_button_np *currentmapsubmit_discard_button = (ui_button_np*)mainGui.addWidget("currentmap_discard", UI_WIDGET_BUTTON_NP);
+    currentmapsubmit_discard_button->setStyle(default_np_style);
+    currentmapsubmit_discard_button->setXY(10,80);
+    currentmapsubmit_discard_button->setWH(130,40);
+    currentmapsubmit_discard_button->my_font.setFont(&font12);
+    currentmapsubmit_discard_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    currentmapsubmit_discard_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    currentmapsubmit_discard_button->my_font.setStretch(false);
+    currentmapsubmit_discard_button->my_font.setColor(0.0,0.0,0.0,1.0);
+    currentmapsubmit_discard_button->my_font.setText("Discard Piece");
+    currentmapsubmit_discard_button->my_font.cook();
+    currentmapsubmit_discard_button->setPayload(currentmapsubmit_discard);
+
+    ui_button_np *currentmapsubmit_back_button = (ui_button_np*)mainGui.addWidget("currentmap_back", UI_WIDGET_BUTTON_NP);
+    currentmapsubmit_back_button->setStyle(default_np_style);
+    currentmapsubmit_back_button->setXY(10,130);
+    currentmapsubmit_back_button->setWH(130,40);
+    currentmapsubmit_back_button->my_font.setFont(&font12);
+    currentmapsubmit_back_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    currentmapsubmit_back_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    currentmapsubmit_back_button->my_font.setStretch(false);
+    currentmapsubmit_back_button->my_font.setColor(0.0,0.0,0.0,1.0);
+    currentmapsubmit_back_button->my_font.setText("Back to Editor");
+    currentmapsubmit_back_button->my_font.cook();
+    currentmapsubmit_back_button->setPayload(currentmapsubmit_close);
+
+    currentmapsubmit_window->setVisible(false);
+    currentmapsubmit_window->cook();
+    }
+
+    /////////////////////////////////////////////////////////////////
+    // info window
+    /////////////////////////////////////////////////////////////////
+    {
+    ui_window *info_window = mainGui.addWindow("Info");
+    info_window->setThemeTextureID(theme_texture);
+    info_window->window_style = default_win_style;
+    info_window->titlebar.setStyle(default_win_titlebar_style);
+    info_window->closebutton.setStyle(default_win_closebutton_style);
+    info_window->setCustomKeyCallback(options_input_keycallback);
+
+    info_window->setXY(res_cur_x/2-250,res_cur_y/2+200);
+    info_window->setWH(500,400);
+    info_window->titlebar.setWH(500,20);
+    info_window->titlebar.can_drag_parent = false;
+    info_window->enableFontController();
+    info_window->enableCloseButton();
+    info_window->enableTitlebar();
+    info_window->titlebar.my_font.setFont(&font12);
+    info_window->titlebar.my_font.setVertAlign(FONT_ALIGN_CENTER);
+    info_window->titlebar.my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    info_window->titlebar.my_font.setStretch(true);
+    info_window->titlebar.my_font.setColor(1.0,1.0,1.0,1.0);
+    info_window->titlebar.my_font.setText("What is Sculpt?");
+    info_window->titlebar.my_font.cook();
+    info_window->closebutton.setPayload(infowindow_close);
+
+    ui_button_np *info_close_button = (ui_button_np*)mainGui.addWidget("info_close", UI_WIDGET_BUTTON_NP);
+    info_close_button->setStyle(default_np_style);
+    info_close_button->setXY(250-55/2,400-40); info_close_button->setWH(55,30);
+    info_close_button->my_font.setFont(&font12);
+    info_close_button->my_font.setVertAlign(FONT_ALIGN_CENTER);
+    info_close_button->my_font.setHorizAlign(FONT_ALIGN_CENTER);
+    info_close_button->my_font.setStretch(false);
+    info_close_button->my_font.setColor(0.0,0.0,0.0,1.0);
+    info_close_button->my_font.setText("Back");
+    info_close_button->my_font.cook();
+    info_close_button->setPayload(infowindow_close);
+
+    ui_label *infomenu_text = (ui_label*)mainGui.addWidget("info_text", UI_WIDGET_LABEL);
+    infomenu_text->setXY(10,25);
+    infomenu_text->setWH(480,300);
+    infomenu_text->my_font.setFont(&font18);
+    infomenu_text->my_font.setColor(1.0,1.0,1.0,1.0);
+    infomenu_text->my_font.setVertAlign(FONT_ALIGN_TOP);
+    infomenu_text->my_font.setHorizAlign(FONT_ALIGN_LEFT);
+    infomenu_text->my_font.setStretch(false);
+    infomenu_text->my_font.setText("Are you sure you want to quit?\nYou will lose your current work.\nThis is a really long sentence that\nshould stretch further than the box.");
+    infomenu_text->my_font.cook();
+
+    info_window->cook();
+    info_window->setVisible(false);
+    }
 
     //if we haven't loaded a username, show the box
     if ( !loaded_username ) {

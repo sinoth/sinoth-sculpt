@@ -34,6 +34,8 @@ void protobuf_ShutdownFile_messages_2etxt();
 class Server;
 class ServerList;
 class ServerPiece;
+class CurrentMap;
+class SubmitPiece;
 
 // ===================================================================
 
@@ -275,36 +277,273 @@ class ServerPiece : public ::google::protobuf::MessageLite {
   
   // accessors -------------------------------------------------------
   
-  // required string hash = 1;
+  // required int32 map_id = 1;
+  inline bool has_map_id() const;
+  inline void clear_map_id();
+  static const int kMapIdFieldNumber = 1;
+  inline ::google::protobuf::int32 map_id() const;
+  inline void set_map_id(::google::protobuf::int32 value);
+  
+  // required int32 piece_id = 2;
+  inline bool has_piece_id() const;
+  inline void clear_piece_id();
+  static const int kPieceIdFieldNumber = 2;
+  inline ::google::protobuf::int32 piece_id() const;
+  inline void set_piece_id(::google::protobuf::int32 value);
+  
+  // required string hash = 4;
   inline bool has_hash() const;
   inline void clear_hash();
-  static const int kHashFieldNumber = 1;
+  static const int kHashFieldNumber = 4;
   inline const ::std::string& hash() const;
   inline void set_hash(const ::std::string& value);
   inline void set_hash(const char* value);
   inline void set_hash(const char* value, size_t size);
   inline ::std::string* mutable_hash();
   
-  // required uint32 size_x = 2;
+  // required uint32 size_x = 5;
   inline bool has_size_x() const;
   inline void clear_size_x();
-  static const int kSizeXFieldNumber = 2;
+  static const int kSizeXFieldNumber = 5;
   inline ::google::protobuf::uint32 size_x() const;
   inline void set_size_x(::google::protobuf::uint32 value);
   
-  // required uint32 size_y = 3;
+  // required uint32 size_y = 6;
   inline bool has_size_y() const;
   inline void clear_size_y();
-  static const int kSizeYFieldNumber = 3;
+  static const int kSizeYFieldNumber = 6;
   inline ::google::protobuf::uint32 size_y() const;
   inline void set_size_y(::google::protobuf::uint32 value);
   
-  // required uint32 size_z = 4;
+  // required uint32 size_z = 7;
   inline bool has_size_z() const;
   inline void clear_size_z();
-  static const int kSizeZFieldNumber = 4;
+  static const int kSizeZFieldNumber = 7;
   inline ::google::protobuf::uint32 size_z() const;
   inline void set_size_z(::google::protobuf::uint32 value);
+  
+  // required bytes data = 8;
+  inline bool has_data() const;
+  inline void clear_data();
+  static const int kDataFieldNumber = 8;
+  inline const ::std::string& data() const;
+  inline void set_data(const ::std::string& value);
+  inline void set_data(const char* value);
+  inline void set_data(const void* value, size_t size);
+  inline ::std::string* mutable_data();
+  
+  // @@protoc_insertion_point(class_scope:sculpt.ServerPiece)
+ private:
+  mutable int _cached_size_;
+  
+  ::google::protobuf::int32 map_id_;
+  ::google::protobuf::int32 piece_id_;
+  ::std::string* hash_;
+  static const ::std::string _default_hash_;
+  ::google::protobuf::uint32 size_x_;
+  ::google::protobuf::uint32 size_y_;
+  ::google::protobuf::uint32 size_z_;
+  ::std::string* data_;
+  static const ::std::string _default_data_;
+  friend void  protobuf_AddDesc_messages_2etxt();
+  friend void protobuf_AssignDesc_messages_2etxt();
+  friend void protobuf_ShutdownFile_messages_2etxt();
+  
+  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static ServerPiece* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CurrentMap : public ::google::protobuf::MessageLite {
+ public:
+  CurrentMap();
+  virtual ~CurrentMap();
+  
+  CurrentMap(const CurrentMap& from);
+  
+  inline CurrentMap& operator=(const CurrentMap& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  static const CurrentMap& default_instance();
+  
+  void Swap(CurrentMap* other);
+  
+  // implements Message ----------------------------------------------
+  
+  CurrentMap* New() const;
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
+  void CopyFrom(const CurrentMap& from);
+  void MergeFrom(const CurrentMap& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::std::string GetTypeName() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required string name = 1;
+  inline bool has_name() const;
+  inline void clear_name();
+  static const int kNameFieldNumber = 1;
+  inline const ::std::string& name() const;
+  inline void set_name(const ::std::string& value);
+  inline void set_name(const char* value);
+  inline void set_name(const char* value, size_t size);
+  inline ::std::string* mutable_name();
+  
+  // required string completed_pieces = 2;
+  inline bool has_completed_pieces() const;
+  inline void clear_completed_pieces();
+  static const int kCompletedPiecesFieldNumber = 2;
+  inline const ::std::string& completed_pieces() const;
+  inline void set_completed_pieces(const ::std::string& value);
+  inline void set_completed_pieces(const char* value);
+  inline void set_completed_pieces(const char* value, size_t size);
+  inline ::std::string* mutable_completed_pieces();
+  
+  // required uint32 available = 3;
+  inline bool has_available() const;
+  inline void clear_available();
+  static const int kAvailableFieldNumber = 3;
+  inline ::google::protobuf::uint32 available() const;
+  inline void set_available(::google::protobuf::uint32 value);
+  
+  // @@protoc_insertion_point(class_scope:sculpt.CurrentMap)
+ private:
+  mutable int _cached_size_;
+  
+  ::std::string* name_;
+  static const ::std::string _default_name_;
+  ::std::string* completed_pieces_;
+  static const ::std::string _default_completed_pieces_;
+  ::google::protobuf::uint32 available_;
+  friend void  protobuf_AddDesc_messages_2etxt();
+  friend void protobuf_AssignDesc_messages_2etxt();
+  friend void protobuf_ShutdownFile_messages_2etxt();
+  
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static CurrentMap* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class SubmitPiece : public ::google::protobuf::MessageLite {
+ public:
+  SubmitPiece();
+  virtual ~SubmitPiece();
+  
+  SubmitPiece(const SubmitPiece& from);
+  
+  inline SubmitPiece& operator=(const SubmitPiece& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  static const SubmitPiece& default_instance();
+  
+  void Swap(SubmitPiece* other);
+  
+  // implements Message ----------------------------------------------
+  
+  SubmitPiece* New() const;
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
+  void CopyFrom(const SubmitPiece& from);
+  void MergeFrom(const SubmitPiece& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::std::string GetTypeName() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required int32 map_id = 1;
+  inline bool has_map_id() const;
+  inline void clear_map_id();
+  static const int kMapIdFieldNumber = 1;
+  inline ::google::protobuf::int32 map_id() const;
+  inline void set_map_id(::google::protobuf::int32 value);
+  
+  // required int32 piece_id = 2;
+  inline bool has_piece_id() const;
+  inline void clear_piece_id();
+  static const int kPieceIdFieldNumber = 2;
+  inline ::google::protobuf::int32 piece_id() const;
+  inline void set_piece_id(::google::protobuf::int32 value);
+  
+  // required string hash = 3;
+  inline bool has_hash() const;
+  inline void clear_hash();
+  static const int kHashFieldNumber = 3;
+  inline const ::std::string& hash() const;
+  inline void set_hash(const ::std::string& value);
+  inline void set_hash(const char* value);
+  inline void set_hash(const char* value, size_t size);
+  inline ::std::string* mutable_hash();
+  
+  // required string username = 4;
+  inline bool has_username() const;
+  inline void clear_username();
+  static const int kUsernameFieldNumber = 4;
+  inline const ::std::string& username() const;
+  inline void set_username(const ::std::string& value);
+  inline void set_username(const char* value);
+  inline void set_username(const char* value, size_t size);
+  inline ::std::string* mutable_username();
   
   // required bytes data = 5;
   inline bool has_data() const;
@@ -316,15 +555,16 @@ class ServerPiece : public ::google::protobuf::MessageLite {
   inline void set_data(const void* value, size_t size);
   inline ::std::string* mutable_data();
   
-  // @@protoc_insertion_point(class_scope:sculpt.ServerPiece)
+  // @@protoc_insertion_point(class_scope:sculpt.SubmitPiece)
  private:
   mutable int _cached_size_;
   
+  ::google::protobuf::int32 map_id_;
+  ::google::protobuf::int32 piece_id_;
   ::std::string* hash_;
   static const ::std::string _default_hash_;
-  ::google::protobuf::uint32 size_x_;
-  ::google::protobuf::uint32 size_y_;
-  ::google::protobuf::uint32 size_z_;
+  ::std::string* username_;
+  static const ::std::string _default_username_;
   ::std::string* data_;
   static const ::std::string _default_data_;
   friend void  protobuf_AddDesc_messages_2etxt();
@@ -345,7 +585,7 @@ class ServerPiece : public ::google::protobuf::MessageLite {
   }
   
   void InitAsDefaultInstance();
-  static ServerPiece* default_instance_;
+  static SubmitPiece* default_instance_;
 };
 // ===================================================================
 
@@ -493,131 +733,429 @@ ServerList::mutable_servers() {
 
 // ServerPiece
 
-// required string hash = 1;
-inline bool ServerPiece::has_hash() const {
+// required int32 map_id = 1;
+inline bool ServerPiece::has_map_id() const {
   return _has_bit(0);
+}
+inline void ServerPiece::clear_map_id() {
+  map_id_ = 0;
+  _clear_bit(0);
+}
+inline ::google::protobuf::int32 ServerPiece::map_id() const {
+  return map_id_;
+}
+inline void ServerPiece::set_map_id(::google::protobuf::int32 value) {
+  _set_bit(0);
+  map_id_ = value;
+}
+
+// required int32 piece_id = 2;
+inline bool ServerPiece::has_piece_id() const {
+  return _has_bit(1);
+}
+inline void ServerPiece::clear_piece_id() {
+  piece_id_ = 0;
+  _clear_bit(1);
+}
+inline ::google::protobuf::int32 ServerPiece::piece_id() const {
+  return piece_id_;
+}
+inline void ServerPiece::set_piece_id(::google::protobuf::int32 value) {
+  _set_bit(1);
+  piece_id_ = value;
+}
+
+// required string hash = 4;
+inline bool ServerPiece::has_hash() const {
+  return _has_bit(2);
 }
 inline void ServerPiece::clear_hash() {
   if (hash_ != &_default_hash_) {
     hash_->clear();
   }
-  _clear_bit(0);
+  _clear_bit(2);
 }
 inline const ::std::string& ServerPiece::hash() const {
   return *hash_;
 }
 inline void ServerPiece::set_hash(const ::std::string& value) {
-  _set_bit(0);
+  _set_bit(2);
   if (hash_ == &_default_hash_) {
     hash_ = new ::std::string;
   }
   hash_->assign(value);
 }
 inline void ServerPiece::set_hash(const char* value) {
-  _set_bit(0);
+  _set_bit(2);
   if (hash_ == &_default_hash_) {
     hash_ = new ::std::string;
   }
   hash_->assign(value);
 }
 inline void ServerPiece::set_hash(const char* value, size_t size) {
-  _set_bit(0);
+  _set_bit(2);
   if (hash_ == &_default_hash_) {
     hash_ = new ::std::string;
   }
   hash_->assign(reinterpret_cast<const char*>(value), size);
 }
 inline ::std::string* ServerPiece::mutable_hash() {
-  _set_bit(0);
+  _set_bit(2);
   if (hash_ == &_default_hash_) {
     hash_ = new ::std::string;
   }
   return hash_;
 }
 
-// required uint32 size_x = 2;
+// required uint32 size_x = 5;
 inline bool ServerPiece::has_size_x() const {
-  return _has_bit(1);
+  return _has_bit(3);
 }
 inline void ServerPiece::clear_size_x() {
   size_x_ = 0u;
-  _clear_bit(1);
+  _clear_bit(3);
 }
 inline ::google::protobuf::uint32 ServerPiece::size_x() const {
   return size_x_;
 }
 inline void ServerPiece::set_size_x(::google::protobuf::uint32 value) {
-  _set_bit(1);
+  _set_bit(3);
   size_x_ = value;
 }
 
-// required uint32 size_y = 3;
+// required uint32 size_y = 6;
 inline bool ServerPiece::has_size_y() const {
-  return _has_bit(2);
+  return _has_bit(4);
 }
 inline void ServerPiece::clear_size_y() {
   size_y_ = 0u;
-  _clear_bit(2);
+  _clear_bit(4);
 }
 inline ::google::protobuf::uint32 ServerPiece::size_y() const {
   return size_y_;
 }
 inline void ServerPiece::set_size_y(::google::protobuf::uint32 value) {
-  _set_bit(2);
+  _set_bit(4);
   size_y_ = value;
 }
 
-// required uint32 size_z = 4;
+// required uint32 size_z = 7;
 inline bool ServerPiece::has_size_z() const {
-  return _has_bit(3);
+  return _has_bit(5);
 }
 inline void ServerPiece::clear_size_z() {
   size_z_ = 0u;
-  _clear_bit(3);
+  _clear_bit(5);
 }
 inline ::google::protobuf::uint32 ServerPiece::size_z() const {
   return size_z_;
 }
 inline void ServerPiece::set_size_z(::google::protobuf::uint32 value) {
-  _set_bit(3);
+  _set_bit(5);
   size_z_ = value;
 }
 
-// required bytes data = 5;
+// required bytes data = 8;
 inline bool ServerPiece::has_data() const {
-  return _has_bit(4);
+  return _has_bit(6);
 }
 inline void ServerPiece::clear_data() {
   if (data_ != &_default_data_) {
     data_->clear();
   }
-  _clear_bit(4);
+  _clear_bit(6);
 }
 inline const ::std::string& ServerPiece::data() const {
   return *data_;
 }
 inline void ServerPiece::set_data(const ::std::string& value) {
-  _set_bit(4);
+  _set_bit(6);
   if (data_ == &_default_data_) {
     data_ = new ::std::string;
   }
   data_->assign(value);
 }
 inline void ServerPiece::set_data(const char* value) {
-  _set_bit(4);
+  _set_bit(6);
   if (data_ == &_default_data_) {
     data_ = new ::std::string;
   }
   data_->assign(value);
 }
 inline void ServerPiece::set_data(const void* value, size_t size) {
-  _set_bit(4);
+  _set_bit(6);
   if (data_ == &_default_data_) {
     data_ = new ::std::string;
   }
   data_->assign(reinterpret_cast<const char*>(value), size);
 }
 inline ::std::string* ServerPiece::mutable_data() {
+  _set_bit(6);
+  if (data_ == &_default_data_) {
+    data_ = new ::std::string;
+  }
+  return data_;
+}
+
+// -------------------------------------------------------------------
+
+// CurrentMap
+
+// required string name = 1;
+inline bool CurrentMap::has_name() const {
+  return _has_bit(0);
+}
+inline void CurrentMap::clear_name() {
+  if (name_ != &_default_name_) {
+    name_->clear();
+  }
+  _clear_bit(0);
+}
+inline const ::std::string& CurrentMap::name() const {
+  return *name_;
+}
+inline void CurrentMap::set_name(const ::std::string& value) {
+  _set_bit(0);
+  if (name_ == &_default_name_) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+}
+inline void CurrentMap::set_name(const char* value) {
+  _set_bit(0);
+  if (name_ == &_default_name_) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+}
+inline void CurrentMap::set_name(const char* value, size_t size) {
+  _set_bit(0);
+  if (name_ == &_default_name_) {
+    name_ = new ::std::string;
+  }
+  name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CurrentMap::mutable_name() {
+  _set_bit(0);
+  if (name_ == &_default_name_) {
+    name_ = new ::std::string;
+  }
+  return name_;
+}
+
+// required string completed_pieces = 2;
+inline bool CurrentMap::has_completed_pieces() const {
+  return _has_bit(1);
+}
+inline void CurrentMap::clear_completed_pieces() {
+  if (completed_pieces_ != &_default_completed_pieces_) {
+    completed_pieces_->clear();
+  }
+  _clear_bit(1);
+}
+inline const ::std::string& CurrentMap::completed_pieces() const {
+  return *completed_pieces_;
+}
+inline void CurrentMap::set_completed_pieces(const ::std::string& value) {
+  _set_bit(1);
+  if (completed_pieces_ == &_default_completed_pieces_) {
+    completed_pieces_ = new ::std::string;
+  }
+  completed_pieces_->assign(value);
+}
+inline void CurrentMap::set_completed_pieces(const char* value) {
+  _set_bit(1);
+  if (completed_pieces_ == &_default_completed_pieces_) {
+    completed_pieces_ = new ::std::string;
+  }
+  completed_pieces_->assign(value);
+}
+inline void CurrentMap::set_completed_pieces(const char* value, size_t size) {
+  _set_bit(1);
+  if (completed_pieces_ == &_default_completed_pieces_) {
+    completed_pieces_ = new ::std::string;
+  }
+  completed_pieces_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CurrentMap::mutable_completed_pieces() {
+  _set_bit(1);
+  if (completed_pieces_ == &_default_completed_pieces_) {
+    completed_pieces_ = new ::std::string;
+  }
+  return completed_pieces_;
+}
+
+// required uint32 available = 3;
+inline bool CurrentMap::has_available() const {
+  return _has_bit(2);
+}
+inline void CurrentMap::clear_available() {
+  available_ = 0u;
+  _clear_bit(2);
+}
+inline ::google::protobuf::uint32 CurrentMap::available() const {
+  return available_;
+}
+inline void CurrentMap::set_available(::google::protobuf::uint32 value) {
+  _set_bit(2);
+  available_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// SubmitPiece
+
+// required int32 map_id = 1;
+inline bool SubmitPiece::has_map_id() const {
+  return _has_bit(0);
+}
+inline void SubmitPiece::clear_map_id() {
+  map_id_ = 0;
+  _clear_bit(0);
+}
+inline ::google::protobuf::int32 SubmitPiece::map_id() const {
+  return map_id_;
+}
+inline void SubmitPiece::set_map_id(::google::protobuf::int32 value) {
+  _set_bit(0);
+  map_id_ = value;
+}
+
+// required int32 piece_id = 2;
+inline bool SubmitPiece::has_piece_id() const {
+  return _has_bit(1);
+}
+inline void SubmitPiece::clear_piece_id() {
+  piece_id_ = 0;
+  _clear_bit(1);
+}
+inline ::google::protobuf::int32 SubmitPiece::piece_id() const {
+  return piece_id_;
+}
+inline void SubmitPiece::set_piece_id(::google::protobuf::int32 value) {
+  _set_bit(1);
+  piece_id_ = value;
+}
+
+// required string hash = 3;
+inline bool SubmitPiece::has_hash() const {
+  return _has_bit(2);
+}
+inline void SubmitPiece::clear_hash() {
+  if (hash_ != &_default_hash_) {
+    hash_->clear();
+  }
+  _clear_bit(2);
+}
+inline const ::std::string& SubmitPiece::hash() const {
+  return *hash_;
+}
+inline void SubmitPiece::set_hash(const ::std::string& value) {
+  _set_bit(2);
+  if (hash_ == &_default_hash_) {
+    hash_ = new ::std::string;
+  }
+  hash_->assign(value);
+}
+inline void SubmitPiece::set_hash(const char* value) {
+  _set_bit(2);
+  if (hash_ == &_default_hash_) {
+    hash_ = new ::std::string;
+  }
+  hash_->assign(value);
+}
+inline void SubmitPiece::set_hash(const char* value, size_t size) {
+  _set_bit(2);
+  if (hash_ == &_default_hash_) {
+    hash_ = new ::std::string;
+  }
+  hash_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* SubmitPiece::mutable_hash() {
+  _set_bit(2);
+  if (hash_ == &_default_hash_) {
+    hash_ = new ::std::string;
+  }
+  return hash_;
+}
+
+// required string username = 4;
+inline bool SubmitPiece::has_username() const {
+  return _has_bit(3);
+}
+inline void SubmitPiece::clear_username() {
+  if (username_ != &_default_username_) {
+    username_->clear();
+  }
+  _clear_bit(3);
+}
+inline const ::std::string& SubmitPiece::username() const {
+  return *username_;
+}
+inline void SubmitPiece::set_username(const ::std::string& value) {
+  _set_bit(3);
+  if (username_ == &_default_username_) {
+    username_ = new ::std::string;
+  }
+  username_->assign(value);
+}
+inline void SubmitPiece::set_username(const char* value) {
+  _set_bit(3);
+  if (username_ == &_default_username_) {
+    username_ = new ::std::string;
+  }
+  username_->assign(value);
+}
+inline void SubmitPiece::set_username(const char* value, size_t size) {
+  _set_bit(3);
+  if (username_ == &_default_username_) {
+    username_ = new ::std::string;
+  }
+  username_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* SubmitPiece::mutable_username() {
+  _set_bit(3);
+  if (username_ == &_default_username_) {
+    username_ = new ::std::string;
+  }
+  return username_;
+}
+
+// required bytes data = 5;
+inline bool SubmitPiece::has_data() const {
+  return _has_bit(4);
+}
+inline void SubmitPiece::clear_data() {
+  if (data_ != &_default_data_) {
+    data_->clear();
+  }
+  _clear_bit(4);
+}
+inline const ::std::string& SubmitPiece::data() const {
+  return *data_;
+}
+inline void SubmitPiece::set_data(const ::std::string& value) {
+  _set_bit(4);
+  if (data_ == &_default_data_) {
+    data_ = new ::std::string;
+  }
+  data_->assign(value);
+}
+inline void SubmitPiece::set_data(const char* value) {
+  _set_bit(4);
+  if (data_ == &_default_data_) {
+    data_ = new ::std::string;
+  }
+  data_->assign(value);
+}
+inline void SubmitPiece::set_data(const void* value, size_t size) {
+  _set_bit(4);
+  if (data_ == &_default_data_) {
+    data_ = new ::std::string;
+  }
+  data_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* SubmitPiece::mutable_data() {
   _set_bit(4);
   if (data_ == &_default_data_) {
     data_ = new ::std::string;

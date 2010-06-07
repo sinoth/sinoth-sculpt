@@ -5,7 +5,7 @@
 		<Option title="sculpt-client" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="todo\;scene\;main\;" />
+		<Option virtualFolders="todo\;scene\;main\;main\pb\;" />
 		<Build>
 			<Target title="Windows Client Debug">
 				<Option platforms="Windows;" />
@@ -21,6 +21,7 @@
 					<Add option="-D_WIN32_WINNT=0x0501" />
 					<Add option="-D_DEBUG" />
 					<Add directory="client" />
+					<Add directory="res" />
 				</Compiler>
 				<Linker>
 					<Add option="-pg -lgmon" />
@@ -34,6 +35,7 @@
 					<Add library="pthread_static" />
 					<Add library="ws2_32" />
 					<Add library="z_static" />
+					<Add library="protobuf-lite_static" />
 				</Linker>
 			</Target>
 			<Target title="Windows Client Release">
@@ -71,6 +73,7 @@
 		</Unit>
 		<Unit filename="client\scene.h">
 			<Option virtualFolder="main\" />
+			<Option target="Windows Client Release" />
 		</Unit>
 		<Unit filename="client\scene\actions.cpp">
 			<Option virtualFolder="scene\" />
@@ -98,6 +101,13 @@
 		</Unit>
 		<Unit filename="client\todo.txt">
 			<Option virtualFolder="todo\" />
+		</Unit>
+		<Unit filename="res\messages.txt.pb.cc">
+			<Option virtualFolder="main\pb\" />
+		</Unit>
+		<Unit filename="res\messages.txt.pb.h">
+			<Option virtualFolder="main\pb\" />
+			<Option target="Windows Client Release" />
 		</Unit>
 		<Extensions>
 			<code_completion />

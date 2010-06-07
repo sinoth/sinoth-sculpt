@@ -64,10 +64,10 @@ void scene::render() {
     static std::vector<collision3f> sorted_blocks;
     sorted_blocks.clear();
 
-    for ( int i=0; i<piece_x_size;++i )
-     for ( int j=0; j<piece_y_size;++j )
-      for ( int k=0; k<piece_z_size;++k )
-        if ( built_list[i+j*piece_x_size+k*piece_y_size*piece_x_size] )
+    for ( int j=0; j<piece_y_size;++j )
+     for ( int k=0; k<piece_z_size;++k )
+      for ( int i=0; i<piece_x_size;++i )
+        if ( built_list[i+k*piece_x_size+j*piece_z_size*piece_x_size] )
             sorted_blocks.push_back( collision3f( vec3f(i+piece_x_size+0.5,j+piece_y_size+0.5,k+piece_z_size+0.5), mainCamera.getPosition().distance( vec3f(i+piece_x_size+0.5,j+piece_y_size+0.5,k+piece_z_size+0.5) ) ) );
 
     if ( sorted_blocks.size() ) {
@@ -90,6 +90,8 @@ void scene::render() {
             boxes.draw((*it).pos.x, (*it).pos.y, (*it).pos.z, 0.5);
         boxes.optimize();
 
+        //printf("xyz: %f, %f, %f\n", sorted_blocks[0].pos.x, sorted_blocks[0].pos.y, sorted_blocks[0].pos.z);
+
         shadows.generate_edges(0, boxes.vert, 100);
         //shadows.generate_edges(1, boxes.vert, 100);
         //shadows.generate_edges(2, boxes.vert, 100);
@@ -97,6 +99,7 @@ void scene::render() {
 
     }
 
+render_cubes(surrounding_boxes);
 
 glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 glPushAttrib(GL_ALL_ATTRIB_BITS);

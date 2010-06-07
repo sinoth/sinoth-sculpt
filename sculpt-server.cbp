@@ -25,10 +25,13 @@
 				</Compiler>
 				<Linker>
 					<Add option="-pg -lgmon" />
-					<Add library="ws2_32" />
 					<Add library="sinsocket" />
 					<Add library="mysqlclient" />
 					<Add library="mysqlpp" />
+					<Add library="protobuf-lite_static" />
+					<Add library="pthread_static" />
+					<Add library="ws2_32" />
+					<Add library="z_static" />
 				</Linker>
 			</Target>
 			<Target title="Windows Server Release">
@@ -68,6 +71,8 @@
 				<Linker>
 					<Add option="-pg -lgmon" />
 					<Add library="ws2_32" />
+					<Add library="mysqlclient" />
+					<Add library="mysqlpp" />
 				</Linker>
 			</Target>
 			<Target title="Windows Controller">
@@ -100,7 +105,6 @@
 		</Unit>
 		<Unit filename="res\messages.txt.pb.h">
 			<Option virtualFolder="server\pb\" />
-			<Option target="Windows Server Debug" />
 			<Option target="Windows Server Release" />
 		</Unit>
 		<Unit filename="server\controller.cpp">
@@ -120,7 +124,6 @@
 			<Option compile="1" />
 			<Option link="1" />
 			<Option virtualFolder="server\" />
-			<Option target="Windows Server Debug" />
 			<Option target="Windows Server Release" />
 		</Unit>
 		<Unit filename="server\todo.txt">

@@ -1,5 +1,201 @@
 
 #include "scene.h"
+#include "messages.txt.pb.h"
+
+bool scene::retrieveCurrentMap() {
+
+    sinsocket client_socket;
+    uint8_t currentmap_request = 0x29;
+    char temp_label_text[100];
+
+    ui_label *temp_label;
+    temp_label= (ui_label*)mainGui.getWidget("cmap_name");
+    temp_label->my_font.setText("(connecting to server...)");
+    temp_label->my_font.cook();
+    render();
+
+    if ( client_socket.connect("localhost",35610) ) {
+        printf("ERROR: could not connect to localhost!\n");
+        //should do some error dialog here
+        ui_label *temp_label;
+        temp_label= (ui_label*)mainGui.getWidget("cmap_name");
+        temp_label->my_font.setText("(ERROR: cannot connect to server)");
+        temp_label->my_font.cook();
+        return 1; }
+
+    //ask for current map info
+    if ( client_socket.sendRaw( &currentmap_request, 1 ) ) return 1;
+
+    //make sure our version is okay
+    uint8_t their_version, my_version = (VERSION_MAJOR<<4) | VERSION_MINOR;;
+    if ( client_socket.sendRaw(&my_version, 1) ) return 1;
+    if ( client_socket.recvRaw(&their_version, 1) ) return 1;
+
+    if ( their_version != my_version ) {
+        printf("ERROR: Versions do not match, please update.\n");
+        //should display a dialog about restarting/updating here, or even initiate an update
+        client_socket.beginDisconnect();
+        return 1;
+    }
+
+    //grab the protobuffer object
+    packet_data *map_packet;
+    if ( client_socket.recvPacket(map_packet, true) ) return 1;
+    sculpt::CurrentMap cmap;
+    cmap.ParseFromArray( map_packet->data, map_packet->size() );
+
+    client_socket.beginDisconnect();
+
+    //now update the dialog with relevant data
+    temp_label= (ui_label*)mainGui.getWidget("cmap_name");
+    temp_label->my_font.setText(cmap.name().c_str());
+    temp_label->my_font.cook();
+
+    temp_label= (ui_label*)mainGui.getWidget("cmap_complete");
+    temp_label->my_font.setText(cmap.completed_pieces().c_str());
+    temp_label->my_font.cook();
+
+    temp_label= (ui_label*)mainGui.getWidget("cmap_available");
+    sprintf(temp_label_text, "%d", cmap.available() );
+    temp_label->my_font.setText(temp_label_text);
+    temp_label->my_font.cook();
+
+    return 0;
+}
+
+bool scene::retrievePiece() {
+
+    sinsocket client_socket;
+    uint8_t request_piece = 0x43;
+
+    if ( client_socket.connect("localhost",35610) ) {
+        printf("ERROR: could not connect to localhost!\n");
+        //should do some error dialog here
+        return 1; }
+
+    //ask for current map info
+    if ( client_socket.sendRaw( &request_piece, 1 ) ) return 1;
+
+    //make sure our version is okay
+    uint8_t their_version, my_version = (VERSION_MAJOR<<4) | VERSION_MINOR;;
+    if ( client_socket.sendRaw(&my_version, 1) ) return 1;
+    if ( client_socket.recvRaw(&their_version, 1) ) return 1;
+
+    if ( their_version != my_version ) {
+        printf("ERROR: Versions do not match, please update.\n");
+        //should display a dialog about restarting/updating here, or even initiate an update
+        client_socket.beginDisconnect();
+        return 1;
+    }
+
+    uint8_t allowed;
+    if ( client_socket.recvRaw(&allowed, 1) ) return 1;
+
+    if ( !allowed ) {
+        //we've been rejected
+        printf("ERROR: Cannot participate in server\n");
+        client_socket.beginDisconnect();
+        return 1;
+    }
+
+    //send our username
+    uint32_t name_length = strlen(username);
+    if ( client_socket.sendRaw(&name_length, 4) ) return 1;
+    if ( client_socket.sendRaw(username, name_length) ) return 1;
+
+    //grab the protobuffer object
+    packet_data *piece_packet;
+    if ( client_socket.recvPacket(piece_packet, true) ) return 1;
+    client_socket.beginDisconnect();
+
+    sculpt::ServerPiece the_piece;
+    the_piece.ParseFromArray( piece_packet->data, piece_packet->size() );
+
+    my_piece_hash = the_piece.hash();
+    my_piece_map_id = the_piece.map_id();
+    my_piece_id = the_piece.piece_id();
+
+    //convert the data from bitstream to vector
+    std::vector<uint8_t> chunk_vector;
+    sinbits::bits_to_vector( (const uint8_t*)&the_piece.data()[0], the_piece.data().size(), &chunk_vector );
+
+    //lets display what we got, for debugging
+    //printf("DEBUG: Got %d entries in the chunk_vector:\n", chunk_vector.size());
+    //for (int i=0; i<chunk_vector.size(); ++i){
+    //    printf("%d ", chunk_vector[i]);
+    //} printf("\n");
+
+    //create these boxes to render
+    int current_piece = 0;
+    surrounding_boxes.clear();
+
+    for ( int o_y = 0; o_y <= 2; ++o_y )
+      for ( int o_z = 0; o_z <= 2; ++o_z )
+        for ( int o_x = 0; o_x <= 2; ++o_x )
+          for ( unsigned int t_y=0; t_y < the_piece.size_y(); ++t_y)
+            for ( unsigned int t_z=0; t_z < the_piece.size_z(); ++t_z)
+              for ( unsigned int t_x=0; t_x < the_piece.size_x(); ++t_x)
+                if ( o_y!=1 || o_z!=1 || o_x!=1 )
+                  if ( chunk_vector[current_piece++] )
+                    surrounding_boxes.draw(  0.5+o_x*the_piece.size_x()+t_x, 0.5+o_y*the_piece.size_y()+t_y, 0.5+o_z*the_piece.size_z()+t_z, 0.5);
+
+    //printf("DEBUG: current_piece = %d, actual size = %d\n", current_piece, chunk_vector.size() );
+
+    surrounding_boxes.optimize();
+    have_piece = true;
+
+    return 0;
+}
+
+bool scene::submitPiece() {
+
+    if ( !have_piece ) return 1;
+
+    sinsocket client_socket;
+    uint8_t submit_piece = 0x74;
+
+    if ( client_socket.connect("localhost",35610) ) {
+        printf("ERROR: could not connect to localhost!\n");
+        //should do some error dialog here
+        return 1; }
+
+    //ask for current map info
+    if ( client_socket.sendRaw( &submit_piece, 1 ) ) return 1;
+
+    //make sure our version is okay
+    uint8_t their_version, my_version = (VERSION_MAJOR<<4) | VERSION_MINOR;;
+    if ( client_socket.sendRaw(&my_version, 1) ) return 1;
+    if ( client_socket.recvRaw(&their_version, 1) ) return 1;
+
+    if ( their_version != my_version ) {
+        printf("ERROR: Versions do not match, please update.\n");
+        //should display a dialog about restarting/updating here, or even initiate an update
+        client_socket.beginDisconnect();
+        return 1;
+    }
+
+    uint8_t *bit_data;
+    int bit_data_size;
+    sinbits::vector_to_bits(built_list, &bit_data, &bit_data_size);
+
+    sculpt::SubmitPiece to_submit;
+    to_submit.set_map_id(my_piece_map_id);
+    to_submit.set_hash(my_piece_hash);
+    to_submit.set_username(username);
+    to_submit.set_data(bit_data, bit_data_size);
+
+    int size_of_submit = to_submit.ByteSize();
+    packet_data *sending_packet = new packet_data( malloc(size_of_submit), size_of_submit );
+    to_submit.SerializeToArray(sending_packet->data, size_of_submit);
+    if ( client_socket.sendPacket(sending_packet) ) return 1;
+
+    //see if our submit was successful
+
+
+    client_socket.beginDisconnect();
+
+    return 0;
+}
 
 bool scene::retrieveServerList() {
 
@@ -85,7 +281,6 @@ bool scene::retrieveServerList() {
 
     return 0;
 }
-
 
 
 bool scene::participateInServer( int inserver ) {
