@@ -146,6 +146,7 @@ public:
     //network stuff
     bool retrieveServerList();
     bool retrieveCurrentMap();
+    bool retrieveEntireMap(int);
     bool retrievePiece();
     bool submitPiece();
     bool participateInServer(int);

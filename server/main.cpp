@@ -36,6 +36,7 @@ using std::cerr;
 //prototypes
 void send_server_list( sinsocket * );
 void send_current_map( sinsocket * );
+void send_entire_map( sinsocket * );
 uint8_t check_current_version( sinsocket * );
 void send_piece( sinsocket * );
 void receive_piece( sinsocket * );
@@ -89,8 +90,11 @@ int main(int, char **) {
             case 0x43: //request to claim a piece
                 send_piece(incoming_connection);
                 break;
-            case 0x74:
+            case 0x74: //get piece from client
                 receive_piece(incoming_connection);
+                break;
+            case 0x81: //send an entire map
+                send_entire_map(incoming_connection);
                 break;
             case 0x55: //terminate the server
                 do_quit = true;
@@ -175,8 +179,6 @@ void send_current_map( sinsocket *insocket ) {
 
     //fetch the active map
     query << "SELECT table_name,description,pieces_total,pieces_per_user,recharge_rate FROM server_maps WHERE completed_timestamp IS NULL ORDER BY added_timestamp ASC LIMIT 1";
-
-    get_server_maps::table("server_maps");
     std::vector<get_server_maps> the_current_map;
     query.storein(the_current_map);
 
@@ -196,7 +198,7 @@ void send_current_map( sinsocket *insocket ) {
     //calculate available to this user
     int pieces_per_user = the_current_map[0].pieces_per_user;
     //int recharge_rate = the_current_map[0].recharge_rate;
-    query << "SELECT COUNT(*) FROM " << the_current_map[0].table_name << " WHERE ip = \"" << (char*)insocket->getUserData() << "\" AND checkout < TIMESTAMPADD(HOUR,CURRENT_TIMESTAMP,-" << pieces_per_user << ")";
+    query << "SELECT COUNT(*) FROM " << the_current_map[0].table_name << " WHERE ip = \"" << (char*)insocket->getUserData() << "\" AND checkout > TIMESTAMPADD(HOUR,-" << pieces_per_user << ",CURRENT_TIMESTAMP)";
     res = query.store();
     int actual_available = pieces_per_user - res[0][0];
     if ( actual_available > total_avail ) actual_available = total_avail;
@@ -209,6 +211,89 @@ void send_current_map( sinsocket *insocket ) {
     cmap.SerializeToArray(cmap_packet->data, size_of_map);
     cmap_packet->compress();
     insocket->sendPacket(cmap_packet);
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+void send_entire_map( sinsocket *insocket ) {
+
+    //first make sure we're at the current version
+    uint8_t version_result;
+    if ( (version_result = check_current_version(insocket) ) ) {
+        //version is bad, so bail
+        printf("Version is bad! (%02d.%02d)\n", version_result>>4, version_result&15);
+        return; }
+
+    mysqlpp::Connection conn;
+    //open the database (db, server, user, pass)
+    if ( !conn.connect("sculpt", "localhost", SCULPT_USER, SCULPT_PASSWORD) ) {
+        cerr << "DB connection failed (sculpt): " << conn.error() << "\n";
+        return; }
+
+    mysqlpp::Query query = conn.query();
+    mysqlpp::StoreQueryResult res;
+
+    //grab the map they want
+    int32_t in_map_id;
+    insocket->recvRaw(&in_map_id, 4);
+
+    //see if their request is valid
+    query << "SELECT table_name,description,x_size,y_size,z_size,piece_x_size,piece_y_size,piece_z_size FROM server_maps WHERE map_id = " << in_map_id;
+    //cout << query;
+    std::vector<get_server_maps> the_current_map;
+    get_server_maps *cur_map;
+    query.storein(the_current_map);
+    //cout << "\nresults: " << the_current_map.size() << "\n";
+    cur_map = &the_current_map[0];
+
+    if ( !the_current_map.size() ) {
+        //invalid request!
+        uint8_t nope=0x01;
+        insocket->sendRaw(&nope, 1);
+        return; }
+
+    //looks ok
+    uint8_t good_to_go = 0x00;
+    insocket->sendRaw(&good_to_go, 1);
+
+    //start constructing the message object
+    sculpt::EntireMap the_map;
+    the_map.set_name( cur_map->description );
+    the_map.set_map_size_x( cur_map->x_size );
+    the_map.set_map_size_y( cur_map->y_size );
+    the_map.set_map_size_z( cur_map->z_size );
+    the_map.set_piece_size_x( cur_map->piece_x_size );
+    the_map.set_piece_size_y( cur_map->piece_y_size );
+    the_map.set_piece_size_z( cur_map->piece_z_size );
+
+    //grab the list of usernames and data
+    query << "SELECT username,data FROM " << cur_map->table_name << " WHERE piece_order >= 0 ORDER BY piece_id ASC";
+    res = query.store();
+
+    std::vector<uint8_t> chunk_field;
+    int blank_amount = cur_map->piece_x_size * cur_map->piece_y_size * cur_map->piece_z_size;
+    for (unsigned int i=0; i<res.size(); ++i ) {
+        if ( res[i][0] == mysqlpp::null ) the_map.add_usernames("");
+        else the_map.add_usernames(res[i][0]);
+        if ( res[i][1] == mysqlpp::null )
+            for (int j=0; j < blank_amount; ++j) chunk_field.push_back(0);
+        else {
+            for (int j=0; j < blank_amount; ++j) chunk_field.push_back( (uint8_t) res[i][1].at(j) );
+        }
+
+    }
+
+    uint8_t *bit_data;
+    int bit_data_size;
+    sinbits::vector_to_bits(chunk_field, &bit_data, &bit_data_size);
+    the_map.set_data( bit_data, bit_data_size );
+
+    int packet_size = the_map.ByteSize();
+    packet_data *map_packet = new packet_data( malloc(packet_size), packet_size );
+    the_map.SerializeToArray( map_packet->data, packet_size );
+    map_packet->compress();
+    insocket->sendPacket(map_packet);
 
 }
 
@@ -240,7 +325,6 @@ void send_piece( sinsocket *insocket ) {
     mysqlpp::SimpleResult simple_res;
 
     //fetch the active map
-    get_server_maps::table("server_maps");
     std::vector<get_server_maps> cur_map_vec;
     get_server_maps *cur_map;
     query << "SELECT map_id,table_name,pieces_per_user,x_size,y_size,z_size,piece_x_size,piece_y_size,piece_z_size FROM server_maps WHERE completed_timestamp IS NULL ORDER BY added_timestamp ASC LIMIT 1";
@@ -253,7 +337,7 @@ void send_piece( sinsocket *insocket ) {
     int total_avail = res[0][0];
 
     //calculate available to this user
-    query << "SELECT COUNT(*) FROM " << cur_map->table_name << " WHERE ip = \"" << (char*)insocket->getUserData() << "\" AND checkout < TIMESTAMPADD(HOUR,CURRENT_TIMESTAMP,-" << cur_map->pieces_per_user << ")";
+    query << "SELECT COUNT(*) FROM " << cur_map->table_name << " WHERE ip = \"" << (char*)insocket->getUserData() << "\" AND checkout < TIMESTAMPADD(HOUR,-" << cur_map->pieces_per_user << ",CURRENT_TIMESTAMP)";
     res = query.store();
     int actual_available = cur_map->pieces_per_user - res[0][0];
     if ( actual_available > total_avail ) actual_available = total_avail;
@@ -274,6 +358,7 @@ void send_piece( sinsocket *insocket ) {
     char username[25];
     insocket->recvRaw(&username_size, 4);
     insocket->recvRaw(username, username_size);
+    username[username_size] = '\0';
 
     //find the next available piece and claim it immediately
     //table probably needs to be locked so we don't accidentally dish out a piece twice
@@ -315,8 +400,9 @@ void send_piece( sinsocket *insocket ) {
             for (int j=0; j<cur_map->piece_x_size*cur_map->piece_y_size*cur_map->piece_z_size; ++j)
                 chunk_vector.push_back(0);
         } else {
+            //printf("DEBUG: size of this piece: %d, going to %d\n", res[i][0].size(),cur_map->piece_x_size*cur_map->piece_y_size*cur_map->piece_z_size);
             for (int j=0; j<cur_map->piece_x_size*cur_map->piece_y_size*cur_map->piece_z_size; ++j)
-                chunk_vector.push_back( (uint8_t)(((char*)&res[i][0])[j]) );
+                chunk_vector.push_back( (uint8_t)res[i][0].at(j) );
         }
     }
 
@@ -346,7 +432,6 @@ void send_piece( sinsocket *insocket ) {
 
 void receive_piece( sinsocket *insocket ) {
 
-
     //first make sure we are at the current version
     uint8_t version_result;
     if ( (version_result = check_current_version(insocket) ) ) {
@@ -371,7 +456,6 @@ void receive_piece( sinsocket *insocket ) {
     the_piece.ParseFromArray( piece_packet->data, piece_packet->size() );
 
     //fetch the map they supplied
-    get_server_maps::table("server_maps");
     std::vector<get_server_maps> cur_map_vec;
     get_server_maps *cur_map;
     query << "SELECT table_name,completed_timestamp FROM server_maps WHERE map_id = " << the_piece.map_id() << " LIMIT 1";
@@ -382,23 +466,61 @@ void receive_piece( sinsocket *insocket ) {
         //invalid, must have been a bad ID
         uint8_t bad_id = 0x01;
         insocket->sendRaw(&bad_id, 1);
-        return;
-    }
+        return; }
 
     if ( cur_map->completed_timestamp != mysqlpp::null ) {
         //map has been closed
         uint8_t map_closed = 0x02;
         insocket->sendRaw(&map_closed, 1);
-        return;
-    }
+        return; }
 
     //check that the piece is still submittable
-    query << "SELECT piece_hash,username,checkin FROM " << cur_map->table_name << " WHERE piece_id = " << the_piece.piece_id() << " LIMIT 1";
+    query << "SELECT piece_hash,username,ip,checkin FROM " << cur_map->table_name << " WHERE piece_id = " << the_piece.piece_id() << " LIMIT 1";
     res = query.store();
+    if ( res[0][3] != mysqlpp::null ) {
+        //piece already submitted
+        uint8_t piece_closed = 0x03;
+        insocket->sendRaw(&piece_closed, 1);
+        return; }
 
-    xxx
+    if ( res[0][1] != the_piece.username() ) {
+        //usernames don't match
+        uint8_t user_mismatch = 0x04;
+        insocket->sendRaw(&user_mismatch, 1);
+        return; }
 
-    //tell them it was a success
+    if ( strcmp(res[0][2],(char*)insocket->getUserData() ) ) {
+        //ip doesn't match
+        uint8_t ip_mismatch = 0x05;
+        insocket->sendRaw(&ip_mismatch, 1);
+        return; }
+
+    if ( res[0][0] != the_piece.hash() ) {
+        //hash doesn't match
+        uint8_t hash_mismatch = 0x06;
+        insocket->sendRaw(&hash_mismatch, 1);
+        return; }
+
+    //convert the data to a vector
+    std::vector<uint8_t> vec_data;
+    sinbits::bits_to_vector( (uint8_t*)the_piece.data().c_str(), the_piece.data().size(), &vec_data);
+    std::string t_string;
+    t_string.resize( vec_data.size() );
+    for (unsigned int i=0; i<vec_data.size(); ++i) {
+        t_string[i] = vec_data[i];
+    }
+
+    //actually update the row now
+    query << "UPDATE " << cur_map->table_name << " SET data = \"";
+    query << mysqlpp::escape << t_string << "\", checkin = CURRENT_TIMESTAMP WHERE piece_id = " << the_piece.piece_id();
+    simple_res = query.execute();
+    if ( simple_res.rows() != 1 ) {
+        cerr << "Could not update row on submit piece!\n";
+        uint8_t update_fail = 0x07;
+        insocket->sendRaw(&update_fail, 1);
+        return; }
+
+    //looks like we're good, tell them it was a success
     uint8_t success = 0x00;
     insocket->sendRaw(&success, 1);
 

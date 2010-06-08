@@ -24,6 +24,18 @@ message ServerPiece {
     required bytes data = 8;
 }
 
+message EntireMap {
+    required string name = 1;
+    required uint32 map_size_x = 2;
+    required uint32 map_size_y = 3;
+    required uint32 map_size_z = 4;
+    required uint32 piece_size_x = 5;
+    required uint32 piece_size_y = 6;
+    required uint32 piece_size_z = 7;
+    required bytes data = 8;
+    repeated string usernames = 9;
+}
+
 message CurrentMap {
     required string name = 1;
     required string completed_pieces = 2;

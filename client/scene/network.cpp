@@ -110,6 +110,7 @@ bool scene::retrievePiece() {
 
     sculpt::ServerPiece the_piece;
     the_piece.ParseFromArray( piece_packet->data, piece_packet->size() );
+    delete piece_packet;
 
     my_piece_hash = the_piece.hash();
     my_piece_map_id = the_piece.map_id();
@@ -118,12 +119,6 @@ bool scene::retrievePiece() {
     //convert the data from bitstream to vector
     std::vector<uint8_t> chunk_vector;
     sinbits::bits_to_vector( (const uint8_t*)&the_piece.data()[0], the_piece.data().size(), &chunk_vector );
-
-    //lets display what we got, for debugging
-    //printf("DEBUG: Got %d entries in the chunk_vector:\n", chunk_vector.size());
-    //for (int i=0; i<chunk_vector.size(); ++i){
-    //    printf("%d ", chunk_vector[i]);
-    //} printf("\n");
 
     //create these boxes to render
     int current_piece = 0;
@@ -179,6 +174,7 @@ bool scene::submitPiece() {
     sinbits::vector_to_bits(built_list, &bit_data, &bit_data_size);
 
     sculpt::SubmitPiece to_submit;
+    to_submit.set_piece_id(my_piece_id);
     to_submit.set_map_id(my_piece_map_id);
     to_submit.set_hash(my_piece_hash);
     to_submit.set_username(username);
@@ -190,12 +186,96 @@ bool scene::submitPiece() {
     if ( client_socket.sendPacket(sending_packet) ) return 1;
 
     //see if our submit was successful
+    uint8_t submit_result;
+    client_socket.recvRaw(&submit_result, 1);
 
+    if ( submit_result ) {
+        printf("ERROR: could not submit due to reason: %d\n", submit_result);
+    }
 
     client_socket.beginDisconnect();
 
     return 0;
 }
+
+
+bool scene::retrieveEntireMap(int in) {
+
+    sinsocket client_socket;
+    uint8_t request_entire_map = 0x81;
+
+    if ( client_socket.connect("localhost",35610) ) {
+        printf("ERROR: could not connect to localhost!\n");
+        //should do some error dialog here
+        return 1; }
+
+    //ask for current map info
+    if ( client_socket.sendRaw( &request_entire_map, 1 ) ) return 1;
+
+    //make sure our version is okay
+    uint8_t their_version, my_version = (VERSION_MAJOR<<4) | VERSION_MINOR;;
+    if ( client_socket.sendRaw(&my_version, 1) ) return 1;
+    if ( client_socket.recvRaw(&their_version, 1) ) return 1;
+
+    if ( their_version != my_version ) {
+        printf("ERROR: Versions do not match, please update.\n");
+        //should display a dialog about restarting/updating here, or even initiate an update
+        client_socket.beginDisconnect();
+        return 1;
+    }
+
+    //tell which server we want
+    int32_t request_id = in;
+    if ( client_socket.sendRaw(&request_id, 4) ) return 1;
+
+    //see if our request is valid
+    uint8_t is_valid;
+    if ( client_socket.recvRaw(&is_valid, 1) ) return 1;
+
+    if ( is_valid != 0x00 ) {
+        //oh well
+        printf("ERROR: Cannot get info for map_id %d\n",in);
+        client_socket.beginDisconnect();
+        return 1;
+    }
+
+    //receive the message
+    packet_data *map_packet;
+    if ( client_socket.recvPacket(map_packet, true) ) return 1;
+    client_socket.beginDisconnect();
+
+    sculpt::EntireMap the_map;
+    the_map.ParseFromArray( map_packet->data, map_packet->size() );
+    delete map_packet;
+
+    //convert the data from bitstream to vector
+    std::vector<uint8_t> chunk_vector;
+    sinbits::bits_to_vector( (const uint8_t*)&the_map.data()[0], the_map.data().size(), &chunk_vector );
+
+    //create these boxes to render
+    int current_piece = 0;
+    surrounding_boxes.clear();
+
+    //printf("map: %d, %d, %d -- piece: %d, %d, %d\n", the_map.map_size_x(), the_map.map_size_y(), the_map.map_size_z(), the_map.piece_size_z(), the_map.piece_size_y(), the_map.piece_size_z());
+    for ( unsigned int o_y = 0; o_y < the_map.map_size_y(); ++o_y )
+      for ( unsigned int o_z = 0; o_z < the_map.map_size_z(); ++o_z )
+        for ( unsigned int o_x = 0; o_x < the_map.map_size_x(); ++o_x )
+          for ( unsigned int t_y=0; t_y < the_map.piece_size_y(); ++t_y)
+            for ( unsigned int t_z=0; t_z < the_map.piece_size_z(); ++t_z)
+              for ( unsigned int t_x=0; t_x < the_map.piece_size_x(); ++t_x)
+                if ( chunk_vector[current_piece++] )
+                  surrounding_boxes.draw(  0.5+o_x*the_map.piece_size_x()+t_x, 0.5+o_y*the_map.piece_size_y()+t_y, 0.5+o_z*the_map.piece_size_z()+t_z, 0.5);
+
+
+    printf("DEBUG: current_piece = %d, actual size = %d\n", current_piece, chunk_vector.size() );
+    surrounding_boxes.optimize();
+
+    mainCamera.arcSetCenter( vec3f((float)the_map.map_size_x()/2.0 * (float)the_map.piece_size_x(), (float)the_map.map_size_y()/2.0 * (float)the_map.piece_size_y(), (float)the_map.map_size_z()/2.0 * (float)the_map.piece_size_z()) );
+
+    return 0;
+}
+
+
 
 bool scene::retrieveServerList() {
 
@@ -281,7 +361,6 @@ bool scene::retrieveServerList() {
 
     return 0;
 }
-
 
 bool scene::participateInServer( int inserver ) {
 

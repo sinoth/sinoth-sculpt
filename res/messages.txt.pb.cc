@@ -13,6 +13,7 @@ void protobuf_ShutdownFile_messages_2etxt() {
   delete Server::default_instance_;
   delete ServerList::default_instance_;
   delete ServerPiece::default_instance_;
+  delete EntireMap::default_instance_;
   delete CurrentMap::default_instance_;
   delete SubmitPiece::default_instance_;
 }
@@ -26,11 +27,13 @@ void protobuf_AddDesc_messages_2etxt() {
   Server::default_instance_ = new Server();
   ServerList::default_instance_ = new ServerList();
   ServerPiece::default_instance_ = new ServerPiece();
+  EntireMap::default_instance_ = new EntireMap();
   CurrentMap::default_instance_ = new CurrentMap();
   SubmitPiece::default_instance_ = new SubmitPiece();
   Server::default_instance_->InitAsDefaultInstance();
   ServerList::default_instance_->InitAsDefaultInstance();
   ServerPiece::default_instance_->InitAsDefaultInstance();
+  EntireMap::default_instance_->InitAsDefaultInstance();
   CurrentMap::default_instance_->InitAsDefaultInstance();
   SubmitPiece::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_messages_2etxt);
@@ -884,6 +887,456 @@ void ServerPiece::Swap(ServerPiece* other) {
 
 ::std::string ServerPiece::GetTypeName() const {
   return "sculpt.ServerPiece";
+}
+
+
+// ===================================================================
+
+const ::std::string EntireMap::_default_name_;
+const ::std::string EntireMap::_default_data_;
+#ifndef _MSC_VER
+const int EntireMap::kNameFieldNumber;
+const int EntireMap::kMapSizeXFieldNumber;
+const int EntireMap::kMapSizeYFieldNumber;
+const int EntireMap::kMapSizeZFieldNumber;
+const int EntireMap::kPieceSizeXFieldNumber;
+const int EntireMap::kPieceSizeYFieldNumber;
+const int EntireMap::kPieceSizeZFieldNumber;
+const int EntireMap::kDataFieldNumber;
+const int EntireMap::kUsernamesFieldNumber;
+#endif  // !_MSC_VER
+
+EntireMap::EntireMap()
+  : ::google::protobuf::MessageLite() {
+  SharedCtor();
+}
+
+void EntireMap::InitAsDefaultInstance() {
+}
+
+EntireMap::EntireMap(const EntireMap& from)
+  : ::google::protobuf::MessageLite() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void EntireMap::SharedCtor() {
+  _cached_size_ = 0;
+  name_ = const_cast< ::std::string*>(&_default_name_);
+  map_size_x_ = 0u;
+  map_size_y_ = 0u;
+  map_size_z_ = 0u;
+  piece_size_x_ = 0u;
+  piece_size_y_ = 0u;
+  piece_size_z_ = 0u;
+  data_ = const_cast< ::std::string*>(&_default_data_);
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+EntireMap::~EntireMap() {
+  SharedDtor();
+}
+
+void EntireMap::SharedDtor() {
+  if (name_ != &_default_name_) {
+    delete name_;
+  }
+  if (data_ != &_default_data_) {
+    delete data_;
+  }
+  if (this != default_instance_) {
+  }
+}
+
+void EntireMap::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const EntireMap& EntireMap::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_messages_2etxt();  return *default_instance_;
+}
+
+EntireMap* EntireMap::default_instance_ = NULL;
+
+EntireMap* EntireMap::New() const {
+  return new EntireMap;
+}
+
+void EntireMap::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (_has_bit(0)) {
+      if (name_ != &_default_name_) {
+        name_->clear();
+      }
+    }
+    map_size_x_ = 0u;
+    map_size_y_ = 0u;
+    map_size_z_ = 0u;
+    piece_size_x_ = 0u;
+    piece_size_y_ = 0u;
+    piece_size_z_ = 0u;
+    if (_has_bit(7)) {
+      if (data_ != &_default_data_) {
+        data_->clear();
+      }
+    }
+  }
+  usernames_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+bool EntireMap::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required string name = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_name()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(16)) goto parse_map_size_x;
+        break;
+      }
+      
+      // required uint32 map_size_x = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_map_size_x:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &map_size_x_)));
+          _set_bit(1);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(24)) goto parse_map_size_y;
+        break;
+      }
+      
+      // required uint32 map_size_y = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_map_size_y:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &map_size_y_)));
+          _set_bit(2);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(32)) goto parse_map_size_z;
+        break;
+      }
+      
+      // required uint32 map_size_z = 4;
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_map_size_z:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &map_size_z_)));
+          _set_bit(3);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(40)) goto parse_piece_size_x;
+        break;
+      }
+      
+      // required uint32 piece_size_x = 5;
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_piece_size_x:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &piece_size_x_)));
+          _set_bit(4);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(48)) goto parse_piece_size_y;
+        break;
+      }
+      
+      // required uint32 piece_size_y = 6;
+      case 6: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_piece_size_y:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &piece_size_y_)));
+          _set_bit(5);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(56)) goto parse_piece_size_z;
+        break;
+      }
+      
+      // required uint32 piece_size_z = 7;
+      case 7: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_piece_size_z:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &piece_size_z_)));
+          _set_bit(6);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(66)) goto parse_data;
+        break;
+      }
+      
+      // required bytes data = 8;
+      case 8: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_data:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_data()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(74)) goto parse_usernames;
+        break;
+      }
+      
+      // repeated string usernames = 9;
+      case 9: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_usernames:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->add_usernames()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(74)) goto parse_usernames;
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+      
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void EntireMap::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required string name = 1;
+  if (_has_bit(0)) {
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      1, this->name(), output);
+  }
+  
+  // required uint32 map_size_x = 2;
+  if (_has_bit(1)) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->map_size_x(), output);
+  }
+  
+  // required uint32 map_size_y = 3;
+  if (_has_bit(2)) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->map_size_y(), output);
+  }
+  
+  // required uint32 map_size_z = 4;
+  if (_has_bit(3)) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->map_size_z(), output);
+  }
+  
+  // required uint32 piece_size_x = 5;
+  if (_has_bit(4)) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(5, this->piece_size_x(), output);
+  }
+  
+  // required uint32 piece_size_y = 6;
+  if (_has_bit(5)) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(6, this->piece_size_y(), output);
+  }
+  
+  // required uint32 piece_size_z = 7;
+  if (_has_bit(6)) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(7, this->piece_size_z(), output);
+  }
+  
+  // required bytes data = 8;
+  if (_has_bit(7)) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytes(
+      8, this->data(), output);
+  }
+  
+  // repeated string usernames = 9;
+  for (int i = 0; i < this->usernames_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      9, this->usernames(i), output);
+  }
+  
+}
+
+int EntireMap::ByteSize() const {
+  int total_size = 0;
+  
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required string name = 1;
+    if (has_name()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->name());
+    }
+    
+    // required uint32 map_size_x = 2;
+    if (has_map_size_x()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->map_size_x());
+    }
+    
+    // required uint32 map_size_y = 3;
+    if (has_map_size_y()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->map_size_y());
+    }
+    
+    // required uint32 map_size_z = 4;
+    if (has_map_size_z()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->map_size_z());
+    }
+    
+    // required uint32 piece_size_x = 5;
+    if (has_piece_size_x()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->piece_size_x());
+    }
+    
+    // required uint32 piece_size_y = 6;
+    if (has_piece_size_y()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->piece_size_y());
+    }
+    
+    // required uint32 piece_size_z = 7;
+    if (has_piece_size_z()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->piece_size_z());
+    }
+    
+    // required bytes data = 8;
+    if (has_data()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
+          this->data());
+    }
+    
+  }
+  // repeated string usernames = 9;
+  total_size += 1 * this->usernames_size();
+  for (int i = 0; i < this->usernames_size(); i++) {
+    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+      this->usernames(i));
+  }
+  
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void EntireMap::CheckTypeAndMergeFrom(
+    const ::google::protobuf::MessageLite& from) {
+  MergeFrom(*::google::protobuf::down_cast<const EntireMap*>(&from));
+}
+
+void EntireMap::MergeFrom(const EntireMap& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  usernames_.MergeFrom(from.usernames_);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from._has_bit(0)) {
+      set_name(from.name());
+    }
+    if (from._has_bit(1)) {
+      set_map_size_x(from.map_size_x());
+    }
+    if (from._has_bit(2)) {
+      set_map_size_y(from.map_size_y());
+    }
+    if (from._has_bit(3)) {
+      set_map_size_z(from.map_size_z());
+    }
+    if (from._has_bit(4)) {
+      set_piece_size_x(from.piece_size_x());
+    }
+    if (from._has_bit(5)) {
+      set_piece_size_y(from.piece_size_y());
+    }
+    if (from._has_bit(6)) {
+      set_piece_size_z(from.piece_size_z());
+    }
+    if (from._has_bit(7)) {
+      set_data(from.data());
+    }
+  }
+}
+
+void EntireMap::CopyFrom(const EntireMap& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool EntireMap::IsInitialized() const {
+  if ((_has_bits_[0] & 0x000000ff) != 0x000000ff) return false;
+  
+  return true;
+}
+
+void EntireMap::Swap(EntireMap* other) {
+  if (other != this) {
+    std::swap(name_, other->name_);
+    std::swap(map_size_x_, other->map_size_x_);
+    std::swap(map_size_y_, other->map_size_y_);
+    std::swap(map_size_z_, other->map_size_z_);
+    std::swap(piece_size_x_, other->piece_size_x_);
+    std::swap(piece_size_y_, other->piece_size_y_);
+    std::swap(piece_size_z_, other->piece_size_z_);
+    std::swap(data_, other->data_);
+    usernames_.Swap(&other->usernames_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::std::string EntireMap::GetTypeName() const {
+  return "sculpt.EntireMap";
 }
 
 

@@ -23,7 +23,7 @@ sql_create_14( server_maps, 1, 14,
               mysqlpp::Null<mysqlpp::sql_int>, map_id );
 
 ///////////////////////////////////
-sql_create_14( get_server_maps, 1, 14,
+sql_create_15( get_server_maps, 1, 15,
               mysqlpp::sql_varchar, description,
               mysqlpp::sql_varchar, table_name,
               mysqlpp::sql_int, x_size,
@@ -51,6 +51,7 @@ sql_create_8( current_map, 1, 8,
               mysqlpp::Null<mysqlpp::sql_timestamp>, checkout,
               mysqlpp::Null<mysqlpp::sql_timestamp>, checkin,
               mysqlpp::Null<mysqlpp::sql_blob>, data );
+
 
 /////////////////////////////////////
 sql_create_2( current_versions, 1, 2,

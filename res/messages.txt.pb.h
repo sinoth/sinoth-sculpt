@@ -34,6 +34,7 @@ void protobuf_ShutdownFile_messages_2etxt();
 class Server;
 class ServerList;
 class ServerPiece;
+class EntireMap;
 class CurrentMap;
 class SubmitPiece;
 
@@ -364,6 +365,164 @@ class ServerPiece : public ::google::protobuf::MessageLite {
   
   void InitAsDefaultInstance();
   static ServerPiece* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class EntireMap : public ::google::protobuf::MessageLite {
+ public:
+  EntireMap();
+  virtual ~EntireMap();
+  
+  EntireMap(const EntireMap& from);
+  
+  inline EntireMap& operator=(const EntireMap& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  
+  static const EntireMap& default_instance();
+  
+  void Swap(EntireMap* other);
+  
+  // implements Message ----------------------------------------------
+  
+  EntireMap* New() const;
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
+  void CopyFrom(const EntireMap& from);
+  void MergeFrom(const EntireMap& from);
+  void Clear();
+  bool IsInitialized() const;
+  
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  
+  ::std::string GetTypeName() const;
+  
+  // nested types ----------------------------------------------------
+  
+  // accessors -------------------------------------------------------
+  
+  // required string name = 1;
+  inline bool has_name() const;
+  inline void clear_name();
+  static const int kNameFieldNumber = 1;
+  inline const ::std::string& name() const;
+  inline void set_name(const ::std::string& value);
+  inline void set_name(const char* value);
+  inline void set_name(const char* value, size_t size);
+  inline ::std::string* mutable_name();
+  
+  // required uint32 map_size_x = 2;
+  inline bool has_map_size_x() const;
+  inline void clear_map_size_x();
+  static const int kMapSizeXFieldNumber = 2;
+  inline ::google::protobuf::uint32 map_size_x() const;
+  inline void set_map_size_x(::google::protobuf::uint32 value);
+  
+  // required uint32 map_size_y = 3;
+  inline bool has_map_size_y() const;
+  inline void clear_map_size_y();
+  static const int kMapSizeYFieldNumber = 3;
+  inline ::google::protobuf::uint32 map_size_y() const;
+  inline void set_map_size_y(::google::protobuf::uint32 value);
+  
+  // required uint32 map_size_z = 4;
+  inline bool has_map_size_z() const;
+  inline void clear_map_size_z();
+  static const int kMapSizeZFieldNumber = 4;
+  inline ::google::protobuf::uint32 map_size_z() const;
+  inline void set_map_size_z(::google::protobuf::uint32 value);
+  
+  // required uint32 piece_size_x = 5;
+  inline bool has_piece_size_x() const;
+  inline void clear_piece_size_x();
+  static const int kPieceSizeXFieldNumber = 5;
+  inline ::google::protobuf::uint32 piece_size_x() const;
+  inline void set_piece_size_x(::google::protobuf::uint32 value);
+  
+  // required uint32 piece_size_y = 6;
+  inline bool has_piece_size_y() const;
+  inline void clear_piece_size_y();
+  static const int kPieceSizeYFieldNumber = 6;
+  inline ::google::protobuf::uint32 piece_size_y() const;
+  inline void set_piece_size_y(::google::protobuf::uint32 value);
+  
+  // required uint32 piece_size_z = 7;
+  inline bool has_piece_size_z() const;
+  inline void clear_piece_size_z();
+  static const int kPieceSizeZFieldNumber = 7;
+  inline ::google::protobuf::uint32 piece_size_z() const;
+  inline void set_piece_size_z(::google::protobuf::uint32 value);
+  
+  // required bytes data = 8;
+  inline bool has_data() const;
+  inline void clear_data();
+  static const int kDataFieldNumber = 8;
+  inline const ::std::string& data() const;
+  inline void set_data(const ::std::string& value);
+  inline void set_data(const char* value);
+  inline void set_data(const void* value, size_t size);
+  inline ::std::string* mutable_data();
+  
+  // repeated string usernames = 9;
+  inline int usernames_size() const;
+  inline void clear_usernames();
+  static const int kUsernamesFieldNumber = 9;
+  inline const ::std::string& usernames(int index) const;
+  inline ::std::string* mutable_usernames(int index);
+  inline void set_usernames(int index, const ::std::string& value);
+  inline void set_usernames(int index, const char* value);
+  inline void set_usernames(int index, const char* value, size_t size);
+  inline ::std::string* add_usernames();
+  inline void add_usernames(const ::std::string& value);
+  inline void add_usernames(const char* value);
+  inline void add_usernames(const char* value, size_t size);
+  inline const ::google::protobuf::RepeatedPtrField< ::std::string>& usernames() const;
+  inline ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_usernames();
+  
+  // @@protoc_insertion_point(class_scope:sculpt.EntireMap)
+ private:
+  mutable int _cached_size_;
+  
+  ::std::string* name_;
+  static const ::std::string _default_name_;
+  ::google::protobuf::uint32 map_size_x_;
+  ::google::protobuf::uint32 map_size_y_;
+  ::google::protobuf::uint32 map_size_z_;
+  ::google::protobuf::uint32 piece_size_x_;
+  ::google::protobuf::uint32 piece_size_y_;
+  ::google::protobuf::uint32 piece_size_z_;
+  ::std::string* data_;
+  static const ::std::string _default_data_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> usernames_;
+  friend void  protobuf_AddDesc_messages_2etxt();
+  friend void protobuf_AssignDesc_messages_2etxt();
+  friend void protobuf_ShutdownFile_messages_2etxt();
+  
+  ::google::protobuf::uint32 _has_bits_[(9 + 31) / 32];
+  
+  // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
+  inline bool _has_bit(int index) const {
+    return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
+  }
+  inline void _set_bit(int index) {
+    _has_bits_[index / 32] |= (1u << (index % 32));
+  }
+  inline void _clear_bit(int index) {
+    _has_bits_[index / 32] &= ~(1u << (index % 32));
+  }
+  
+  void InitAsDefaultInstance();
+  static EntireMap* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -895,6 +1054,234 @@ inline ::std::string* ServerPiece::mutable_data() {
     data_ = new ::std::string;
   }
   return data_;
+}
+
+// -------------------------------------------------------------------
+
+// EntireMap
+
+// required string name = 1;
+inline bool EntireMap::has_name() const {
+  return _has_bit(0);
+}
+inline void EntireMap::clear_name() {
+  if (name_ != &_default_name_) {
+    name_->clear();
+  }
+  _clear_bit(0);
+}
+inline const ::std::string& EntireMap::name() const {
+  return *name_;
+}
+inline void EntireMap::set_name(const ::std::string& value) {
+  _set_bit(0);
+  if (name_ == &_default_name_) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+}
+inline void EntireMap::set_name(const char* value) {
+  _set_bit(0);
+  if (name_ == &_default_name_) {
+    name_ = new ::std::string;
+  }
+  name_->assign(value);
+}
+inline void EntireMap::set_name(const char* value, size_t size) {
+  _set_bit(0);
+  if (name_ == &_default_name_) {
+    name_ = new ::std::string;
+  }
+  name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* EntireMap::mutable_name() {
+  _set_bit(0);
+  if (name_ == &_default_name_) {
+    name_ = new ::std::string;
+  }
+  return name_;
+}
+
+// required uint32 map_size_x = 2;
+inline bool EntireMap::has_map_size_x() const {
+  return _has_bit(1);
+}
+inline void EntireMap::clear_map_size_x() {
+  map_size_x_ = 0u;
+  _clear_bit(1);
+}
+inline ::google::protobuf::uint32 EntireMap::map_size_x() const {
+  return map_size_x_;
+}
+inline void EntireMap::set_map_size_x(::google::protobuf::uint32 value) {
+  _set_bit(1);
+  map_size_x_ = value;
+}
+
+// required uint32 map_size_y = 3;
+inline bool EntireMap::has_map_size_y() const {
+  return _has_bit(2);
+}
+inline void EntireMap::clear_map_size_y() {
+  map_size_y_ = 0u;
+  _clear_bit(2);
+}
+inline ::google::protobuf::uint32 EntireMap::map_size_y() const {
+  return map_size_y_;
+}
+inline void EntireMap::set_map_size_y(::google::protobuf::uint32 value) {
+  _set_bit(2);
+  map_size_y_ = value;
+}
+
+// required uint32 map_size_z = 4;
+inline bool EntireMap::has_map_size_z() const {
+  return _has_bit(3);
+}
+inline void EntireMap::clear_map_size_z() {
+  map_size_z_ = 0u;
+  _clear_bit(3);
+}
+inline ::google::protobuf::uint32 EntireMap::map_size_z() const {
+  return map_size_z_;
+}
+inline void EntireMap::set_map_size_z(::google::protobuf::uint32 value) {
+  _set_bit(3);
+  map_size_z_ = value;
+}
+
+// required uint32 piece_size_x = 5;
+inline bool EntireMap::has_piece_size_x() const {
+  return _has_bit(4);
+}
+inline void EntireMap::clear_piece_size_x() {
+  piece_size_x_ = 0u;
+  _clear_bit(4);
+}
+inline ::google::protobuf::uint32 EntireMap::piece_size_x() const {
+  return piece_size_x_;
+}
+inline void EntireMap::set_piece_size_x(::google::protobuf::uint32 value) {
+  _set_bit(4);
+  piece_size_x_ = value;
+}
+
+// required uint32 piece_size_y = 6;
+inline bool EntireMap::has_piece_size_y() const {
+  return _has_bit(5);
+}
+inline void EntireMap::clear_piece_size_y() {
+  piece_size_y_ = 0u;
+  _clear_bit(5);
+}
+inline ::google::protobuf::uint32 EntireMap::piece_size_y() const {
+  return piece_size_y_;
+}
+inline void EntireMap::set_piece_size_y(::google::protobuf::uint32 value) {
+  _set_bit(5);
+  piece_size_y_ = value;
+}
+
+// required uint32 piece_size_z = 7;
+inline bool EntireMap::has_piece_size_z() const {
+  return _has_bit(6);
+}
+inline void EntireMap::clear_piece_size_z() {
+  piece_size_z_ = 0u;
+  _clear_bit(6);
+}
+inline ::google::protobuf::uint32 EntireMap::piece_size_z() const {
+  return piece_size_z_;
+}
+inline void EntireMap::set_piece_size_z(::google::protobuf::uint32 value) {
+  _set_bit(6);
+  piece_size_z_ = value;
+}
+
+// required bytes data = 8;
+inline bool EntireMap::has_data() const {
+  return _has_bit(7);
+}
+inline void EntireMap::clear_data() {
+  if (data_ != &_default_data_) {
+    data_->clear();
+  }
+  _clear_bit(7);
+}
+inline const ::std::string& EntireMap::data() const {
+  return *data_;
+}
+inline void EntireMap::set_data(const ::std::string& value) {
+  _set_bit(7);
+  if (data_ == &_default_data_) {
+    data_ = new ::std::string;
+  }
+  data_->assign(value);
+}
+inline void EntireMap::set_data(const char* value) {
+  _set_bit(7);
+  if (data_ == &_default_data_) {
+    data_ = new ::std::string;
+  }
+  data_->assign(value);
+}
+inline void EntireMap::set_data(const void* value, size_t size) {
+  _set_bit(7);
+  if (data_ == &_default_data_) {
+    data_ = new ::std::string;
+  }
+  data_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* EntireMap::mutable_data() {
+  _set_bit(7);
+  if (data_ == &_default_data_) {
+    data_ = new ::std::string;
+  }
+  return data_;
+}
+
+// repeated string usernames = 9;
+inline int EntireMap::usernames_size() const {
+  return usernames_.size();
+}
+inline void EntireMap::clear_usernames() {
+  usernames_.Clear();
+}
+inline const ::std::string& EntireMap::usernames(int index) const {
+  return usernames_.Get(index);
+}
+inline ::std::string* EntireMap::mutable_usernames(int index) {
+  return usernames_.Mutable(index);
+}
+inline void EntireMap::set_usernames(int index, const ::std::string& value) {
+  usernames_.Mutable(index)->assign(value);
+}
+inline void EntireMap::set_usernames(int index, const char* value) {
+  usernames_.Mutable(index)->assign(value);
+}
+inline void EntireMap::set_usernames(int index, const char* value, size_t size) {
+  usernames_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* EntireMap::add_usernames() {
+  return usernames_.Add();
+}
+inline void EntireMap::add_usernames(const ::std::string& value) {
+  usernames_.Add()->assign(value);
+}
+inline void EntireMap::add_usernames(const char* value) {
+  usernames_.Add()->assign(value);
+}
+inline void EntireMap::add_usernames(const char* value, size_t size) {
+  usernames_.Add()->assign(reinterpret_cast<const char*>(value), size);
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+EntireMap::usernames() const {
+  return usernames_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+EntireMap::mutable_usernames() {
+  return &usernames_;
 }
 
 // -------------------------------------------------------------------
