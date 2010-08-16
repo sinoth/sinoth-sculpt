@@ -387,10 +387,6 @@ void scene::serverlist_close() {
     temp_window->setActive(true);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-void scene::serverlist_refresh() {
-    myself->retrieveCurrentMap();
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 void scene::serverbutton_one() {
@@ -442,10 +438,13 @@ void scene::connectmenu_archive() {
     temp_window->doFade(UI_FADE_OUT, 10);
     temp_window->setActive(false);
 
-    //temp_window = myself->mainGui.getWindow("ServerList");
-    //temp_window->doFade(UI_FADE_IN, 10);
-    //temp_window->setActive(true);
-    myself->retrieveEntireMap(6);
+    temp_window = myself->mainGui.getWindow("ServerList");
+    temp_window->doFade(UI_FADE_IN, 10);
+    temp_window->setActive(true);
+
+    myself->retrieveServerList();
+
+    //myself->retrieveEntireMap(6);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -497,3 +496,10 @@ void scene::currentmapsubmit_close() {
 }
 
 
+void scene::serverlist_prev() {
+    myself->retrieveServerList();
+}
+
+void scene::serverlist_next() {
+    myself->retrieveServerList();
+}

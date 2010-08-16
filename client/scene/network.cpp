@@ -116,6 +116,8 @@ bool scene::retrievePiece() {
     my_piece_map_id = the_piece.map_id();
     my_piece_id = the_piece.piece_id();
 
+    printf("piece_id = %d\n", my_piece_id);
+
     //convert the data from bitstream to vector
     std::vector<uint8_t> chunk_vector;
     sinbits::bits_to_vector( (const uint8_t*)&the_piece.data()[0], the_piece.data().size(), &chunk_vector );
@@ -198,7 +200,6 @@ bool scene::submitPiece() {
     return 0;
 }
 
-
 bool scene::retrieveEntireMap(int in) {
 
     sinsocket client_socket;
@@ -275,9 +276,9 @@ bool scene::retrieveEntireMap(int in) {
     return 0;
 }
 
-
-
 bool scene::retrieveServerList() {
+
+    work on this
 
     sinsocket client_socket;
     unsigned char list_request = 0x28;

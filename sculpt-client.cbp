@@ -34,7 +34,7 @@
 					<Add library="sinsocket" />
 					<Add library="pthread_static" />
 					<Add library="ws2_32" />
-					<Add library="z_static" />
+					<Add library="z" />
 					<Add library="protobuf-lite_static" />
 				</Linker>
 			</Target>

@@ -40,6 +40,7 @@ void send_entire_map( sinsocket * );
 uint8_t check_current_version( sinsocket * );
 void send_piece( sinsocket * );
 void receive_piece( sinsocket * );
+void send_archive_list( sinsocket * );
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -364,7 +365,7 @@ void send_piece( sinsocket *insocket ) {
     //table probably needs to be locked so we don't accidentally dish out a piece twice
     query << "LOCK TABLES " << cur_map->table_name << " WRITE";
     query.execute();
-    query << "SELECT piece_id, piece_hash FROM " << cur_map->table_name << " WHERE piece_order >= 0 AND (checkout IS NULL OR checkout < TIMESTAMPADD(HOUR,-1,CURRENT_TIMESTAMP)) ORDER BY piece_order ASC LIMIT 1";
+    query << "SELECT piece_id, piece_hash FROM " << cur_map->table_name << " WHERE piece_order >= 0 AND (checkout IS NULL OR (checkin IS NULL AND checkout < TIMESTAMPADD(HOUR,-1,CURRENT_TIMESTAMP))) ORDER BY piece_order ASC LIMIT 1";
     res = query.store();
     int piece_id = res[0][0];
     std::string hash(res[0][1]);
@@ -526,3 +527,62 @@ void receive_piece( sinsocket *insocket ) {
 
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+//
+void send_archive_list( sinsocket *insocket ) {
+
+    work on this
+
+    //first make sure we're at the current version
+    uint8_t version_result;
+    if ( (version_result = check_current_version(insocket) ) ) {
+        //version is bad, so bail
+        printf("Version is bad! (%02d.%02d)\n", version_result>>4, version_result&15);
+        return; }
+
+    mysqlpp::Connection conn;
+    //open the database (db, server, user, pass)
+    if ( !conn.connect("sculpt", "localhost", SCULPT_USER, SCULPT_PASSWORD) ) {
+        cerr << "DB connection failed (sculpt): " << conn.error() << "\n";
+        return; }
+
+    mysqlpp::Query query = conn.query();
+    mysqlpp::StoreQueryResult res;
+
+    //fetch the active map
+    query << "SELECT table_name,description,pieces_total,pieces_per_user,recharge_rate FROM server_maps WHERE completed_timestamp IS NULL ORDER BY added_timestamp ASC LIMIT 1";
+    std::vector<get_server_maps> the_current_map;
+    query.storein(the_current_map);
+
+    sculpt::CurrentMap cmap;
+    cmap.set_name( the_current_map[0].description );
+
+    //calculate how many have actually been completed
+    query << "SELECT COUNT(*) FROM " << the_current_map[0].table_name << " WHERE piece_order >= 0 AND checkin IS NULL AND (checkout IS NULL OR checkout < TIMESTAMPADD(HOUR,-1,CURRENT_TIMESTAMP))";
+    res = query.store();
+    int total_avail = res[0][0];
+
+    //convert completed to a string
+    char temp_completed[20];
+    sprintf(temp_completed,"%d / %d", the_current_map[0].pieces_total-total_avail, the_current_map[0].pieces_total );
+    cmap.set_completed_pieces( temp_completed );
+
+    //calculate available to this user
+    int pieces_per_user = the_current_map[0].pieces_per_user;
+    //int recharge_rate = the_current_map[0].recharge_rate;
+    query << "SELECT COUNT(*) FROM " << the_current_map[0].table_name << " WHERE ip = \"" << (char*)insocket->getUserData() << "\" AND checkout > TIMESTAMPADD(HOUR,-" << pieces_per_user << ",CURRENT_TIMESTAMP)";
+    res = query.store();
+    int actual_available = pieces_per_user - res[0][0];
+    if ( actual_available > total_avail ) actual_available = total_avail;
+    if ( total_avail == 0 ) actual_available = 0;
+    cmap.set_available(actual_available);
+
+    //send over the message
+    int size_of_map = cmap.ByteSize();
+    packet_data *cmap_packet = new packet_data(malloc(size_of_map),size_of_map);
+    cmap.SerializeToArray(cmap_packet->data, size_of_map);
+    cmap_packet->compress();
+    insocket->sendPacket(cmap_packet);
+
+}

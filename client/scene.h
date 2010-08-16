@@ -85,6 +85,7 @@ public:
     SinUI mainGui;
     freetype_font_controller fontController;
     freetype_font font12,font18;
+    int current_archive_page;
 
     //network stuff
     serverinfo servers[5];
@@ -201,7 +202,8 @@ public:
     void static options_controls();
     void static options_close();
     void static options_res_apply();
-    void static serverlist_refresh();
+    void static serverlist_prev();
+    void static serverlist_next();
     void static serverlist_close();
     void static serverbutton_one();
     void static infowindow_close();

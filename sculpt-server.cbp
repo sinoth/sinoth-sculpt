@@ -31,7 +31,7 @@
 					<Add library="protobuf-lite_static" />
 					<Add library="pthread_static" />
 					<Add library="ws2_32" />
-					<Add library="z_static" />
+					<Add library="z" />
 				</Linker>
 			</Target>
 			<Target title="Windows Server Release">
