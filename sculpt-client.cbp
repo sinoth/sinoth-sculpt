@@ -60,14 +60,29 @@
 					<Add library="sinsocket" />
 					<Add library="pthread_static" />
 					<Add library="ws2_32" />
-					<Add library="z_static" />
+					<Add library="z" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wextra" />
 			<Add option="-Wall" />
+			<Add directory="$(#libsin.include)" />
+			<Add directory="$(#glee.include)" />
+			<Add directory="$(#protobuf.include)" />
+			<Add directory="$(#glfw.include)" />
+			<Add directory="$(#freetype.include)" />
+			<Add directory="$(#pthread.include)" />
 		</Compiler>
+		<Linker>
+			<Add directory="$(#libsin.lib)" />
+			<Add directory="$(#glee.lib)" />
+			<Add directory="$(#protobuf.lib)" />
+			<Add directory="$(#glfw.lib)" />
+			<Add directory="$(#freetype.lib)" />
+			<Add directory="$(#pthread.lib)" />
+			<Add directory="$(#zlib.lib)" />
+		</Linker>
 		<Unit filename="client\main.cpp">
 			<Option virtualFolder="main\" />
 		</Unit>

@@ -92,7 +92,19 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add directory="$(#libsin.include)" />
+			<Add directory="$(#pthread.include)" />
+			<Add directory="$(#protobuf.include)" />
+			<Add directory="$(#mysqlpp.include)" />
+			<Add directory="$(#mysqlc.include)" />
 		</Compiler>
+		<Linker>
+			<Add directory="$(#libsin.lib)" />
+			<Add directory="$(#pthread.lib)" />
+			<Add directory="$(#protobuf.lib)" />
+			<Add directory="$(#mysqlpp.lib)" />
+			<Add directory="$(#zlib.lib)" />
+		</Linker>
 		<Unit filename="res\messages.txt">
 			<Option virtualFolder="server\" />
 			<Option target="Windows Server Debug" />

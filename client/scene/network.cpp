@@ -278,7 +278,7 @@ bool scene::retrieveEntireMap(int in) {
 
 bool scene::retrieveServerList() {
 
-    work on this
+    //\/work on this
 
     sinsocket client_socket;
     unsigned char list_request = 0x28;

@@ -44,27 +44,27 @@ class Server : public ::google::protobuf::MessageLite {
  public:
   Server();
   virtual ~Server();
-  
+
   Server(const Server& from);
-  
+
   inline Server& operator=(const Server& from) {
     CopyFrom(from);
     return *this;
   }
-  
+
   static const Server& default_instance();
-  
+
   void Swap(Server* other);
-  
+
   // implements Message ----------------------------------------------
-  
+
   Server* New() const;
   void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
   void CopyFrom(const Server& from);
   void MergeFrom(const Server& from);
   void Clear();
   bool IsInitialized() const;
-  
+
   int ByteSize() const;
   bool MergePartialFromCodedStream(
       ::google::protobuf::io::CodedInputStream* input);
@@ -76,20 +76,20 @@ class Server : public ::google::protobuf::MessageLite {
   void SharedDtor();
   void SetCachedSize(int size) const;
   public:
-  
+
   ::std::string GetTypeName() const;
-  
+
   // nested types ----------------------------------------------------
-  
+
   // accessors -------------------------------------------------------
-  
+
   // required uint32 map_id = 1;
   inline bool has_map_id() const;
   inline void clear_map_id();
   static const int kMapIdFieldNumber = 1;
   inline ::google::protobuf::uint32 map_id() const;
   inline void set_map_id(::google::protobuf::uint32 value);
-  
+
   // required string map_name = 2;
   inline bool has_map_name() const;
   inline void clear_map_name();
@@ -99,32 +99,32 @@ class Server : public ::google::protobuf::MessageLite {
   inline void set_map_name(const char* value);
   inline void set_map_name(const char* value, size_t size);
   inline ::std::string* mutable_map_name();
-  
+
   // required uint32 total_pieces = 3;
   inline bool has_total_pieces() const;
   inline void clear_total_pieces();
   static const int kTotalPiecesFieldNumber = 3;
   inline ::google::protobuf::uint32 total_pieces() const;
   inline void set_total_pieces(::google::protobuf::uint32 value);
-  
+
   // required uint32 pieces_left = 4;
   inline bool has_pieces_left() const;
   inline void clear_pieces_left();
   static const int kPiecesLeftFieldNumber = 4;
   inline ::google::protobuf::uint32 pieces_left() const;
   inline void set_pieces_left(::google::protobuf::uint32 value);
-  
+
   // required uint32 pieces_available = 5;
   inline bool has_pieces_available() const;
   inline void clear_pieces_available();
   static const int kPiecesAvailableFieldNumber = 5;
   inline ::google::protobuf::uint32 pieces_available() const;
   inline void set_pieces_available(::google::protobuf::uint32 value);
-  
+
   // @@protoc_insertion_point(class_scope:sculpt.Server)
  private:
   mutable int _cached_size_;
-  
+
   ::google::protobuf::uint32 map_id_;
   ::std::string* map_name_;
   static const ::std::string _default_map_name_;
@@ -134,9 +134,9 @@ class Server : public ::google::protobuf::MessageLite {
   friend void  protobuf_AddDesc_messages_2etxt();
   friend void protobuf_AssignDesc_messages_2etxt();
   friend void protobuf_ShutdownFile_messages_2etxt();
-  
+
   ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
-  
+
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
     return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
@@ -147,7 +147,7 @@ class Server : public ::google::protobuf::MessageLite {
   inline void _clear_bit(int index) {
     _has_bits_[index / 32] &= ~(1u << (index % 32));
   }
-  
+
   void InitAsDefaultInstance();
   static Server* default_instance_;
 };
@@ -157,27 +157,27 @@ class ServerList : public ::google::protobuf::MessageLite {
  public:
   ServerList();
   virtual ~ServerList();
-  
+
   ServerList(const ServerList& from);
-  
+
   inline ServerList& operator=(const ServerList& from) {
     CopyFrom(from);
     return *this;
   }
-  
+
   static const ServerList& default_instance();
-  
+
   void Swap(ServerList* other);
-  
+
   // implements Message ----------------------------------------------
-  
+
   ServerList* New() const;
   void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
   void CopyFrom(const ServerList& from);
   void MergeFrom(const ServerList& from);
   void Clear();
   bool IsInitialized() const;
-  
+
   int ByteSize() const;
   bool MergePartialFromCodedStream(
       ::google::protobuf::io::CodedInputStream* input);
@@ -189,13 +189,13 @@ class ServerList : public ::google::protobuf::MessageLite {
   void SharedDtor();
   void SetCachedSize(int size) const;
   public:
-  
+
   ::std::string GetTypeName() const;
-  
+
   // nested types ----------------------------------------------------
-  
+
   // accessors -------------------------------------------------------
-  
+
   // repeated .sculpt.Server servers = 1;
   inline int servers_size() const;
   inline void clear_servers();
@@ -207,18 +207,18 @@ class ServerList : public ::google::protobuf::MessageLite {
       servers() const;
   inline ::google::protobuf::RepeatedPtrField< ::sculpt::Server >*
       mutable_servers();
-  
+
   // @@protoc_insertion_point(class_scope:sculpt.ServerList)
  private:
   mutable int _cached_size_;
-  
+
   ::google::protobuf::RepeatedPtrField< ::sculpt::Server > servers_;
   friend void  protobuf_AddDesc_messages_2etxt();
   friend void protobuf_AssignDesc_messages_2etxt();
   friend void protobuf_ShutdownFile_messages_2etxt();
-  
+
   ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
-  
+
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
     return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
@@ -229,7 +229,7 @@ class ServerList : public ::google::protobuf::MessageLite {
   inline void _clear_bit(int index) {
     _has_bits_[index / 32] &= ~(1u << (index % 32));
   }
-  
+
   void InitAsDefaultInstance();
   static ServerList* default_instance_;
 };
@@ -239,27 +239,27 @@ class ServerPiece : public ::google::protobuf::MessageLite {
  public:
   ServerPiece();
   virtual ~ServerPiece();
-  
+
   ServerPiece(const ServerPiece& from);
-  
+
   inline ServerPiece& operator=(const ServerPiece& from) {
     CopyFrom(from);
     return *this;
   }
-  
+
   static const ServerPiece& default_instance();
-  
+
   void Swap(ServerPiece* other);
-  
+
   // implements Message ----------------------------------------------
-  
+
   ServerPiece* New() const;
   void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
   void CopyFrom(const ServerPiece& from);
   void MergeFrom(const ServerPiece& from);
   void Clear();
   bool IsInitialized() const;
-  
+
   int ByteSize() const;
   bool MergePartialFromCodedStream(
       ::google::protobuf::io::CodedInputStream* input);
@@ -271,27 +271,27 @@ class ServerPiece : public ::google::protobuf::MessageLite {
   void SharedDtor();
   void SetCachedSize(int size) const;
   public:
-  
+
   ::std::string GetTypeName() const;
-  
+
   // nested types ----------------------------------------------------
-  
+
   // accessors -------------------------------------------------------
-  
+
   // required int32 map_id = 1;
   inline bool has_map_id() const;
   inline void clear_map_id();
   static const int kMapIdFieldNumber = 1;
   inline ::google::protobuf::int32 map_id() const;
   inline void set_map_id(::google::protobuf::int32 value);
-  
+
   // required int32 piece_id = 2;
   inline bool has_piece_id() const;
   inline void clear_piece_id();
   static const int kPieceIdFieldNumber = 2;
   inline ::google::protobuf::int32 piece_id() const;
   inline void set_piece_id(::google::protobuf::int32 value);
-  
+
   // required string hash = 4;
   inline bool has_hash() const;
   inline void clear_hash();
@@ -301,28 +301,28 @@ class ServerPiece : public ::google::protobuf::MessageLite {
   inline void set_hash(const char* value);
   inline void set_hash(const char* value, size_t size);
   inline ::std::string* mutable_hash();
-  
+
   // required uint32 size_x = 5;
   inline bool has_size_x() const;
   inline void clear_size_x();
   static const int kSizeXFieldNumber = 5;
   inline ::google::protobuf::uint32 size_x() const;
   inline void set_size_x(::google::protobuf::uint32 value);
-  
+
   // required uint32 size_y = 6;
   inline bool has_size_y() const;
   inline void clear_size_y();
   static const int kSizeYFieldNumber = 6;
   inline ::google::protobuf::uint32 size_y() const;
   inline void set_size_y(::google::protobuf::uint32 value);
-  
+
   // required uint32 size_z = 7;
   inline bool has_size_z() const;
   inline void clear_size_z();
   static const int kSizeZFieldNumber = 7;
   inline ::google::protobuf::uint32 size_z() const;
   inline void set_size_z(::google::protobuf::uint32 value);
-  
+
   // required bytes data = 8;
   inline bool has_data() const;
   inline void clear_data();
@@ -332,11 +332,11 @@ class ServerPiece : public ::google::protobuf::MessageLite {
   inline void set_data(const char* value);
   inline void set_data(const void* value, size_t size);
   inline ::std::string* mutable_data();
-  
+
   // @@protoc_insertion_point(class_scope:sculpt.ServerPiece)
  private:
   mutable int _cached_size_;
-  
+
   ::google::protobuf::int32 map_id_;
   ::google::protobuf::int32 piece_id_;
   ::std::string* hash_;
@@ -349,9 +349,9 @@ class ServerPiece : public ::google::protobuf::MessageLite {
   friend void  protobuf_AddDesc_messages_2etxt();
   friend void protobuf_AssignDesc_messages_2etxt();
   friend void protobuf_ShutdownFile_messages_2etxt();
-  
+
   ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
-  
+
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
     return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
@@ -362,7 +362,7 @@ class ServerPiece : public ::google::protobuf::MessageLite {
   inline void _clear_bit(int index) {
     _has_bits_[index / 32] &= ~(1u << (index % 32));
   }
-  
+
   void InitAsDefaultInstance();
   static ServerPiece* default_instance_;
 };
@@ -372,27 +372,27 @@ class EntireMap : public ::google::protobuf::MessageLite {
  public:
   EntireMap();
   virtual ~EntireMap();
-  
+
   EntireMap(const EntireMap& from);
-  
+
   inline EntireMap& operator=(const EntireMap& from) {
     CopyFrom(from);
     return *this;
   }
-  
+
   static const EntireMap& default_instance();
-  
+
   void Swap(EntireMap* other);
-  
+
   // implements Message ----------------------------------------------
-  
+
   EntireMap* New() const;
   void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
   void CopyFrom(const EntireMap& from);
   void MergeFrom(const EntireMap& from);
   void Clear();
   bool IsInitialized() const;
-  
+
   int ByteSize() const;
   bool MergePartialFromCodedStream(
       ::google::protobuf::io::CodedInputStream* input);
@@ -404,13 +404,13 @@ class EntireMap : public ::google::protobuf::MessageLite {
   void SharedDtor();
   void SetCachedSize(int size) const;
   public:
-  
+
   ::std::string GetTypeName() const;
-  
+
   // nested types ----------------------------------------------------
-  
+
   // accessors -------------------------------------------------------
-  
+
   // required string name = 1;
   inline bool has_name() const;
   inline void clear_name();
@@ -420,49 +420,49 @@ class EntireMap : public ::google::protobuf::MessageLite {
   inline void set_name(const char* value);
   inline void set_name(const char* value, size_t size);
   inline ::std::string* mutable_name();
-  
+
   // required uint32 map_size_x = 2;
   inline bool has_map_size_x() const;
   inline void clear_map_size_x();
   static const int kMapSizeXFieldNumber = 2;
   inline ::google::protobuf::uint32 map_size_x() const;
   inline void set_map_size_x(::google::protobuf::uint32 value);
-  
+
   // required uint32 map_size_y = 3;
   inline bool has_map_size_y() const;
   inline void clear_map_size_y();
   static const int kMapSizeYFieldNumber = 3;
   inline ::google::protobuf::uint32 map_size_y() const;
   inline void set_map_size_y(::google::protobuf::uint32 value);
-  
+
   // required uint32 map_size_z = 4;
   inline bool has_map_size_z() const;
   inline void clear_map_size_z();
   static const int kMapSizeZFieldNumber = 4;
   inline ::google::protobuf::uint32 map_size_z() const;
   inline void set_map_size_z(::google::protobuf::uint32 value);
-  
+
   // required uint32 piece_size_x = 5;
   inline bool has_piece_size_x() const;
   inline void clear_piece_size_x();
   static const int kPieceSizeXFieldNumber = 5;
   inline ::google::protobuf::uint32 piece_size_x() const;
   inline void set_piece_size_x(::google::protobuf::uint32 value);
-  
+
   // required uint32 piece_size_y = 6;
   inline bool has_piece_size_y() const;
   inline void clear_piece_size_y();
   static const int kPieceSizeYFieldNumber = 6;
   inline ::google::protobuf::uint32 piece_size_y() const;
   inline void set_piece_size_y(::google::protobuf::uint32 value);
-  
+
   // required uint32 piece_size_z = 7;
   inline bool has_piece_size_z() const;
   inline void clear_piece_size_z();
   static const int kPieceSizeZFieldNumber = 7;
   inline ::google::protobuf::uint32 piece_size_z() const;
   inline void set_piece_size_z(::google::protobuf::uint32 value);
-  
+
   // required bytes data = 8;
   inline bool has_data() const;
   inline void clear_data();
@@ -472,7 +472,7 @@ class EntireMap : public ::google::protobuf::MessageLite {
   inline void set_data(const char* value);
   inline void set_data(const void* value, size_t size);
   inline ::std::string* mutable_data();
-  
+
   // repeated string usernames = 9;
   inline int usernames_size() const;
   inline void clear_usernames();
@@ -488,11 +488,11 @@ class EntireMap : public ::google::protobuf::MessageLite {
   inline void add_usernames(const char* value, size_t size);
   inline const ::google::protobuf::RepeatedPtrField< ::std::string>& usernames() const;
   inline ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_usernames();
-  
+
   // @@protoc_insertion_point(class_scope:sculpt.EntireMap)
  private:
   mutable int _cached_size_;
-  
+
   ::std::string* name_;
   static const ::std::string _default_name_;
   ::google::protobuf::uint32 map_size_x_;
@@ -507,9 +507,9 @@ class EntireMap : public ::google::protobuf::MessageLite {
   friend void  protobuf_AddDesc_messages_2etxt();
   friend void protobuf_AssignDesc_messages_2etxt();
   friend void protobuf_ShutdownFile_messages_2etxt();
-  
+
   ::google::protobuf::uint32 _has_bits_[(9 + 31) / 32];
-  
+
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
     return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
@@ -520,7 +520,7 @@ class EntireMap : public ::google::protobuf::MessageLite {
   inline void _clear_bit(int index) {
     _has_bits_[index / 32] &= ~(1u << (index % 32));
   }
-  
+
   void InitAsDefaultInstance();
   static EntireMap* default_instance_;
 };
@@ -530,27 +530,27 @@ class CurrentMap : public ::google::protobuf::MessageLite {
  public:
   CurrentMap();
   virtual ~CurrentMap();
-  
+
   CurrentMap(const CurrentMap& from);
-  
+
   inline CurrentMap& operator=(const CurrentMap& from) {
     CopyFrom(from);
     return *this;
   }
-  
+
   static const CurrentMap& default_instance();
-  
+
   void Swap(CurrentMap* other);
-  
+
   // implements Message ----------------------------------------------
-  
+
   CurrentMap* New() const;
   void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
   void CopyFrom(const CurrentMap& from);
   void MergeFrom(const CurrentMap& from);
   void Clear();
   bool IsInitialized() const;
-  
+
   int ByteSize() const;
   bool MergePartialFromCodedStream(
       ::google::protobuf::io::CodedInputStream* input);
@@ -562,13 +562,13 @@ class CurrentMap : public ::google::protobuf::MessageLite {
   void SharedDtor();
   void SetCachedSize(int size) const;
   public:
-  
+
   ::std::string GetTypeName() const;
-  
+
   // nested types ----------------------------------------------------
-  
+
   // accessors -------------------------------------------------------
-  
+
   // required string name = 1;
   inline bool has_name() const;
   inline void clear_name();
@@ -578,7 +578,7 @@ class CurrentMap : public ::google::protobuf::MessageLite {
   inline void set_name(const char* value);
   inline void set_name(const char* value, size_t size);
   inline ::std::string* mutable_name();
-  
+
   // required string completed_pieces = 2;
   inline bool has_completed_pieces() const;
   inline void clear_completed_pieces();
@@ -588,18 +588,18 @@ class CurrentMap : public ::google::protobuf::MessageLite {
   inline void set_completed_pieces(const char* value);
   inline void set_completed_pieces(const char* value, size_t size);
   inline ::std::string* mutable_completed_pieces();
-  
+
   // required uint32 available = 3;
   inline bool has_available() const;
   inline void clear_available();
   static const int kAvailableFieldNumber = 3;
   inline ::google::protobuf::uint32 available() const;
   inline void set_available(::google::protobuf::uint32 value);
-  
+
   // @@protoc_insertion_point(class_scope:sculpt.CurrentMap)
  private:
   mutable int _cached_size_;
-  
+
   ::std::string* name_;
   static const ::std::string _default_name_;
   ::std::string* completed_pieces_;
@@ -608,9 +608,9 @@ class CurrentMap : public ::google::protobuf::MessageLite {
   friend void  protobuf_AddDesc_messages_2etxt();
   friend void protobuf_AssignDesc_messages_2etxt();
   friend void protobuf_ShutdownFile_messages_2etxt();
-  
+
   ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
-  
+
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
     return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
@@ -621,7 +621,7 @@ class CurrentMap : public ::google::protobuf::MessageLite {
   inline void _clear_bit(int index) {
     _has_bits_[index / 32] &= ~(1u << (index % 32));
   }
-  
+
   void InitAsDefaultInstance();
   static CurrentMap* default_instance_;
 };
@@ -631,27 +631,27 @@ class SubmitPiece : public ::google::protobuf::MessageLite {
  public:
   SubmitPiece();
   virtual ~SubmitPiece();
-  
+
   SubmitPiece(const SubmitPiece& from);
-  
+
   inline SubmitPiece& operator=(const SubmitPiece& from) {
     CopyFrom(from);
     return *this;
   }
-  
+
   static const SubmitPiece& default_instance();
-  
+
   void Swap(SubmitPiece* other);
-  
+
   // implements Message ----------------------------------------------
-  
+
   SubmitPiece* New() const;
   void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from);
   void CopyFrom(const SubmitPiece& from);
   void MergeFrom(const SubmitPiece& from);
   void Clear();
   bool IsInitialized() const;
-  
+
   int ByteSize() const;
   bool MergePartialFromCodedStream(
       ::google::protobuf::io::CodedInputStream* input);
@@ -663,27 +663,27 @@ class SubmitPiece : public ::google::protobuf::MessageLite {
   void SharedDtor();
   void SetCachedSize(int size) const;
   public:
-  
+
   ::std::string GetTypeName() const;
-  
+
   // nested types ----------------------------------------------------
-  
+
   // accessors -------------------------------------------------------
-  
+
   // required int32 map_id = 1;
   inline bool has_map_id() const;
   inline void clear_map_id();
   static const int kMapIdFieldNumber = 1;
   inline ::google::protobuf::int32 map_id() const;
   inline void set_map_id(::google::protobuf::int32 value);
-  
+
   // required int32 piece_id = 2;
   inline bool has_piece_id() const;
   inline void clear_piece_id();
   static const int kPieceIdFieldNumber = 2;
   inline ::google::protobuf::int32 piece_id() const;
   inline void set_piece_id(::google::protobuf::int32 value);
-  
+
   // required string hash = 3;
   inline bool has_hash() const;
   inline void clear_hash();
@@ -693,7 +693,7 @@ class SubmitPiece : public ::google::protobuf::MessageLite {
   inline void set_hash(const char* value);
   inline void set_hash(const char* value, size_t size);
   inline ::std::string* mutable_hash();
-  
+
   // required string username = 4;
   inline bool has_username() const;
   inline void clear_username();
@@ -703,7 +703,7 @@ class SubmitPiece : public ::google::protobuf::MessageLite {
   inline void set_username(const char* value);
   inline void set_username(const char* value, size_t size);
   inline ::std::string* mutable_username();
-  
+
   // required bytes data = 5;
   inline bool has_data() const;
   inline void clear_data();
@@ -713,11 +713,11 @@ class SubmitPiece : public ::google::protobuf::MessageLite {
   inline void set_data(const char* value);
   inline void set_data(const void* value, size_t size);
   inline ::std::string* mutable_data();
-  
+
   // @@protoc_insertion_point(class_scope:sculpt.SubmitPiece)
  private:
   mutable int _cached_size_;
-  
+
   ::google::protobuf::int32 map_id_;
   ::google::protobuf::int32 piece_id_;
   ::std::string* hash_;
@@ -729,9 +729,9 @@ class SubmitPiece : public ::google::protobuf::MessageLite {
   friend void  protobuf_AddDesc_messages_2etxt();
   friend void protobuf_AssignDesc_messages_2etxt();
   friend void protobuf_ShutdownFile_messages_2etxt();
-  
+
   ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
-  
+
   // WHY DOES & HAVE LOWER PRECEDENCE THAN != !?
   inline bool _has_bit(int index) const {
     return (_has_bits_[index / 32] & (1u << (index % 32))) != 0;
@@ -742,7 +742,7 @@ class SubmitPiece : public ::google::protobuf::MessageLite {
   inline void _clear_bit(int index) {
     _has_bits_[index / 32] &= ~(1u << (index % 32));
   }
-  
+
   void InitAsDefaultInstance();
   static SubmitPiece* default_instance_;
 };

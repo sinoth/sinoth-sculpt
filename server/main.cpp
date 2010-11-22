@@ -532,7 +532,7 @@ void receive_piece( sinsocket *insocket ) {
 //
 void send_archive_list( sinsocket *insocket ) {
 
-    work on this
+    //\/work on this
 
     //first make sure we're at the current version
     uint8_t version_result;
