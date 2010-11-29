@@ -30,7 +30,7 @@
 
 
 typedef struct serverinfo_s {
-    unsigned char server_id;
+    int server_id;
     char server_name[100];
     int total_pieces;
     int pieces_left;
@@ -145,7 +145,7 @@ public:
     void save_username();
 
     //network stuff
-    bool retrieveServerList();
+    bool retrieveArchiveList(unsigned char page);
     bool retrieveCurrentMap();
     bool retrieveEntireMap(int);
     bool retrievePiece();
@@ -206,6 +206,10 @@ public:
     void static serverlist_next();
     void static serverlist_close();
     void static serverbutton_one();
+    void static serverbutton_two();
+    void static serverbutton_three();
+    void static serverbutton_four();
+    void static serverbutton_five();
     void static infowindow_close();
     void static connectmenu_close();
     void static connectmenu_current();

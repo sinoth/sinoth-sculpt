@@ -599,11 +599,11 @@ void scene::init_ui() {
 
     ui_label *serverlabel_pages = (ui_label*)mainGui.addWidget("serverlabel_pages", UI_WIDGET_LABEL);
     serverlabel_pages->setXY(390,140); serverlabel_pages->setWH(70,20);
-    serverlabel_pages->my_font.setFont(&font12);
+    serverlabel_pages->my_font.setFont(&font12, FONT_HINT_DYNAMIC);
     serverlabel_pages->my_font.setColor(0.2,0.2,0.2,1.0);
     serverlabel_pages->my_font.setVertAlign(FONT_ALIGN_CENTER);
     serverlabel_pages->my_font.setHorizAlign(FONT_ALIGN_CENTER);
-    serverlabel_pages->my_font.setText("Page 1/2");
+    serverlabel_pages->my_font.setText("Page 0/0");
     serverlabel_pages->my_font.cook();
 
     ui_button *separator_button3 = (ui_button*)mainGui.addWidget("list_separator3", UI_WIDGET_BUTTON);

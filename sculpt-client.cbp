@@ -87,7 +87,7 @@
 			<Option virtualFolder="main\" />
 		</Unit>
 		<Unit filename="client\scene.h">
-			<Option virtualFolder="main\" />
+			<Option virtualFolder="scene\" />
 			<Option target="Windows Client Release" />
 		</Unit>
 		<Unit filename="client\scene\actions.cpp">

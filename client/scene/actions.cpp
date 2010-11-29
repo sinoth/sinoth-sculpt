@@ -388,11 +388,12 @@ void scene::serverlist_close() {
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
-void scene::serverbutton_one() {
-
-    myself->participateInServer(1);
-}
+/////////////////////////////////////////////////////////////////////
+void scene::serverbutton_one()   { if ( myself->servers[0].server_id != -1 ) myself->retrieveEntireMap(myself->servers[0].server_id); }
+void scene::serverbutton_two()   { if ( myself->servers[1].server_id != -1 ) myself->retrieveEntireMap(myself->servers[1].server_id); }
+void scene::serverbutton_three() { if ( myself->servers[2].server_id != -1 ) myself->retrieveEntireMap(myself->servers[2].server_id); }
+void scene::serverbutton_four()  { if ( myself->servers[3].server_id != -1 ) myself->retrieveEntireMap(myself->servers[3].server_id); }
+void scene::serverbutton_five()  { if ( myself->servers[4].server_id != -1 ) myself->retrieveEntireMap(myself->servers[4].server_id); }
 
 ////////////////////////////////////////////////////////////////////////////////
 void scene::infowindow_close() {
@@ -442,7 +443,7 @@ void scene::connectmenu_archive() {
     temp_window->doFade(UI_FADE_IN, 10);
     temp_window->setActive(true);
 
-    myself->retrieveServerList();
+    myself->retrieveArchiveList(0);
 
     //myself->retrieveEntireMap(6);
 }
@@ -497,9 +498,9 @@ void scene::currentmapsubmit_close() {
 
 
 void scene::serverlist_prev() {
-    myself->retrieveServerList();
+    myself->retrieveArchiveList(0);
 }
 
 void scene::serverlist_next() {
-    myself->retrieveServerList();
+    myself->retrieveArchiveList(0);
 }

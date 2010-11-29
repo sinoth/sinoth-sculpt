@@ -100,6 +100,9 @@ int main(int, char **) {
             case 0x55: //terminate the server
                 do_quit = true;
                 break;
+            case 0x47: //archive list request
+                send_archive_list(incoming_connection);
+                break;
             case 0x71: //query for server info
                 break;
         }
@@ -550,39 +553,76 @@ void send_archive_list( sinsocket *insocket ) {
     mysqlpp::Query query = conn.query();
     mysqlpp::StoreQueryResult res;
 
+    //get page number
+    unsigned char page;
+    unsigned int entries_per_page = 5;
+    insocket->recvRaw(&page, 1);
+
     //fetch the active map
-    query << "SELECT table_name,description,pieces_total,pieces_per_user,recharge_rate FROM server_maps WHERE completed_timestamp IS NULL ORDER BY added_timestamp ASC LIMIT 1";
+    query << "SELECT map_id,table_name,description,pieces_total,pieces_per_user,recharge_rate,x_size,y_size,z_size,completed_timestamp FROM server_maps WHERE completed_timestamp IS NOT NULL ORDER BY added_timestamp DESC";
     std::vector<get_server_maps> the_current_map;
     query.storein(the_current_map);
 
-    sculpt::CurrentMap cmap;
-    cmap.set_name( the_current_map[0].description );
+    unsigned char num_of_servers;
 
-    //calculate how many have actually been completed
-    query << "SELECT COUNT(*) FROM " << the_current_map[0].table_name << " WHERE piece_order >= 0 AND checkin IS NULL AND (checkout IS NULL OR checkout < TIMESTAMPADD(HOUR,-1,CURRENT_TIMESTAMP))";
-    res = query.store();
-    int total_avail = res[0][0];
+    if ( the_current_map.size() - entries_per_page*page <= 0 )
+        num_of_servers = 0;
+    else if ( the_current_map.size() - entries_per_page*page > entries_per_page )
+        num_of_servers = entries_per_page;
+    else
+        num_of_servers = the_current_map.size() - entries_per_page*page;
 
-    //convert completed to a string
-    char temp_completed[20];
-    sprintf(temp_completed,"%d / %d", the_current_map[0].pieces_total-total_avail, the_current_map[0].pieces_total );
-    cmap.set_completed_pieces( temp_completed );
+    //send number of servers
+    insocket->sendRaw(&num_of_servers, 1);
 
-    //calculate available to this user
-    int pieces_per_user = the_current_map[0].pieces_per_user;
-    //int recharge_rate = the_current_map[0].recharge_rate;
-    query << "SELECT COUNT(*) FROM " << the_current_map[0].table_name << " WHERE ip = \"" << (char*)insocket->getUserData() << "\" AND checkout > TIMESTAMPADD(HOUR,-" << pieces_per_user << ",CURRENT_TIMESTAMP)";
-    res = query.store();
-    int actual_available = pieces_per_user - res[0][0];
-    if ( actual_available > total_avail ) actual_available = total_avail;
-    if ( total_avail == 0 ) actual_available = 0;
-    cmap.set_available(actual_available);
+    //send number of servers
+    unsigned int num_of_pages = (the_current_map.size() / entries_per_page) + 1;
+    insocket->sendRaw(&num_of_pages, 1);
+
+    //send total number of pages
+
+    if ( num_of_servers == 0 )
+    {
+        //we're done here!
+        return;
+    }
+
+    sculpt::ArchiveMaps amaps;
+    sculpt::ArchiveMap *amap;
+
+    for (int i=0; i < num_of_servers; ++i)
+    {
+        amap = amaps.add_maps();
+        amap->set_name( the_current_map[page*entries_per_page+i].description );
+        char map_size[20];
+        sprintf(map_size, "%dx%dx%d", the_current_map[page*entries_per_page+i].x_size, the_current_map[page*entries_per_page+i].y_size, the_current_map[page*entries_per_page+i].z_size);
+        amap->set_size( map_size );
+        char map_date[13];
+        std::string month;
+        switch ( the_current_map[page*entries_per_page+i].completed_timestamp.data.month() )
+        {
+            case  1: month = "Jan"; break;
+            case  2: month = "Feb"; break;
+            case  3: month = "Mar"; break;
+            case  4: month = "Apr"; break;
+            case  5: month = "May"; break;
+            case  6: month = "Jun"; break;
+            case  7: month = "Jul"; break;
+            case  8: month = "Aug"; break;
+            case  9: month = "Sep"; break;
+            case 10: month = "Oct"; break;
+            case 11: month = "Nov"; break;
+            case 12: month = "Dec"; break;
+        }
+        sprintf(map_date, "%s %02d, %4d", month.c_str(), the_current_map[page*entries_per_page+i].completed_timestamp.data.day(), the_current_map[page*entries_per_page+i].completed_timestamp.data.year());
+        amap->set_date( map_date );
+        amap->set_id( the_current_map[page*entries_per_page+i].map_id );
+    }
 
     //send over the message
-    int size_of_map = cmap.ByteSize();
-    packet_data *cmap_packet = new packet_data(malloc(size_of_map),size_of_map);
-    cmap.SerializeToArray(cmap_packet->data, size_of_map);
-    cmap_packet->compress();
-    insocket->sendPacket(cmap_packet);
+    packet_data *amaps_packet = new packet_data(malloc(amaps.ByteSize()),amaps.ByteSize());
+    amaps.SerializeToArray(amaps_packet->data, amaps.ByteSize());
+    amaps_packet->compress();
+    insocket->sendPacket(amaps_packet);
 
 }

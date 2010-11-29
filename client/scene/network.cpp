@@ -276,14 +276,15 @@ bool scene::retrieveEntireMap(int in) {
     return 0;
 }
 
-bool scene::retrieveServerList() {
 
+bool scene::retrieveArchiveList(unsigned char page) {
+    //this is for receiving an archive list of completed servers
     //\/work on this
 
     sinsocket client_socket;
-    unsigned char list_request = 0x28;
+    unsigned char archive_request = 0x47;
     unsigned char num_of_servers;
-    unsigned char server_name_length;
+    unsigned char num_of_pages;
     ui_label *temp_label;
     char temp_widget_name[100];
     char temp_label_text[100];
@@ -293,30 +294,54 @@ bool scene::retrieveServerList() {
     if ( client_socket.connect("localhost",35610) ) {
         printf("ERROR: could not connect to localhost!\n"); return 1; }
 
-    //ask for a server list (0x28)
-    client_socket.sendRaw( &list_request, 1 );
+    //ask for archive list
+    client_socket.sendRaw( &archive_request, 1 );
+
+    //make sure our version is okay
+    uint8_t their_version, my_version = (VERSION_MAJOR<<4) | VERSION_MINOR;;
+    if ( client_socket.sendRaw(&my_version, 1) ) return 1;
+    if ( client_socket.recvRaw(&their_version, 1) ) return 1;
+
+    if ( their_version != my_version ) {
+        printf("ERROR: Versions do not match, please update.\n");
+        //should display a dialog about restarting/updating here, or even initiate an update
+        client_socket.beginDisconnect();
+        return 1;
+    }
+
+    //request page number
+    client_socket.sendRaw( &page, 1 );
 
     //get number of servers being transferred
     client_socket.recvRaw( &num_of_servers, 1 );
     printf("* NETWORK: Preparing to receive %d servers...\n", num_of_servers );
 
-    for ( int i=0; i < num_of_servers; ++i ) {
-        client_socket.recvRaw( &servers[i].server_id, 1 );
-        client_socket.recvRaw( &server_name_length, 1 );
-        client_socket.recvRaw( servers[i].server_name, server_name_length );
-        client_socket.recvRaw( &servers[i].total_pieces, 4 );
-        client_socket.recvRaw( &servers[i].pieces_left, 4 );
-        client_socket.recvRaw( &servers[i].player_total, 1 );
-        client_socket.recvRaw( &servers[i].player_left, 1 );
+    //get total number of pages
+    client_socket.recvRaw( &num_of_pages, 1 );
+    temp_label = (ui_label*)mainGui.getWidget("serverlabel_pages");
+    sprintf(temp_status, "Page %d/%d", page+1, num_of_pages);
+    temp_label->my_font.setText(temp_status); temp_label->my_font.cook();
 
-        printf("%d(%d): [%s], %d/%d total pieces, %u/%u available pieces\n", i+1,
-                                                                         servers[i].server_id,
-                                                                         servers[i].server_name,
-                                                                         servers[i].pieces_left,
-                                                                         servers[i].total_pieces,
-                                                                         servers[i].player_left,
-                                                                         servers[i].player_total );
+
+    if ( num_of_servers == 0 )
+    {
+        //we're done! should probably set some "no servers for this page" message
+        sprintf(temp_status,"SUCCESS: Retrieved %d archive entries.",num_of_servers);
+        temp_label = (ui_label*)mainGui.getWidget("comm_status");
+        temp_label->my_font.setText(temp_status); temp_label->my_font.cook();
+        client_socket.beginDisconnect();
+        return 0;
     }
+
+    //retrieve map pbuffer
+    packet_data *archive_packet;
+    if ( client_socket.recvPacket(archive_packet, true) )
+    {
+        //bad things
+        return 1;
+    }
+    sculpt::ArchiveMaps amaps;
+    amaps.ParseFromArray( archive_packet->data, archive_packet->size() );
 
     //clean up the socket
     client_socket.beginDisconnect();
@@ -325,38 +350,40 @@ bool scene::retrieveServerList() {
     for ( int i=0; i < 5; ++i ) {
 
         if ( i < num_of_servers ) {
-            sprintf(temp_widget_name,"server%d_name",i+1);
+            sprintf(temp_widget_name,"server%d_name",i);
             temp_label = (ui_label*)mainGui.getWidget(temp_widget_name);
-            sprintf(temp_label_text,"%s",servers[i].server_name);
+            sprintf(temp_label_text,"%s",amaps.maps(i).name().c_str());
             temp_label->my_font.setText(temp_label_text); temp_label->my_font.cook();
 
-            sprintf(temp_widget_name,"server%d_complete",i+1);
+            sprintf(temp_widget_name,"server%d_size",i);
             temp_label = (ui_label*)mainGui.getWidget(temp_widget_name);
-            sprintf(temp_label_text,"%u / %u",servers[i].pieces_left, servers[i].total_pieces);
+            sprintf(temp_label_text,"%s",amaps.maps(i).size().c_str());
             temp_label->my_font.setText(temp_label_text); temp_label->my_font.cook();
 
-            sprintf(temp_widget_name,"server%d_available",i+1);
+            sprintf(temp_widget_name,"server%d_date",i);
             temp_label = (ui_label*)mainGui.getWidget(temp_widget_name);
-            sprintf(temp_label_text,"%u / %u",servers[i].player_left, servers[i].player_total);
+            sprintf(temp_label_text,"%s",amaps.maps(i).date().c_str());
             temp_label->my_font.setText(temp_label_text); temp_label->my_font.cook();
+            servers[i].server_id = amaps.maps(i).id();
 
         } else {
             //fill with blanks
-            sprintf(temp_widget_name,"server%d_name",i+1);
+            sprintf(temp_widget_name,"server%d_name",i);
             temp_label = (ui_label*)mainGui.getWidget(temp_widget_name);
             temp_label->my_font.setText(""); temp_label->my_font.cook();
 
-            sprintf(temp_widget_name,"server%d_complete",i+1);
+            sprintf(temp_widget_name,"server%d_size",i);
             temp_label = (ui_label*)mainGui.getWidget(temp_widget_name);
             temp_label->my_font.setText(""); temp_label->my_font.cook();
 
-            sprintf(temp_widget_name,"server%d_available",i+1);
+            sprintf(temp_widget_name,"server%d_date",i);
             temp_label = (ui_label*)mainGui.getWidget(temp_widget_name);
             temp_label->my_font.setText(""); temp_label->my_font.cook();
+            servers[i].server_id = -1;
         }
     }
 
-    sprintf(temp_status,"SUCCESS: Retrieved %d server entries.",num_of_servers);
+    sprintf(temp_status,"SUCCESS: Retrieved %d archive entries.",num_of_servers);
     temp_label = (ui_label*)mainGui.getWidget("comm_status");
     temp_label->my_font.setText(temp_status); temp_label->my_font.cook();
 

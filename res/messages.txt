@@ -42,6 +42,17 @@ message CurrentMap {
     required uint32 available = 3;
 }
 
+message ArchiveMap {
+    required string name = 1;
+    required string size = 2;
+    required string date = 3;
+    required uint32 id = 4;
+}
+
+message ArchiveMaps {
+    repeated ArchiveMap maps = 1;
+}
+
 message SubmitPiece {
     required int32 map_id = 1;
     required int32 piece_id = 2;
